@@ -148,6 +148,48 @@ router.post("/", async function (req, res, next) {
   }
 });
 
+// for e.g /products/featured
+// router.get('/featured' , async function(req,res,next){
+//   try{
+//     let featuredProducts = await productModel.find({"isfeatured":true})
+//     return res.json({
+//       type:'success',
+//       status:200,
+//       message:`Featured products`,
+//       data:featuredProducts,
+//     })
+//   }
+//   catch(error){
+//     console.log('error at /products/featured --> products.js route',error)
+//     return res.json({
+//       type:'error',
+//       status:500,
+//       message:`Server error at /products/featured API `,
+//     })
+//   }
+// })
+
+// for e.g /products/favorite
+// router.get('/favorite',async function(req,res,next){
+//   try{
+//     let favoriteProducts = await productModel.find({"isMarkedFavorite":true})
+//     return res.json({
+//       type:'success',
+//       status:200,
+//       message:`Favorite products`,
+//       data:favoriteProducts,
+//     })
+//   }
+//   catch(error){
+//     console.log('error at /products/favorite --> products.js route',error)
+//     return res.json({
+//       type:'error',
+//       status:500,
+//       message:`Server error at /products/favorite API `,
+//     })
+//   }
+// })
+
 // for e.g /products/categories
 router.get("/categories", async function (req, res, next) {
   try {
