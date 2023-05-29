@@ -35,5 +35,33 @@ category Object
     "totalProducts":100,
     "image":"http://192.168.1.178:1108/images/category/cat-1.jpg"
 }
-        
+
+
+-----------------------------------------------
+
+Filter Object Be like below in POST request for product listing:
+
+{
+    // ---------------filter-----------
+    filterByprice:[{
+        min:0,
+        max:100
+    },
+    {
+        min:100,
+        max:200
+    }],
+    filterByColor:["Black","Red" ...],
+    FilterBySize:["S","M","XXL" ...],
+    isFeatured:true,
+    isMarkedFavorite:true
+    // ----------------sort-------------
+    sortBy:{
+        field:"Rating",
+        order:"asc/desc"
+    },
+    // ------------- skip,limit---------
+    page:1,
+    limit:5,
+}
         

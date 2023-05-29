@@ -39,6 +39,14 @@ const product = new mongoose.Schema({
         required:true,
         default:false
     },
+    color:{
+        type:String,
+        required:true,
+    },
+    size:{
+        type:String,
+        required:true,
+    },
     rating:{
         rate:{
             type:Number,

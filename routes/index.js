@@ -31,6 +31,7 @@ router.get("/poster", function (req, res, next) {
         btnName: "Shop Now",
       },
     ];
+
     let offers = [
       {
         offerTitle: "SAVE 20%",
@@ -45,6 +46,7 @@ router.get("/poster", function (req, res, next) {
         btnName: "Shop Now",
       },
     ];
+    
     res.json({
       type: "success",
       status: 200,
@@ -122,13 +124,13 @@ router.post("/signup", async function (req, res, next) {
     };
 
     // 4. send email with mail options
-    await transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email sent: " + req.body.userEmail);
-      }
-    });
+    // await transporter.sendMail(mailOptions, function (error, info) {
+    //   if (error) {
+    //     console.log(error);
+    //   } else {
+    //     console.log("Email sent: " + req.body.userEmail);
+    //   }
+    // });
 
     return res.json({
       type: "success",
