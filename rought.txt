@@ -61,7 +61,9 @@ Filter Object Be like below in POST request for product listing:
         order:"asc/desc"
     },
     // ------------- skip,limit---------
-    page:1,
-    limit:5,
+     "pagination":{
+        "page":2,
+        "productsPerPage":5
+     }
 }
         
