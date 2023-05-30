@@ -6,56 +6,67 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 /* GET home page. */
 
-// for e.g POST : /products  
+// for e.g POST : /products
 router.post("/", async function (req, res, next) {
   try {
-    // const {filterByColor} = req.body;
+    console.log("=====================> ip : ", req.ip);
+    // console.log("=====================> req.body : ", req.body);
+
+    const {
+      filterByColor,
+      _id,
+      filterBySize,
+      isFeatured,
+      filterByCategory,
+      isMarkedFavorite,
+      filterByPrice,
+      sortBy,
+      limit,
+      pagination,
+    } = req.body;
     // const {} = req.params
-    console.log("req.body ===================> ", req.body);
     let condition = [];
 
     //1.---------------- filter
     let match = {};
 
-    match["$or"] = [];
+    match["$and"] = [];
 
-
-    if(req.body._id){
-      match['_id'] = new ObjectId(req.body._id)
+    if (req.body._id) {
+      match["_id"] = new ObjectId(_id);
     }
 
-    if(req.body.filterByColor){
-      // match['$or'] = []
-      req.body.filterByColor.forEach(color => {
-        match.$or.push({"color":color})
+    if (filterByColor) {
+      filterByColor.forEach((color) => {
+        match.$and.push({ color: color });
       });
     }
 
-    
-    if(req.body.filterBySize){
-      // match['$or'] = []
-      req.body.filterBySize.map((size)=>{
-        match.$or.push({"size":size})
-      })
+    if (filterBySize) {
+      filterBySize.forEach((size) => {
+        match.$and.push({ size: size });
+      });
+      // req.body.filterBySize.map((size)=>{
+      //   match.$or.push({"size":size})
+      // })
     }
 
-    if (req.body.isFeatured) {
+    if (isFeatured) {
       match["isfeatured"] = true;
     }
 
-    if (req.body.category) {
-      match["category"] = req.body.category;
+    if (filterByCategory) {
+      match["category"] = filterByCategory;
     }
 
-    if (req.body.isMarkedFavorite) {
+    if (isMarkedFavorite) {
       match["isMarkedFavorite"] = true;
     }
 
-    if (req.body.filterByPrice) {
+    if (filterByPrice) {
       // match["$or"] = [];
-      let arrayOfPriceRange = [...req.body.filterByPrice];
-      arrayOfPriceRange.forEach((priceRange) => {
-        match.$or.push({
+      filterByPrice.forEach((priceRange) => {
+        match.$and.push({
           $and: [
             { price: { $gte: priceRange.min } },
             { price: { $lte: priceRange.max } },
@@ -63,7 +74,11 @@ router.post("/", async function (req, res, next) {
         });
       });
     }
-    console.log("match =============>",match)
+
+
+    if (!match["$and"].length) {
+      delete match.$and;
+    }
 
     condition.push({
       $match: match,
@@ -71,12 +86,20 @@ router.post("/", async function (req, res, next) {
 
 
 
+    condition.push({
+      $count:"filteredProducts"
+    })
+
+    let [ totalFilteredProducts ] = await productModel.aggregate(condition)
+
+    condition.pop()
+
     //2.----------------- sort
 
-    if (req.body.sortBy) {
-      let field = req.body.sortBy.field || "_id";
+    if (sortBy) {
+      let field = sortBy.field || "_id";
       let order = -1;
-      if (req.body.sortBy.order == "asc") {
+      if (sortBy.order == "asc") {
         order = 1;
       }
       condition.push({
@@ -88,23 +111,20 @@ router.post("/", async function (req, res, next) {
 
     //3.------------------ (i)skip-(ii)limit
 
-    let limit = 0;
+    let limitDefault = 0;
 
-    if (req.body.limit) {
-      limit = parseInt(req.body.limit);
+    if (limit) {
+      limitDefault = parseInt(limit);
     }
 
-    if (req.body.pagination) {
-      let productsInOnePage =
-        parseInt(req.body.pagination.productsPerPage) || 8;
-      let page = parseInt(req.body.pagination.page) || 1;
+    if (pagination) {
+      let productsInOnePage = parseInt(pagination.productsPerPage) || 8;
+      let page = parseInt(pagination.page) || 1;
 
-      limit = productsInOnePage * page;
-
+      limitDefault = productsInOnePage * page;
       condition.push({
-        $limit: limit,
+        $limit: limitDefault,
       });
-
       condition.push({
         $skip: (page - 1) * productsInOnePage,
       });
@@ -124,17 +144,18 @@ router.post("/", async function (req, res, next) {
         rating: 1,
         isfeatured: 1,
         isMarkedFavorite: 1,
-        color:1,
-        size:1
+        color: 1,
+        size: 1,
       },
     });
-    console.log(JSON.stringify(condition,null,3))
+    console.log(JSON.stringify(condition, null, 3));
     let products = await productModel.aggregate(condition);
-    let totalProducts = await productModel.countDocuments({});
+    let totalProducts = products.length;
     return res.json({
       type: "success",
       status: 200,
       message: `product list `,
+      totalFilteredProducts:totalFilteredProducts.filteredProducts,
       totalProducts: totalProducts,
       data: products,
     });
@@ -233,6 +254,7 @@ router.get("/categories/:type", async function (req, res, next) {
 // for e.g /products/filters
 router.get("/filters", async function (req, res, next) {
   try {
+    console.log("=====================> ip : ", req.ip);
     let maxPriceDetails = await productModel.aggregate([
       {
         $group: {
@@ -248,43 +270,71 @@ router.get("/filters", async function (req, res, next) {
       i < Math.ceil(maxPriceDetails[0].MaximumPrice);
       i = i + 100
     ) {
-      priceRanges.push({ min: i, max: i + 100 });
+      priceRanges.push({
+        min: i,
+        max: i + 100,
+        totalProducts: await productModel.countDocuments({
+          $and:[
+          {price: { $gte: i }},
+          {price: { $lte: i + 100 }},
+          ]
+        }),
+      });
     }
+    let colorsArray = await productModel.aggregate([
+      {
+        $group: {
+          _id: "$color",
+          totalProducts: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          color: "$_id",
+          totalProducts: 1,
+        },
+      },
+    ]);
+
+    let sizesArray = await productModel.aggregate([
+      {
+        $group: {
+          _id: "$size",
+          totalProducts: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          size: "$_id",
+          totalProducts: 1,
+        },
+      },
+    ]);
+
+    // let totalProductsInFilterResponse = await productModel.count({})
+    // sizesArray.unshift({
+    //   totalProducts: totalProductsInFilterResponse,
+    //   size: "all size",
+    // });
+
+    // colorsArray.unshift({
+    //   totalProducts:totalProductsInFilterResponse,
+    //   color: "all color",
+    // });
+
+    // priceRanges.unshift({
+    //   totalProducts: totalProductsInFilterResponse,
+    // })
+
     return res.json({
       type: "success",
       status: 200,
       message: `for /products/filters route`,
       data: {
-        colors: await productModel.aggregate([
-          {
-            $group: {
-              _id: "$color",
-              totalProducts: { $sum: 1 },
-            },
-          },
-          {
-            $project: {
-              _id: 0,
-              color: "$_id",
-              totalProducts: 1,
-            },
-          },
-        ]),
-        sizes: await productModel.aggregate([
-          {
-            $group: {
-              _id: "$size",
-              totalProducts: { $sum: 1 },
-            },
-          },
-          {
-            $project: {
-              _id: 0,
-              size: "$_id",
-              totalProducts: 1,
-            },
-          },
-        ]),
+        colors: colorsArray,
+        sizes: sizesArray,
         priceRanges: priceRanges,
       },
     });

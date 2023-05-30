@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var vendorModel = require("../models/vendors");
-var userModel = require("../models/users");
+var newsModel = require("../models/newletter");
 // 1.import node mailer
 var nodemailer = require("nodemailer");
 /* GET users listing. */
@@ -91,7 +91,7 @@ router.post("/signup", async function (req, res, next) {
   try {
     console.log("----------------------> req.body", req.body.userEmail);
 
-    let isEmailExists = await userModel.findOne({userEmail:req.body.userEmail})
+    let isEmailExists = await newsModel.findOne({userEmail:req.body.userEmail})
     if(isEmailExists){
         return res.json({
             type: "error",
@@ -100,7 +100,7 @@ router.post("/signup", async function (req, res, next) {
           });
     }
 
-    await userModel.create(req.body)
+    await newsModel.create(req.body)
 
     // 2.define transporter
     var transporter = nodemailer.createTransport({
