@@ -91,7 +91,7 @@ router.post("/", async function (req, res, next) {
     })
 
     let [ totalFilteredProducts ] = await productModel.aggregate(condition)
-
+    console.log("totalFilteredProducts",totalFilteredProducts);
     condition.pop()
 
     //2.----------------- sort
@@ -155,8 +155,8 @@ router.post("/", async function (req, res, next) {
       type: "success",
       status: 200,
       message: `product list `,
-      totalFilteredProducts:totalFilteredProducts.filteredProducts,
-      totalProducts: totalProducts,
+      totalProducts:(totalFilteredProducts.filteredProducts)?totalFilteredProducts['filteredProducts']:0,
+      totalFilteredProducts: totalProducts,
       data: products,
     });
   } catch (error) {
