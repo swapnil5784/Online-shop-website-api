@@ -2,69 +2,11 @@ var express = require("express");
 var router = express.Router();
 var vendorModel = require("../models/vendors");
 var newsModel = require("../models/newletter");
+var advertisementModel = require('../models/advertisements')
+var offerModel =require('../models/offers')
+var emailValidator = require("deep-email-validator")
 // 1.import node mailer
 var nodemailer = require("nodemailer");
-/* GET users listing. */
-// for e.g /poster
-router.get("/poster", function (req, res, next) {
-  try {
-    let carousels = [
-      {
-        title: "Men Fashion",
-        description:
-          "Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam",
-        image: "/images/carousel/carousel-1.jpg",
-        btnName: "Shop Now",
-      },
-      {
-        title: "Women Fashion",
-        description:
-          "Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam",
-        image: "/images/carousel/carousel-2.jpg",
-        btnName: "Shop Now",
-      },
-      {
-        title: "Kids Fashion",
-        description:
-          "Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam",
-        image: "/images/carousel/carousel-3.jpg",
-        btnName: "Shop Now",
-      },
-    ];
-
-    let offers = [
-      {
-        offerTitle: "SAVE 20%",
-        offerType: "Special Offer",
-        image: "/images/offers/offer-1.jpg",
-        btnName: "Shop Now",
-      },
-      {
-        offerTitle: "SAVE 20%",
-        offerType: "Special Offer",
-        image: "/images/offers/offer-2.jpg",
-        btnName: "Shop Now",
-      },
-    ];
-    
-    res.json({
-      type: "success",
-      status: 200,
-      message: `for /banner route`,
-      data: {
-        carousels: carousels,
-        offers: offers,
-      },
-    });
-  } catch (error) {
-    console.log("error at /banner route", error);
-    res.json({
-      type: "error",
-      status: 500,
-      message: `Server error at /banner API `,
-    });
-  }
-});
 
 // for e.g /vendors
 router.get("/vendors", async function (req, res, next) {
@@ -89,6 +31,7 @@ router.get("/vendors", async function (req, res, next) {
 // post route to register user and send mail about registration
 router.post("/signup", async function (req, res, next) {
   try {
+
     console.log("----------------------> req.body", req.body.userEmail);
 
     let isEmailExists = await newsModel.findOne({userEmail:req.body.userEmail})
@@ -113,7 +56,16 @@ router.post("/signup", async function (req, res, next) {
         pass: "lxoldjnefineriei",
       },
     });
+    let emailToValidate =req.body.userEmail
 
+    // check email in reality exists or not 
+      async function isEmailValid(email){
+        return emailValidator.validate(email)
+    }
+
+    const {valid} = await isEmailValid(emailToValidate)
+    // valid ==> true or false
+    console.log("Email in reality exists or not ====> ",valid);
 
     // 3. mail option
     var mailOptions = {
