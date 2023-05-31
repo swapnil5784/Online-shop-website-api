@@ -66,4 +66,109 @@ Filter Object Be like below in POST request for product listing:
         "productsPerPage":5
      }
 }
+
+
+-------------------filter condition all applied
+
+
+// [
+//   {
+//     $match: {
+//       $or: [
+//         {
+//           $and: [
+//             {
+//               price: {
+//                 $gte: 0,
+//               },
+//             },
+//             {
+//               price: {
+//                 $lte: 100,
+//               },
+//             },
+//           ],
+//           $or: [
+//             {
+//               color: "Black",
+//               $or: [
+//                 {
+//                   size: "XL",
+//                 },
+//                 {
+//                   size: "M",
+//                 },
+//               ],
+//             },
+//             {
+//               color: "Red",
+//               $or: [
+//                 {
+//                   size: "XL",
+//                 },
+//                 {
+//                   size: "M",
+//                 },
+//               ],
+//             },
+//           ],
+//         },
+//         {
+//           $and: [
+//             {
+//               price: {
+//                 $gte: 100,
+//               },
+//             },
+//             {
+//               price: {
+//                 $lte: 200,
+//               },
+//             },
+//           ],
+//           $or: [
+//             {
+//               color: "Black",
+//               $or: [
+//                 {
+//                   size: "XL",
+//                 },
+//                 {
+//                   size: "M",
+//                 },
+//               ],
+//             },
+//             {
+//               color: "Red",
+//               $or: [
+//                 {
+//                   size: "XL",
+//                 },
+//                 {
+//                   size: "M",
+//                 },
+//               ],
+//             },
+//           ],
+//         },
+//       ],
+//     },
+//   },
+//   {
+//     $project: {
+//       _id: 1,
+//       id: 1,
+//       title: 1,
+//       price: 1,
+//       description: 1,
+//       category: 1,
+//       image: 1,
+//       rating: 1,
+//       isfeatured: 1,
+//       isMarkedFavorite: 1,
+//       color: 1,
+//       size: 1,
+//     },
+//   },
+// ];
         
