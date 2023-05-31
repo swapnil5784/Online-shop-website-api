@@ -7,115 +7,157 @@ const ObjectId = mongoose.Types.ObjectId;
 /* GET home page. */
 
 // for e.g POST : /products
-router.post("/", async function (req, res, next) {
+router.post("/:id?", async function (req, res, next) {
   try {
     console.log("=====================> ip : ", req.ip);
-    // console.log("=====================> req.body : ", req.body);
+    console.log("=====================> req.body : ", req.body);
 
     const {
-      filterByColor,
-      _id,
-      filterBySize,
-      isFeatured,
-      filterByCategory,
-      isMarkedFavorite,
-      filterByPrice,
-      sortBy,
-      limit,
+      filter,
+      sort,
       pagination,
     } = req.body;
-    // const {} = req.params
+    const {id} = req.params
     let condition = [];
 
     //1.---------------- filter
     let match = {};
 
-    match["$and"] = [];
+    match["$or"] = [];
 
-    if (req.body._id) {
-      match["_id"] = new ObjectId(_id);
+    if (id) {
+      match["_id"] = new ObjectId(id);
     }
 
-    if (filterByColor) {
-      filterByColor.forEach((color) => {
-        match.$and.push({ color: color });
-      });
-    }
-
-    if (filterBySize) {
-      filterBySize.forEach((size) => {
-        match.$and.push({ size: size });
-      });
-      // req.body.filterBySize.map((size)=>{
-      //   match.$or.push({"size":size})
-      // })
-    }
-
-    if (isFeatured) {
+    if (filter?.isFeatured) {
       match["isfeatured"] = true;
     }
-
-    if (filterByCategory) {
-      match["category"] = filterByCategory;
+    
+    if (filter?.category) {
+      match["category"] = filter.category;
     }
 
-    if (isMarkedFavorite) {
+    if (filter?.isMarkedFavorite) {
       match["isMarkedFavorite"] = true;
     }
 
-    if (filterByPrice) {
-      // match["$or"] = [];
-      filterByPrice.forEach((priceRange) => {
-        match.$and.push({
-          $and: [
-            { price: { $gte: priceRange.min } },
-            { price: { $lte: priceRange.max } },
-          ],
+    //  nested filters
+
+    if (filter?.price) {
+      if (!match.$or.length) {
+        filter?.price.map((priceRange)=>{
+          match.$or.push({
+            $and: [
+              { price: { $gte: priceRange.min } },
+              { price: { $lte: priceRange.max } },
+            ],
+          });
+        })          
+      } 
+      // else {
+      //   match.$or.forEach((object) => {
+      //     console.log('inside else price filter=========================')
+      //     // let priceRangeOr = [];
+      //     filterByPrice.forEach((priceRange) => {
+      //       object.$or.push({
+      //         $and: [
+      //           { price: { $gte: priceRange.min } },
+      //           { price: { $lte: priceRange.max } },
+      //         ],
+      //       });
+      //     });
+      //     //  = priceRangeOr;
+      //   });
+      // }
+      // if (match.$or.$or == []) {
+      //   match.$or.$or.push({});
+      // }
+    }
+
+    if (filter?.color) {
+      if (!match.$or.length) {
+        filter.color.map((color)=>{
+          match.$or.push({ color: color });
+        })
+      } else {
+        match.$or.map((object)=>{
+          let colorArray = [];
+          filter?.color.map((color) => {
+            colorArray.push({ color: color });
+          });
+          object["$or"] = colorArray;
+        })
+      }
+    }
+
+    if (filter?.size) {
+      if (!match.$or.length) {
+        filter?.size.map((size) => {
+          match.$or.push({ size: size });
         });
-      });
+      } else {
+        match.$or.map((object) => {
+          if (object.$or) {
+            if (!object.$or.length) {
+              let sizeOr = [];
+              filter.size.map((size) => {
+                sizeOr.push({ size: size });
+              });
+              object["$or"] = sizeOr;
+            } else {
+              object.$or.map((object) => {
+                let insideColorOr = [];
+                filter?.size.map((size) => {
+                  insideColorOr.push({ size: size });
+                });
+                object.$or = insideColorOr;
+              });
+            }
+          } else {
+            let sizeOrArray = [];
+            filter?.size.map((size) => {
+              sizeOrArray.push({ size: size });
+            });
+            object.$or = sizeOrArray;
+          }
+        });
+      }
     }
 
-
-    if (!match["$and"].length) {
-      delete match.$and;
+    if (!match["$or"].length) {
+      delete match.$or;
     }
+
+    let totalFilteredProducts = await productModel.countDocuments(match);
 
     condition.push({
       $match: match,
     });
 
-
-
-    condition.push({
-      $count:"filteredProducts"
-    })
-
-    let [ totalFilteredProducts ] = await productModel.aggregate(condition)
-    console.log("totalFilteredProducts",totalFilteredProducts);
-    condition.pop()
+    // console.log("condition =========> ", JSON.stringify(condition, null, 3));
 
     //2.----------------- sort
+    console.log("sortsort ======================>>> ",sort);
 
-    if (sortBy) {
-      let field = sortBy.field || "_id";
+      let field = sort?.field || "_id";
       let order = -1;
-      if (sortBy.order == "asc") {
+      if (sort?.order === "asc") {
         order = 1;
       }
       condition.push({
-        $sort: {
-          [field]: order,
-        },
-      });
-    }
+        $sort:{
+          [field]:order
+        }
+      })
+    
 
     //3.------------------ (i)skip-(ii)limit
 
-    let limitDefault = 0;
+    // let limitDefault = 0;
 
-    if (limit) {
-      limitDefault = parseInt(limit);
-    }
+    // if (limit) {
+    //   limitDefault = parseInt(limit);
+    // }
 
     if (pagination) {
       let productsInOnePage = parseInt(pagination.productsPerPage) || 8;
@@ -148,14 +190,14 @@ router.post("/", async function (req, res, next) {
         size: 1,
       },
     });
-    console.log(JSON.stringify(condition, null, 3));
+    // console.log(JSON.stringify(condition, null, 3));
     let products = await productModel.aggregate(condition);
     let totalProducts = products.length;
     return res.json({
       type: "success",
       status: 200,
       message: `product list `,
-      totalProducts:(totalFilteredProducts.filteredProducts)?totalFilteredProducts['filteredProducts']:0,
+      totalProducts: totalFilteredProducts,
       totalFilteredProducts: totalProducts,
       data: products,
     });
@@ -168,48 +210,6 @@ router.post("/", async function (req, res, next) {
     });
   }
 });
-
-// for e.g /products/featured
-// router.get('/featured' , async function(req,res,next){
-//   try{
-//     let featuredProducts = await productModel.find({"isfeatured":true})
-//     return res.json({
-//       type:'success',
-//       status:200,
-//       message:`Featured products`,
-//       data:featuredProducts,
-//     })
-//   }
-//   catch(error){
-//     console.log('error at /products/featured --> products.js route',error)
-//     return res.json({
-//       type:'error',
-//       status:500,
-//       message:`Server error at /products/featured API `,
-//     })
-//   }
-// })
-
-// for e.g /products/favorite
-// router.get('/favorite',async function(req,res,next){
-//   try{
-//     let favoriteProducts = await productModel.find({"isMarkedFavorite":true})
-//     return res.json({
-//       type:'success',
-//       status:200,
-//       message:`Favorite products`,
-//       data:favoriteProducts,
-//     })
-//   }
-//   catch(error){
-//     console.log('error at /products/favorite --> products.js route',error)
-//     return res.json({
-//       type:'error',
-//       status:500,
-//       message:`Server error at /products/favorite API `,
-//     })
-//   }
-// })
 
 // for e.g /products/categories
 router.get("/categories", async function (req, res, next) {
@@ -254,7 +254,6 @@ router.get("/categories/:type", async function (req, res, next) {
 // for e.g /products/filters
 router.get("/filters", async function (req, res, next) {
   try {
-    console.log("=====================> ip : ", req.ip);
     let maxPriceDetails = await productModel.aggregate([
       {
         $group: {
@@ -274,10 +273,7 @@ router.get("/filters", async function (req, res, next) {
         min: i,
         max: i + 100,
         totalProducts: await productModel.countDocuments({
-          $and:[
-          {price: { $gte: i }},
-          {price: { $lte: i + 100 }},
-          ]
+          $and: [{ price: { $gte: i } }, { price: { $lte: i + 100 } }],
         }),
       });
     }
