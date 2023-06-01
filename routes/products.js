@@ -9,13 +9,13 @@ const ObjectId = mongoose.Types.ObjectId;
 // for e.g POST : /products
 router.post("/:id?", async function (req, res, next) {
   try {
-    console.log("=====================> ip : ", req.ip);
     console.log("=====================> req.body : ", req.body);
 
     const {
       filter,
       sort,
       pagination,
+      isCategoryList,
     } = req.body;
     const {id} = req.params
     let condition = [];
@@ -74,6 +74,8 @@ router.post("/:id?", async function (req, res, next) {
       // }
     }
 
+    
+
     if (filter?.color) {
       if (!match.$or.length) {
         filter.color.map((color)=>{
@@ -124,20 +126,65 @@ router.post("/:id?", async function (req, res, next) {
       }
     }
 
+
+    if(filter?.search){
+      console.log("search == > > ",filter?.search);
+      if(!match.$or.length){
+        match['$or'] = [
+          {title: { $regex : filter.search , $options : "i" } },
+          {description: { $regex : filter.search , $options : "i" } },
+          {category: { $regex : filter.search , $options : "i" } },
+        ]
+      } else{
+          match.$or.map((object)=>{
+            if(!object.$or){
+              object.$or = [
+                {title: { $regex : filter.search , $options : "i" } },
+                {description: { $regex : filter.search , $options : "i" } },
+                {category: { $regex : filter.search , $options : "i" } },
+              ]
+            }else{
+              object.$or.map((innerObject) => {
+                if(!innerObject.$or){
+                  innerObject.$or = [
+                    {title: { $regex : filter.search , $options : "i" } },
+                    {description: { $regex : filter.search , $options : "i" } },
+                    {category: { $regex : filter.search , $options : "i" } },
+                  ]
+                }else{
+                  innerObject.$or.map((innerInnerObject)=>{
+                    innerInnerObject.$or = [
+                      {title: { $regex : filter.search , $options : "i" } },
+                      {description: { $regex : filter.search , $options : "i" } },
+                      {category: { $regex : filter.search , $options : "i" } },
+                    ]
+                  }) 
+                }
+
+              })
+            }
+          })
+        }
+
+      }
+    
+
+
     if (!match["$or"].length) {
       delete match.$or;
     }
-
-    let totalFilteredProducts = await productModel.countDocuments(match);
 
     condition.push({
       $match: match,
     });
 
+    console.log(" = = = > >",JSON.stringify(condition,null,3));
+    let totalFilteredProducts = await productModel.countDocuments(match);
+
     // console.log("condition =========> ", JSON.stringify(condition, null, 3));
 
     //2.----------------- sort
-    console.log("sortsort ======================>>> ",sort);
+    // console.log("sortsort ======================>>> ",sort);
 
       let field = sort?.field || "_id";
       let order = -1;
@@ -190,16 +237,60 @@ router.post("/:id?", async function (req, res, next) {
         size: 1,
       },
     });
-    // console.log(JSON.stringify(condition, null, 3));
-    let products = await productModel.aggregate(condition);
-    let totalProducts = products.length;
+    console.log("isCategoryListisCategoryListisCategoryList",isCategoryList);
+    let data ={
+      products : await productModel.aggregate(condition)
+    }
+    
+    if(isCategoryList){
+      data ={
+        categories : await categoryModel.aggregate([
+  
+          {
+              $lookup :{
+                  
+                  from:"products",
+                  let:{ "name":"$title" },
+                  pipeline:[
+                  {
+                      $match:{
+                          $expr :{
+                              $eq:["$category","$$name"]
+                              
+                              }
+                          
+                         }
+                      }
+                  ],
+                  as:"totalProducts"
+                  
+                  }
+              
+              },
+              {
+                  
+                  $project :{
+                      
+                      isCategoryList:1,
+                      totalProducts:{ $size : "$totalProducts"  },
+                      image:1,
+                      title:1
+                      }
+                  
+                  }
+          
+          ])
+      }
+    }
+
+    let totalProducts = data.products?.length;
     return res.json({
       type: "success",
       status: 200,
       message: `product list `,
       totalProducts: totalFilteredProducts,
       totalFilteredProducts: totalProducts,
-      data: products,
+      data: data
     });
   } catch (error) {
     console.log("error at get /products route...", error);
@@ -211,45 +302,45 @@ router.post("/:id?", async function (req, res, next) {
   }
 });
 
-// for e.g /products/categories
-router.get("/categories", async function (req, res, next) {
-  try {
-    let categories = await categoryModel.find({});
-    return res.json({
-      type: "success",
-      status: 200,
-      message: `for /products/categories route`,
-      data: categories,
-    });
-  } catch (error) {
-    console.log("error at /products/categories --> products.js route", error);
-    return res.json({
-      type: "error",
-      status: 500,
-      message: `Server error at /products/categories API `,
-    });
-  }
-});
+// for e.g /products/categories         [ stopped ]
+// router.get("/categories", async function (req, res, next) {
+//   try {
+//     let categories = await categoryModel.find({});
+//     return res.json({
+//       type: "success",
+//       status: 200,
+//       message: `for /products/categories route`,
+//       data: categories,
+//     });
+//   } catch (error) {
+//     console.log("error at /products/categories --> products.js route", error);
+//     return res.json({
+//       type: "error",
+//       status: 500,
+//       message: `Server error at /products/categories API `,
+//     });
+//   }
+// });
 
-// for e.g /products/category/:category
-router.get("/categories/:type", async function (req, res, next) {
-  try {
-    let products = await productModel.find({ category: req.params.type });
-    return res.json({
-      type: "success",
-      status: 200,
-      message: `for /products/category/${req.params.type} route`,
-      data: products,
-    });
-  } catch (error) {
-    console.log("error at get /products route...", error);
-    return res.json({
-      type: "error",
-      status: 500,
-      message: `Server error at /products/${req.params.type} API `,
-    });
-  }
-});
+// for e.g /products/category/:category [ stopped ]
+// router.get("/categories/:type", async function (req, res, next) {
+//   try {
+//     let products = await productModel.find({ category: req.params.type });
+//     return res.json({
+//       type: "success",
+//       status: 200,
+//       message: `for /products/category/${req.params.type} route`,
+//       data: products,
+//     });
+//   } catch (error) {
+//     console.log("error at get /products route...", error);
+//     return res.json({
+//       type: "error",
+//       status: 500,
+//       message: `Server error at /products/${req.params.type} API `,
+//     });
+//   }
+// });
 
 // for e.g /products/filters
 router.get("/filters", async function (req, res, next) {
@@ -344,24 +435,5 @@ router.get("/filters", async function (req, res, next) {
   }
 });
 
-// for e.g /products/10
-router.get("/:id", async function (req, res, next) {
-  try {
-    let products = await productModel.findOne({ id: parseInt(req.params.id) });
-    return res.json({
-      type: "success",
-      status: 200,
-      message: `for /products/${req.params.id} route`,
-      data: products,
-    });
-  } catch (error) {
-    console.log("error at get /products route...", error);
-    return res.json({
-      type: "error",
-      status: 500,
-      message: `Server error at /products/${req.params.id} API `,
-    });
-  }
-});
 
 module.exports = router;
