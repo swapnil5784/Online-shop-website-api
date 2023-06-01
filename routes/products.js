@@ -23,7 +23,7 @@ router.post("/:id?", async function (req, res, next) {
     //1.---------------- filter
     let match = {};
 
-    match["$or"] = [];
+    // match["$or"] = [];
 
     if (id) {
       match["_id"] = new ObjectId(id);
@@ -43,133 +43,92 @@ router.post("/:id?", async function (req, res, next) {
 
     //  nested filters
 
-    if (filter?.price) {
-      if (!match.$or.length) {
-        filter?.price.map((priceRange)=>{
-          match.$or.push({
-            $and: [
-              { price: { $gte: priceRange.min } },
-              { price: { $lte: priceRange.max } },
-            ],
-          });
-        })          
-      } 
-      // else {
-      //   match.$or.forEach((object) => {
-      //     console.log('inside else price filter=========================')
-      //     // let priceRangeOr = [];
-      //     filterByPrice.forEach((priceRange) => {
-      //       object.$or.push({
-      //         $and: [
-      //           { price: { $gte: priceRange.min } },
-      //           { price: { $lte: priceRange.max } },
-      //         ],
-      //       });
-      //     });
-      //     //  = priceRangeOr;
-      //   });
-      // }
-      // if (match.$or.$or == []) {
-      //   match.$or.$or.push({});
-      // }
+    // filter price
+
+    if(filter?.price){
+      let priceRangeArray =[]
+      filter.price.map((range)=>{
+        priceRangeArray.push({
+          $and:[
+            {price:{ $lte : range.max }},
+            {price:{ $gte : range.min }},
+          ]
+        })
+      })
+      match.$or = priceRangeArray 
     }
+    // if (filter?.price) {
+    //   if (!match.$or.length) {
+    //     filter?.price.map((priceRange)=>{
+    //       match.$or.push({
+    //         $and: [
+    //           { price: { $gte: priceRange.min } },
+    //           { price: { $lte: priceRange.max } },
+    //         ],
+    //       });
+    //     })          
+    //   } 
+    // }
+
+    if(filter?.color){
+        match.color = { $in : filter.color  }
+    }
+
+    // if (filter?.color) {
+    //   if (!match.$or.length) {
+    //     filter.color.map((color)=>{
+    //       match.$or.push({ color: color });
+    //     })
+    //   } else {
+    //     match.$or.map((object)=>{
+    //       let colorArray = [];
+    //       filter?.color.map((color) => {
+    //         colorArray.push({ color: color });
+    //       });
+    //       object["$or"] = colorArray;
+    //     })
+    //   }
+    // }
+
+    if(filter?.size){
+      match.size = { $in : filter.size }
+    }
+
+    // if (filter?.size) {
+    //   if (!match.$or.length) {
+    //     filter?.size.map((size) => {
+    //       match.$or.push({ size: size });
+    //     });
+    //   } else {
+    //     match.$or.map((object) => {
+    //       if (object.$or) {
+    //         if (!object.$or.length) {
+    //           let sizeOr = [];
+    //           filter.size.map((size) => {
+    //             sizeOr.push({ size: size });
+    //           });
+    //           object["$or"] = sizeOr;
+    //         } else {
+    //           object.$or.map((object) => {
+    //             let insideColorOr = [];
+    //             filter?.size.map((size) => {
+    //               insideColorOr.push({ size: size });
+    //             });
+    //             object.$or = insideColorOr;
+    //           });
+    //         }
+    //       } else {
+    //         let sizeOrArray = [];
+    //         filter?.size.map((size) => {
+    //           sizeOrArray.push({ size: size });
+    //         });
+    //         object.$or = sizeOrArray;
+    //       }
+    //     });
+    //   }
+    // }
 
     
-
-    if (filter?.color) {
-      if (!match.$or.length) {
-        filter.color.map((color)=>{
-          match.$or.push({ color: color });
-        })
-      } else {
-        match.$or.map((object)=>{
-          let colorArray = [];
-          filter?.color.map((color) => {
-            colorArray.push({ color: color });
-          });
-          object["$or"] = colorArray;
-        })
-      }
-    }
-
-    if (filter?.size) {
-      if (!match.$or.length) {
-        filter?.size.map((size) => {
-          match.$or.push({ size: size });
-        });
-      } else {
-        match.$or.map((object) => {
-          if (object.$or) {
-            if (!object.$or.length) {
-              let sizeOr = [];
-              filter.size.map((size) => {
-                sizeOr.push({ size: size });
-              });
-              object["$or"] = sizeOr;
-            } else {
-              object.$or.map((object) => {
-                let insideColorOr = [];
-                filter?.size.map((size) => {
-                  insideColorOr.push({ size: size });
-                });
-                object.$or = insideColorOr;
-              });
-            }
-          } else {
-            let sizeOrArray = [];
-            filter?.size.map((size) => {
-              sizeOrArray.push({ size: size });
-            });
-            object.$or = sizeOrArray;
-          }
-        });
-      }
-    }
-
-
-    if(filter?.search){
-      console.log("search == > > ",filter?.search);
-      if(!match.$or.length){
-        match['$or'] = [
-          {title: { $regex : filter.search , $options : "i" } },
-          {description: { $regex : filter.search , $options : "i" } },
-          {category: { $regex : filter.search , $options : "i" } },
-        ]
-      } else{
-          match.$or.map((object)=>{
-            if(!object.$or){
-              object.$or = [
-                {title: { $regex : filter.search , $options : "i" } },
-                {description: { $regex : filter.search , $options : "i" } },
-                {category: { $regex : filter.search , $options : "i" } },
-              ]
-            }else{
-              object.$or.map((innerObject) => {
-                if(!innerObject.$or){
-                  innerObject.$or = [
-                    {title: { $regex : filter.search , $options : "i" } },
-                    {description: { $regex : filter.search , $options : "i" } },
-                    {category: { $regex : filter.search , $options : "i" } },
-                  ]
-                }else{
-                  innerObject.$or.map((innerInnerObject)=>{
-                    innerInnerObject.$or = [
-                      {title: { $regex : filter.search , $options : "i" } },
-                      {description: { $regex : filter.search , $options : "i" } },
-                      {category: { $regex : filter.search , $options : "i" } },
-                    ]
-                  }) 
-                }
-
-              })
-            }
-          })
-        }
-
-      }
-    
-
-
     if (!match["$or"].length) {
       delete match.$or;
     }
@@ -177,6 +136,64 @@ router.post("/:id?", async function (req, res, next) {
     condition.push({
       $match: match,
     });
+
+    if(filter?.search){
+     condition.push({
+      $match:{
+        $or:[
+          { title : { $regex : filter.search , $options : "i"} },
+          { description : { $regex : filter.search , $options : "i"} },
+          { category : { $regex : filter.search , $options : "i"} },
+        ]
+      }
+     })
+    }
+
+
+    // if(filter?.search){
+    //   console.log("search == > > ",filter?.search);
+    //   if(!match.$or.length){
+    //     match['$or'] = [
+    //       {title: { $regex : filter.search , $options : "i" } },
+    //       {description: { $regex : filter.search , $options : "i" } },
+    //       {category: { $regex : filter.search , $options : "i" } },
+    //     ]
+    //   } else{
+    //       match.$or.map((object)=>{
+    //         if(!object.$or){
+    //           object.$or = [
+    //             {title: { $regex : filter.search , $options : "i" } },
+    //             {description: { $regex : filter.search , $options : "i" } },
+    //             {category: { $regex : filter.search , $options : "i" } },
+    //           ]
+    //         }else{
+    //           object.$or.map((innerObject) => {
+    //             if(!innerObject.$or){
+    //               innerObject.$or = [
+    //                 {title: { $regex : filter.search , $options : "i" } },
+    //                 {description: { $regex : filter.search , $options : "i" } },
+    //                 {category: { $regex : filter.search , $options : "i" } },
+    //               ]
+    //             }else{
+    //               innerObject.$or.map((innerInnerObject)=>{
+    //                 innerInnerObject.$or = [
+    //                   {title: { $regex : filter.search , $options : "i" } },
+    //                   {description: { $regex : filter.search , $options : "i" } },
+    //                   {category: { $regex : filter.search , $options : "i" } },
+    //                 ]
+    //               }) 
+    //             }
+
+    //           })
+    //         }
+    //       })
+    //     }
+
+    //   }
+    
+
+
+    
 
     console.log(" = = = > >",JSON.stringify(condition,null,3));
     let totalFilteredProducts = await productModel.countDocuments(match);
@@ -237,7 +254,7 @@ router.post("/:id?", async function (req, res, next) {
         size: 1,
       },
     });
-    console.log("isCategoryListisCategoryListisCategoryList",isCategoryList);
+    // console.log("isCategoryListisCategoryListisCategoryList",isCategoryList);
     let data ={
       products : await productModel.aggregate(condition)
     }
@@ -287,7 +304,7 @@ router.post("/:id?", async function (req, res, next) {
     return res.json({
       type: "success",
       status: 200,
-      message: `product list `,
+      message: `product list`,
       totalProducts: totalFilteredProducts,
       totalFilteredProducts: totalProducts,
       data: data
@@ -418,7 +435,7 @@ router.get("/filters", async function (req, res, next) {
     return res.json({
       type: "success",
       status: 200,
-      message: `for /products/filters route`,
+      message: `response from /products/filters to render filter details`,
       data: {
         colors: colorsArray,
         sizes: sizesArray,

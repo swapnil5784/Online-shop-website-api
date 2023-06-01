@@ -15,7 +15,7 @@ router.get("/vendors", async function (req, res, next) {
     res.json({
       type: "success",
       status: 200,
-      message: `All vendors`,
+      message: `All vendors from /vendors`,
       data: vendors,
     });
   } catch (error) {
@@ -23,7 +23,7 @@ router.get("/vendors", async function (req, res, next) {
     res.json({
       type: "error",
       status: 500,
-      message: `Server error at /products/vendors API `,
+      message: `Server error at /vendors API `,
     });
   }
 });
@@ -110,7 +110,7 @@ router.get("/advertisements",async function (req, res, next) {
     res.json({
       type: "success",
       status: 200,
-      message: `for /banner route`,
+      message: `for /advertisements route`,
       data: {
         carousels: advertisements,
         offers: offers,
