@@ -8,7 +8,7 @@ const options = {
     }
 }
 // model schema
-const user = new mongoose.Schema({
+const subscriber = new mongoose.Schema({
     userEmail:{
         type:String,
         required:true
@@ -17,5 +17,5 @@ const user = new mongoose.Schema({
 },options)
 
 // model export
-const users = mongoose.model('users',user);
-module.exports =  users;
+const subscribers = mongoose.model('subscribers',subscriber);
+module.exports =  subscribers;

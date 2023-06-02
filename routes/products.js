@@ -4,10 +4,11 @@ var productModel = require("../models/products");
 var categoryModel = require("../models/categories");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
+var auth = require('../middlewares/auth')
 /* GET home page. */
 
 // for e.g POST : /products
-router.post("/:id?", async function (req, res, next) {
+router.post("/:id?",async function (req, res, next) {
   try {
     console.log("=====================> req.body : ", req.body);
 
@@ -25,26 +26,24 @@ router.post("/:id?", async function (req, res, next) {
 
     // match["$or"] = [];
 
+    // filter products by _id                    [ params ]
     if (id) {
       match["_id"] = new ObjectId(id);
     }
-
+    // filter products which is featured         [ body ]
     if (filter?.isFeatured) {
       match["isfeatured"] = true;
     }
-    
+    // filter products by category               [ body ]
     if (filter?.category) {
       match["category"] = filter.category;
     }
-
+    // filter products which are favorite marled [ body ]
     if (filter?.isMarkedFavorite) {
       match["isMarkedFavorite"] = true;
     }
 
-    //  nested filters
-
     // filter price
-
     if(filter?.price){
       let priceRangeArray =[]
       filter.price.map((range)=>{
@@ -57,79 +56,20 @@ router.post("/:id?", async function (req, res, next) {
       })
       match.$or = priceRangeArray 
     }
-    // if (filter?.price) {
-    //   if (!match.$or.length) {
-    //     filter?.price.map((priceRange)=>{
-    //       match.$or.push({
-    //         $and: [
-    //           { price: { $gte: priceRange.min } },
-    //           { price: { $lte: priceRange.max } },
-    //         ],
-    //       });
-    //     })          
-    //   } 
-    // }
 
+    // filter colors in product
     if(filter?.color){
         match.color = { $in : filter.color  }
     }
 
-    // if (filter?.color) {
-    //   if (!match.$or.length) {
-    //     filter.color.map((color)=>{
-    //       match.$or.push({ color: color });
-    //     })
-    //   } else {
-    //     match.$or.map((object)=>{
-    //       let colorArray = [];
-    //       filter?.color.map((color) => {
-    //         colorArray.push({ color: color });
-    //       });
-    //       object["$or"] = colorArray;
-    //     })
-    //   }
-    // }
-
+    // filter sizes in product
     if(filter?.size){
       match.size = { $in : filter.size }
     }
 
-    // if (filter?.size) {
-    //   if (!match.$or.length) {
-    //     filter?.size.map((size) => {
-    //       match.$or.push({ size: size });
-    //     });
-    //   } else {
-    //     match.$or.map((object) => {
-    //       if (object.$or) {
-    //         if (!object.$or.length) {
-    //           let sizeOr = [];
-    //           filter.size.map((size) => {
-    //             sizeOr.push({ size: size });
-    //           });
-    //           object["$or"] = sizeOr;
-    //         } else {
-    //           object.$or.map((object) => {
-    //             let insideColorOr = [];
-    //             filter?.size.map((size) => {
-    //               insideColorOr.push({ size: size });
-    //             });
-    //             object.$or = insideColorOr;
-    //           });
-    //         }
-    //       } else {
-    //         let sizeOrArray = [];
-    //         filter?.size.map((size) => {
-    //           sizeOrArray.push({ size: size });
-    //         });
-    //         object.$or = sizeOrArray;
-    //       }
-    //     });
-    //   }
-    // }
-
-    
-    if (!match["$or"].length) {
+    // console.log(`match.$or===>>`,match);
+    // removes $or field from match if $or is empty
+    if (!match["$or"]?.length) {
       delete match.$or;
     }
 
@@ -137,6 +77,7 @@ router.post("/:id?", async function (req, res, next) {
       $match: match,
     });
 
+    // filter products on search
     if(filter?.search){
      condition.push({
       $match:{
@@ -149,59 +90,13 @@ router.post("/:id?", async function (req, res, next) {
      })
     }
 
-
-    // if(filter?.search){
-    //   console.log("search == > > ",filter?.search);
-    //   if(!match.$or.length){
-    //     match['$or'] = [
-    //       {title: { $regex : filter.search , $options : "i" } },
-    //       {description: { $regex : filter.search , $options : "i" } },
-    //       {category: { $regex : filter.search , $options : "i" } },
-    //     ]
-    //   } else{
-    //       match.$or.map((object)=>{
-    //         if(!object.$or){
-    //           object.$or = [
-    //             {title: { $regex : filter.search , $options : "i" } },
-    //             {description: { $regex : filter.search , $options : "i" } },
-    //             {category: { $regex : filter.search , $options : "i" } },
-    //           ]
-    //         }else{
-    //           object.$or.map((innerObject) => {
-    //             if(!innerObject.$or){
-    //               innerObject.$or = [
-    //                 {title: { $regex : filter.search , $options : "i" } },
-    //                 {description: { $regex : filter.search , $options : "i" } },
-    //                 {category: { $regex : filter.search , $options : "i" } },
-    //               ]
-    //             }else{
-    //               innerObject.$or.map((innerInnerObject)=>{
-    //                 innerInnerObject.$or = [
-    //                   {title: { $regex : filter.search , $options : "i" } },
-    //                   {description: { $regex : filter.search , $options : "i" } },
-    //                   {category: { $regex : filter.search , $options : "i" } },
-    //                 ]
-    //               }) 
-    //             }
-
-    //           })
-    //         }
-    //       })
-    //     }
-
-    //   }
-    
-
-
-    
-
+      
     console.log(" = = = > >",JSON.stringify(condition,null,3));
     let totalFilteredProducts = await productModel.countDocuments(match);
 
     // console.log("condition =========> ", JSON.stringify(condition, null, 3));
 
     //2.----------------- sort
-    // console.log("sortsort ======================>>> ",sort);
 
       let field = sort?.field || "_id";
       let order = -1;
@@ -237,7 +132,6 @@ router.post("/:id?", async function (req, res, next) {
     }
 
     //4.------------------- lookup and project
-    //default condition must have in pipeline
     condition.push({
       $project: {
         _id: 1,
@@ -254,7 +148,6 @@ router.post("/:id?", async function (req, res, next) {
         size: 1,
       },
     });
-    // console.log("isCategoryListisCategoryListisCategoryList",isCategoryList);
     let data ={
       products : await productModel.aggregate(condition)
     }
@@ -319,48 +212,8 @@ router.post("/:id?", async function (req, res, next) {
   }
 });
 
-// for e.g /products/categories         [ stopped ]
-// router.get("/categories", async function (req, res, next) {
-//   try {
-//     let categories = await categoryModel.find({});
-//     return res.json({
-//       type: "success",
-//       status: 200,
-//       message: `for /products/categories route`,
-//       data: categories,
-//     });
-//   } catch (error) {
-//     console.log("error at /products/categories --> products.js route", error);
-//     return res.json({
-//       type: "error",
-//       status: 500,
-//       message: `Server error at /products/categories API `,
-//     });
-//   }
-// });
-
-// for e.g /products/category/:category [ stopped ]
-// router.get("/categories/:type", async function (req, res, next) {
-//   try {
-//     let products = await productModel.find({ category: req.params.type });
-//     return res.json({
-//       type: "success",
-//       status: 200,
-//       message: `for /products/category/${req.params.type} route`,
-//       data: products,
-//     });
-//   } catch (error) {
-//     console.log("error at get /products route...", error);
-//     return res.json({
-//       type: "error",
-//       status: 500,
-//       message: `Server error at /products/${req.params.type} API `,
-//     });
-//   }
-// });
-
 // for e.g /products/filters
-router.get("/filters", async function (req, res, next) {
+router.get("/filters",auth,async function (req, res, next) {
   try {
     let maxPriceDetails = await productModel.aggregate([
       {
@@ -416,21 +269,6 @@ router.get("/filters", async function (req, res, next) {
         },
       },
     ]);
-
-    // let totalProductsInFilterResponse = await productModel.count({})
-    // sizesArray.unshift({
-    //   totalProducts: totalProductsInFilterResponse,
-    //   size: "all size",
-    // });
-
-    // colorsArray.unshift({
-    //   totalProducts:totalProductsInFilterResponse,
-    //   color: "all color",
-    // });
-
-    // priceRanges.unshift({
-    //   totalProducts: totalProductsInFilterResponse,
-    // })
 
     return res.json({
       type: "success",

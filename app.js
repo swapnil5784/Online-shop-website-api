@@ -27,6 +27,10 @@ var indexRouter    = require('./routes/index');
 var productsRouter = require('./routes/products');
 // var usersRouter    = require('./routes/users');
 
+// 1. passport authentication
+const passport    = require('passport');
+require('./auth/auth');
+
 var app = express();
 
 // view engine setup
@@ -49,7 +53,11 @@ app.use(function(req, res, next) {
 })
 
 app.use('/', indexRouter);
-app.use('/products', productsRouter);
+// app.use(async function(req,res,next){
+//   ;
+//   next()
+// })
+app.use('/products',productsRouter);
 // app.use('/users', usersRouter);
 
 
