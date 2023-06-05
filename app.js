@@ -25,10 +25,12 @@ console.log(process.env.MONGO_URL)
 
 var indexRouter    = require('./routes/index');
 var productsRouter = require('./routes/products');
-// var usersRouter    = require('./routes/users');
+var usersRouter    = require('./routes/users');
 
 // 1. passport authentication
 const passport    = require('passport');
+const authentication = require('./middlewares/auth')
+// load passport local for login process
 require('./auth/auth');
 
 var app = express();
@@ -53,12 +55,9 @@ app.use(function(req, res, next) {
 })
 
 app.use('/', indexRouter);
-// app.use(async function(req,res,next){
-//   ;
-//   next()
-// })
+app.use(authentication)
 app.use('/products',productsRouter);
-// app.use('/users', usersRouter);
+app.use('/users', usersRouter);
 
 
 // catch 404 and forward to error handler

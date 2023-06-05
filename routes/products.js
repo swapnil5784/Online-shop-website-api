@@ -213,7 +213,7 @@ router.post("/:id?",async function (req, res, next) {
 });
 
 // for e.g /products/filters
-router.get("/filters",auth,async function (req, res, next) {
+router.get("/filters",async function (req, res, next) {
   try {
     let maxPriceDetails = await productModel.aggregate([
       {
