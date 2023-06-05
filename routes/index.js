@@ -72,7 +72,7 @@ router.post('/login',async function(req,res,next){
       // console.log(err);
       if (err || !user) {
           return res.status(400).json({
-              message: info ? info.message : 'Login failed',
+              message: info ? info.message : 'Login failed , entered details are not correct ! ',
               user   : user
           });
       }
@@ -82,8 +82,7 @@ router.post('/login',async function(req,res,next){
               res.send(err);
           }
 
-          const token = jwt.sign({_id:user._id,
-          email:user.email} ,'swapnil');
+          const token = jwt.sign({_id:user._id} ,'swapnil');
           return res.json({
             type:"success",
             status:400,
@@ -119,7 +118,7 @@ router.get('/logout',function(req,res,next){
     return res.json({
       type:'error',
       status:500,
-      message:"error while logout !"
+      message:"Error while logout !"
     })
   }
 })
@@ -227,7 +226,7 @@ router.get("/advertisements",async function (req, res, next) {
     return res.json({
       type: "success",
       status: 200,
-      message: `for /advertisements route`,
+      message: `For /advertisements route`,
       data: {
         carousels: advertisements,
         offers: offers,

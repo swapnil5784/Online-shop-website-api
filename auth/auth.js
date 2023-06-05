@@ -20,7 +20,9 @@ passport.use(new LocalStrategy({
         }).then(user => {
             if (!user) {
                     return cb(null, false, {
-                        message: "invalid credentials auth/auth.js line:29",
+                        type:"error",
+                        status:409,
+                        message: "Login failed , entered  details are not correct ! ",
                       });
                 }
                 return cb(null, user, {

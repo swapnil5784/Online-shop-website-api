@@ -14,7 +14,7 @@ module.exports = async function (req, res, next) {
     }
     let decoded = jwt.verify(token, 'swapnil')
     console.log("decoded", decoded)
-    let user = await userModel.findById(decoded._id)
+    global.user = await userModel.findById(decoded._id)
     // if decoded user _id not found in db
     if (!user) {
         return res.json({
@@ -23,6 +23,6 @@ module.exports = async function (req, res, next) {
             message: "invalid token"
         })
     }
-    console.log("user--user",user);
+    // console.log("user--user",user);
     return next()
 };
