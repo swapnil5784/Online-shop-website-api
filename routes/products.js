@@ -91,7 +91,7 @@ router.post("/:id?",async function (req, res, next) {
     }
 
       
-    console.log(" = = = > >",JSON.stringify(condition,null,3));
+    // console.log(" = = = > >",JSON.stringify(condition,null,3));
     let totalFilteredProducts = await productModel.countDocuments(match);
 
     // console.log("condition =========> ", JSON.stringify(condition, null, 3));
@@ -292,3 +292,4 @@ router.get("/filters",async function (req, res, next) {
 
 
 module.exports = router;
+

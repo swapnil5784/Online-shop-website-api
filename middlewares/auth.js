@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const userModel = require('../models/users')
 module.exports = async function (req, res, next) {
 
-    console.log("req.headers----req.headers==>", req.headers.token)
+    // console.log("req.headers----req.headers==>", req.headers.token)
     let { token } = req.headers
     // if token is not in request headers
     if (!token) {

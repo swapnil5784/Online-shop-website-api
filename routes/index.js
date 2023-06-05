@@ -104,6 +104,26 @@ router.post('/login',async function(req,res,next){
    }
 })
 
+// for e.g GET : /logout
+router.get('/logout',function(req,res,next){
+  try{
+    req.logout();
+    return res.json({
+      type:"success",
+      status:400,
+      message:'Logged out successful !'
+    })
+  }
+  catch(error){
+    console.log('error while logout',error)
+    return res.json({
+      type:'error',
+      status:500,
+      message:"error while logout !"
+    })
+  }
+})
+
 // for e.g /vendors
 router.get("/vendors", async function (req, res, next) {
   try {

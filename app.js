@@ -25,6 +25,7 @@ console.log(process.env.MONGO_URL)
 
 var indexRouter    = require('./routes/index');
 var productsRouter = require('./routes/products');
+var cartRouter = require('./routes/cart')
 var usersRouter    = require('./routes/users');
 
 // 1. passport authentication
@@ -35,9 +36,7 @@ require('./auth/auth');
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -55,9 +54,10 @@ app.use(function(req, res, next) {
 })
 
 app.use('/', indexRouter);
-app.use(authentication)
 app.use('/products',productsRouter);
 app.use('/users', usersRouter);
+app.use(authentication)
+app.use('/cart',cartRouter)
 
 
 // catch 404 and forward to error handler
