@@ -12,7 +12,7 @@ router.get('/', async function (req, res, next) {
             {
                 $lookup: {
                     from: "products",
-                    let: { "productId": "$_product" },
+                    let: { "productId": "$productId" },
                     pipeline: [
                         {
                             $match: {

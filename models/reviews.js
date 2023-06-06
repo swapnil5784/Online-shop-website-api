@@ -7,7 +7,7 @@ const options = {
     }
 }
 // model schema
-const favoriteProduct = new mongoose.Schema({
+const review = new mongoose.Schema({
     userId: {
         type: ObjectId,
         required: true
@@ -16,9 +16,18 @@ const favoriteProduct = new mongoose.Schema({
         type: ObjectId,
         required: true
     },
+    rating: {
+        type: Number,
+        required: true
+    },
+    review: {
+        type: String,
+        required: true
+    }
+
 
 }, options)
 
 // model export
-const favoriteProducts = mongoose.model('favoriteProducts', favoriteProduct);
-module.exports = favoriteProducts;
+const reviews = mongoose.model('reviews', review);
+module.exports = reviews;

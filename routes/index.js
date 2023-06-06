@@ -35,10 +35,10 @@ router.post('/login', async function (req, res, next) {
           res.send(err);
         }
 
-        const token = jwt.sign({ _id: req.user._id, email: req.user.email }, 'swapnil');
+        const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, 'swapnil');
         return res.json({
           type: "success",
-          status: 400,
+          status: 200,
           message: "successfully login",
           token: token
         });

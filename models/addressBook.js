@@ -10,7 +10,7 @@ const options = {
 }
 // model schema
 const address = new mongoose.Schema({
-    _user: {
+    userId: {
         type: ObjectId,
         required: true
     },

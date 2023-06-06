@@ -59,7 +59,7 @@ app.use('/', indexRouter);
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);
 app.use(authentication)
-app.use('/cart', cartRouter)
+// app.use('/cart', cartRouter)
 app.use('/favorite', favoriteProductsRouter)
 app.use('/address', addressBookRouter)
 

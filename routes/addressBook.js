@@ -4,7 +4,7 @@ const addressBookModel = require('../models/addressBook')
 // for e.g /address
 router.get('/', async function (req, res, next) {
     try {
-        let userAddressBook = await addressBookModel.find({ _user: req.user._id })
+        let userAddressBook = await addressBookModel.find({ userId: req.user._id })
         return res.json({
             type: "success",
             status: 200,
@@ -29,7 +29,7 @@ router.post('/add', async function (req, res, next) {
     try {
         let { title, country, name, mobileNo, pincode, addressLineOne, addressLineTwo, landmark, city, state } = req.body
         await addressBookModel.create({
-            _user: req.user._id,
+            userId: req.user._id,
             title: title,
             name: name,
             country: country,
@@ -61,6 +61,16 @@ router.post('/add', async function (req, res, next) {
 router.put('/update/:addressId', async function (req, res, next) {
     try {
         console.log("req.body = = > >", req.body, "req.params = = > >", req.params)
+
+        let addressFoundForUpdate = await addressBookModel.countDocuments({ _id: req.params.addressId })
+
+        if (!addressFoundForUpdate) {
+            return res.json({
+                type: "error",
+                status: 409,
+                message: `Address not found !`
+            })
+        }
         await addressBookModel.updateOne({ _id: req.params.addressId }, { $set: req.body })
         return res.json({
             type: "success",
@@ -82,6 +92,15 @@ router.put('/update/:addressId', async function (req, res, next) {
 router.delete('/remove/:addressId', async function (req, res, next) {
     try {
         console.log("req.params.addressId = = > >", req.params.addressId);
+        let addressFoundForUpdate = await addressBookModel.countDocuments({ _id: req.params.addressId })
+
+        if (!addressFoundForUpdate) {
+            return res.json({
+                type: "error",
+                status: 409,
+                message: `Address not found !`
+            })
+        }
         await addressBookModel.deleteOne({ _id: req.params.addressId })
         return res.json({
             type: "success",
