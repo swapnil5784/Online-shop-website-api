@@ -7,7 +7,7 @@ const ObjectId = mongoose.Types.ObjectId;
 // for e.g /favorite-products
 router.get('/', async function (req, res, next) {
     try {
-        console.log("Login user => => ", user);
+        console.log("Login user => => ", req.user);
         let products = await favoriteProductModel.aggregate([
             {
                 $lookup: {
@@ -52,12 +52,12 @@ router.get('/', async function (req, res, next) {
 // for e.g /favorite-products/add
 router.post('/add', async function (req, res, next) {
     try {
-        console.log("Login user => => ", user);
+        console.log("Login user => => ", req.user);
         let { _product } = req.body
-        console.log(`favorite product =========> user:${user._id} product: ${_product}`);
+        console.log(`favorite product =========> user:${req.user._id} product: ${_product}`);
         await favoriteProductModel.create({
             _product: new ObjectId(_product),
-            _user: new ObjectId(user._id),
+            _user: new ObjectId(req.user._id),
         })
         return res.json({
             type: "success",
@@ -78,11 +78,11 @@ router.post('/add', async function (req, res, next) {
 // for e.g /favorite-products/remove
 router.delete('/remove', async function (req, res, next) {
     try {
-        console.log("Login user => => ", user);
+        console.log("Login user => => ", req.user);
         let { _product } = req.body
-        console.log(`favorite product =========> user:${user._id} product: ${_product}`);
+        console.log(`favorite product =========> user:${req.user._id} product: ${_product}`);
         await favoriteProductModel.deleteOne({
-            _user: user._id, _product: _product
+            _user: req.user._id, _product: _product
         })
         return res.json({
             type: "success",
