@@ -9,9 +9,9 @@ router.get('/', async function (req, res, next) {
     try {
         let products = await cartModel.aggregate([
             {
-                $match : { 
-                    _user:user._id
-                 }
+                $match: {
+                    _user: req.user._id
+                }
             },
             {
                 $lookup: {
@@ -29,7 +29,7 @@ router.get('/', async function (req, res, next) {
                             $project: {
                                 title: 1,
                                 price: 1,
-                                image:1
+                                image: 1
                             }
                         }
                     ],
@@ -49,6 +49,7 @@ router.get('/', async function (req, res, next) {
             type: "success",
             status: 200,
             data: {
+                totalProductsInCart: products.length,
                 products: products
             }
         })
@@ -64,16 +65,16 @@ router.get('/', async function (req, res, next) {
 });
 
 // for e.g /cart/add-products
-router.post('/add-product', async function (req, res, next) {
+router.post('/add', async function (req, res, next) {
     try {
-        console.log("Login user => => ", user);
+        console.log("Login user => => ", req.user);
         let { _product, quantity } = req.body
-        console.log(`user:${user._id} product: ${_product} quantity: ${quantity}`);
-        let productAlreadyInCart = await cartModel.findOne({$and:[ {_product:_product} , {_user:user._id} ]})
-        if(!productAlreadyInCart){
+        console.log(`user:${req.user._id} product: ${_product} quantity: ${quantity}`);
+        let productAlreadyInCart = await cartModel.findOne({ $and: [{ _product: _product }, { _user: req.user._id }] })
+        if (!productAlreadyInCart) {
             let productToAdd = {
                 _product: new ObjectId(_product),
-                _user: new ObjectId(user._id),
+                _user: new ObjectId(req.user._id),
                 quantity: quantity
             }
             await cartModel.create(productToAdd)
@@ -83,14 +84,18 @@ router.post('/add-product', async function (req, res, next) {
                 message: `product with _id:${_product} added to cart with quantity:${quantity}`
             })
         }
-        await cartModel.updateOne({_product:_product,_user:user._id},{ $set :{ quantity : productAlreadyInCart.quantity+
-        quantity } })
+        await cartModel.updateOne({ _product: _product, _user: req.user._id }, {
+            $set: {
+                quantity: productAlreadyInCart.quantity +
+                    quantity
+            }
+        })
         return res.json({
             type: "success",
             status: 200,
             message: `product with _id:${_product} added to cart with quantity:${quantity}`
         })
-        
+
     }
     catch (error) {
         console.log('Error in /cart route ', error)
@@ -103,12 +108,12 @@ router.post('/add-product', async function (req, res, next) {
 });
 
 // for e.g /cart/remove-product
-router.delete('/remove-product', async function (req, res, next) {
+router.delete('/remove', async function (req, res, next) {
     try {
-        console.log("Login user => => ", user);
-        let { _product } = req.body;
-        console.log("_product",_product);
-        await cartModel.deleteMany({ _user: user._id, _product: _product })
+        console.log("Login user => => ", req.user);
+        let { _cart } = req.body;
+        console.log("cartId", _cart);
+        await cartModel.deleteOne({ _id: _cart })
         return res.json({
             type: "success",
             status: 200,
@@ -124,4 +129,31 @@ router.delete('/remove-product', async function (req, res, next) {
         })
     }
 });
+
+// for e.g cart/update
+router.put('/update/:cartId', async function (req, res, next) {
+    try {
+        console.log("body", req.body, "params", req.params);
+        let { operation } = req.body
+        let { cartId } = req.params
+        let toAdd = -1
+        if (operation === 'increment') {
+            toAdd = 1
+        }
+        await cartModel.updateOne({ _id: cartId }, { $inc: { quantity: toAdd } })
+        res.json({
+            type: "success",
+            status: 200,
+            message: "Cart successfully updated ! "
+        })
+    }
+    catch (error) {
+        console.log('Error in /cart/update route ', error)
+        return res.json({
+            type: "error",
+            status: 500,
+            message: 'Server error on /cart/update route'
+        })
+    }
+})
 module.exports = router;
