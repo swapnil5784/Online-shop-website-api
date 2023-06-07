@@ -32,7 +32,7 @@ var addressBookRouter = require('./routes/addressBook')
 
 // 1. passport authentication
 const passport = require('passport');
-const authentication = require('./middlewares/auth');
+const { authentication, logIpOfRequest, addTwo } = require('./comman/middlewares');
 // load passport local for login process
 require('./auth/auth');
 
@@ -50,11 +50,13 @@ app.use(cors({
   origin: '*'
 }));
 
-app.use(function (req, res, next) {
-  console.log("-- > > ----------------------------------------- > > ip ", req.ip);
-  next()
-})
+// app.use(function (req, res, next) {
+//   console.log("-- > > ----------------------------------------- > > ip ", req.ip);
+//   next()
+// })
 
+// addTwo(1, 2)
+app.use(logIpOfRequest)
 app.use('/', indexRouter);
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);

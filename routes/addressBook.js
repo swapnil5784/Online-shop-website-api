@@ -4,14 +4,28 @@ const addressBookModel = require('../models/addressBook')
 // for e.g /address
 router.get('/', async function (req, res, next) {
     try {
-        let userAddressBook = await addressBookModel.find({ userId: req.user._id })
+        let userAddressBook = await addressBookModel.find({ userId: req.user._id }, {
+            _id: 0,
+            addressId: "$_id",
+            userId: 1,
+            title: 1,
+            country: 1,
+            name: 1,
+            mobileNo: 1,
+            pincode: 1,
+            addressLineOne: 1,
+            addressLineTwo: 1,
+            landmark: 1,
+            city: 1,
+            state: 1,
+        })
         return res.json({
             type: "success",
             status: 200,
             data: {
                 addressBook: userAddressBook
             },
-            message: 'Response from /adsress API.'
+            message: 'Response from /address API.'
         })
     }
     catch (error) {
@@ -28,7 +42,11 @@ router.get('/', async function (req, res, next) {
 router.post('/add', async function (req, res, next) {
     try {
         let { title, country, name, mobileNo, pincode, addressLineOne, addressLineTwo, landmark, city, state } = req.body
-        await addressBookModel.create({
+        await addressBookModel.updateOne(
+            {
+                userId: req.user._id,
+                title: title,
+            }, {
             userId: req.user._id,
             title: title,
             name: name,
@@ -40,7 +58,10 @@ router.post('/add', async function (req, res, next) {
             landmark: landmark,
             city: city,
             state: state
-        })
+        },
+            {
+                upsert: true
+            })
         return res.json({
             type: 'success',
             status: 200,

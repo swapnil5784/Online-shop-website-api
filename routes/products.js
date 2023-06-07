@@ -7,11 +7,12 @@ const cartModel = require('../models/carts')
 
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-var authenticate = require('../middlewares/auth')
+var { authentication } = require('../comman/middlewares')
 /* GET home page. */
 
+
 // for e.g /products/add-review
-router.post('/add-review', authenticate, async function (req, res, next) {
+router.post('/review', authentication, async function (req, res, next) {
   try {
     let { productId, rating, review } = req.body
     console.log({
@@ -42,43 +43,43 @@ router.post('/add-review', authenticate, async function (req, res, next) {
   }
 })
 
-// for e.g /products/update-review
-router.put('/update-review', authenticate, async function (req, res, next) {
-  try {
-    let { reviewId, rating, review } = req.body
-    let reviewToUpdate = await reviewModel.countDocuments({ _id: reviewId })
-    if (!reviewToUpdate) {
-      return res.json({
-        type: "error",
-        status: 409,
-        message: 'Review not found!'
-      })
-    }
-    let updateDetails = {
-      _id: reviewId,
-      rating: rating,
-      review: review
-    }
-    console.log("updateDetails = = > > ", updateDetails)
-    await reviewModel.updateOne({ _id: reviewId }, { $set: { rating: rating, review: review } })
-    return res.json({
-      type: "success",
-      status: 200,
-      message: 'Review updated successfully!'
-    })
-  }
-  catch (error) {
-    console.log("error in /products/update-review", error);
-    return res.json({
-      type: "error",
-      status: 500,
-      message: 'Server error in /products/update-review API'
-    })
-  }
-})
+// for e.g /products/update-review == > > No longer needed
+// router.put('/review', authentication, async function (req, res, next) {
+//   try {
+//     let { reviewId, rating, review } = req.body
+//     let reviewToUpdate = await reviewModel.countDocuments({ _id: reviewId })
+//     if (!reviewToUpdate) {
+//       return res.json({
+//         type: "error",
+//         status: 409,
+//         message: 'Review not found!'
+//       })
+//     }
+//     let updateDetails = {
+//       _id: reviewId,
+//       rating: rating,
+//       review: review
+//     }
+//     console.log("updateDetails = = > > ", updateDetails)
+//     await reviewModel.updateOne({ _id: reviewId }, { $set: { rating: rating, review: review } })
+//     return res.json({
+//       type: "success",
+//       status: 200,
+//       message: 'Review updated successfully!'
+//     })
+//   }
+//   catch (error) {
+//     console.log("error in /products/update-review", error);
+//     return res.json({
+//       type: "error",
+//       status: 500,
+//       message: 'Server error in /products/update-review API'
+//     })
+//   }
+// })
 
 // for e.g /products/remove-review
-router.delete('/remove-review/:reviewId', authenticate, async function (req, res, next) {
+router.delete('/review/remove/:reviewId', authentication, async function (req, res, next) {
   try {
     let reviewToDelete = await reviewModel.countDocuments({ _id: req.params.reviewId })
     if (!reviewToDelete) {
@@ -106,10 +107,17 @@ router.delete('/remove-review/:reviewId', authenticate, async function (req, res
 })
 
 // for e.g POST: /products/cart
-router.post('/cart', authenticate, async function (req, res, next) {
+router.post('/cart', authentication, async function (req, res, next) {
   try {
-    console.log("req.params.cartId = = > ", req.params.cartId);
     let { productId, quantity } = req.body
+    let isProductExists = await productModel.countDocuments({ _id: productId })
+    if (!isProductExists) {
+      return res.json({
+        type: "error",
+        status: 404,
+        message: "Product not found !"
+      })
+    }
     let productToAdd = {
       productId: new ObjectId(productId),
       userId: new ObjectId(req.user._id),
@@ -121,7 +129,7 @@ router.post('/cart', authenticate, async function (req, res, next) {
         userId: new ObjectId(req.user._id),
       },
       {
-        $set: productToAdd
+        $inc: { quantity: quantity }
       },
       {
         upsert: true
@@ -145,18 +153,19 @@ router.post('/cart', authenticate, async function (req, res, next) {
 })
 
 //for e.g GET : /products/cart
-router.get('/cart', authenticate, async function (req, res, next) {
+router.get('/cart', authentication, async function (req, res, next) {
   try {
+    console.log("req.user._id = = > ", req.user._id)
     let products = await cartModel.aggregate([
       {
         $match: {
-          user: req.user._id
+          userId: req.user._id
         }
       },
       {
         $lookup: {
           from: "products",
-          let: { "productId": "$_product" },
+          let: { "productId": "$productId" },
           pipeline: [
             {
               $match: {
@@ -167,6 +176,8 @@ router.get('/cart', authenticate, async function (req, res, next) {
             },
             {
               $project: {
+                productId: "$_id",
+                _id: 0,
                 title: 1,
                 price: 1,
                 image: 1
@@ -178,13 +189,15 @@ router.get('/cart', authenticate, async function (req, res, next) {
       },
       {
         $project: {
-
+          cartId: "$_id",
+          _id: 0,
           product: { $arrayElemAt: ["$product", 0] },
           quantity: 1,
           total: { $multiply: ["$quantity", { $arrayElemAt: ["$product.price", 0] }] }
         }
       }
     ])
+    console.log("products = =>>", products)
     return res.json({
       type: "success",
       status: 200,
@@ -205,7 +218,7 @@ router.get('/cart', authenticate, async function (req, res, next) {
 });
 
 // for e.g DELETE : /products/cart/remove
-router.delete('/cart/remove/:cartId', async function (req, res, next) {
+router.delete('/cart/remove/:cartId', authentication, async function (req, res, next) {
   try {
     console.log("cartId => => ", req.params.cartId);
     if (!req.params.cartId) {
@@ -444,6 +457,10 @@ router.post("/:id?", async function (req, res, next) {
     }
 
     //4.------------------- lookup and project
+
+
+
+
     condition.push({
       $project: {
         _id: 1,
@@ -460,6 +477,7 @@ router.post("/:id?", async function (req, res, next) {
         size: 1,
       },
     });
+    console.log(JSON.stringify(condition, null, 3))
     let data = {
       products: await productModel.aggregate(condition)
     }
@@ -523,7 +541,6 @@ router.post("/:id?", async function (req, res, next) {
     });
   }
 });
-
 
 
 
