@@ -1,12 +1,12 @@
 //-1---------------------------------------------------
 require('dotenv').config()
-
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors')
+global.commonFn = require('./comman/functions');
 
 // mongodb connection
 
@@ -37,7 +37,6 @@ const { authentication, logIpOfRequest, addTwo } = require('./comman/middlewares
 require('./auth/auth');
 
 var app = express();
-
 
 
 app.use(logger('dev'));

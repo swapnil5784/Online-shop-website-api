@@ -8,8 +8,19 @@ const cartModel = require('../models/carts')
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 var { authentication } = require('../comman/middlewares')
-/* GET home page. */
+const productLog = commonFn
 
+
+// let opts = {
+//   errorEventName: 'error',
+//   logDirectory: 'logfiles',
+//   fileNamePattern: '_<DATE>.log',
+//   dateFormat: 'YYYY.MM.DD',
+//   timestampFormat: 'YYYY-MM-DD HH:mm:ss'
+// }
+// const log = require('simple-node-logger').createRollingFileLogger(opts);
+
+/* GET home page. */
 
 // for e.g /products/add-review
 router.post('/review', authentication, async function (req, res, next) {
@@ -109,7 +120,7 @@ router.delete('/review/remove/:reviewId', authentication, async function (req, r
 // for e.g POST: /products/cart
 router.post('/cart', authentication, async function (req, res, next) {
   try {
-    let { productId, quantity } = req.body
+    let { productId, quantity, isAddedFromShop } = req.body
     let isProductExists = await productModel.countDocuments({ _id: productId })
     if (!isProductExists) {
       return res.json({
@@ -123,17 +134,27 @@ router.post('/cart', authentication, async function (req, res, next) {
       userId: new ObjectId(req.user._id),
       quantity: quantity
     }
+    let condition = {};
+    if (isAddedFromShop) {
+      condition['$inc'] = {
+        quantity: 1
+      }
+    } else {
+      condition['$set'] = {
+        quantity: quantity
+      }
+    }
+
     const updateCheck = await cartModel.updateOne(
       {
         productId: new ObjectId(productId),
         userId: new ObjectId(req.user._id),
       },
-      {
-        $inc: { quantity: quantity }
-      },
+      condition,
       {
         upsert: true
-      })
+      }
+    )
 
     console.log("updateCheck", updateCheck);
     return res.json({
@@ -143,11 +164,11 @@ router.post('/cart', authentication, async function (req, res, next) {
     })
   }
   catch (error) {
-    console.log('Error in /cart route ', error)
+    console.log('Error in /products/cart route ', error)
     return res.json({
       type: "error",
       status: 500,
-      message: 'Server error on /cart route'
+      message: 'Server error on /products/cart route'
     })
   }
 })
@@ -208,11 +229,11 @@ router.get('/cart', authentication, async function (req, res, next) {
     })
   }
   catch (error) {
-    console.log('error in /cart route ', error)
+    console.log('error in /products/cart route ', error)
     return res.json({
       type: "error",
       status: 500,
-      message: 'server error on /cart route'
+      message: 'server error on /products/cart route'
     })
   }
 });
@@ -335,6 +356,7 @@ router.get("/filters", async function (req, res, next) {
 // for e.g POST : /products
 router.post("/:id?", async function (req, res, next) {
   try {
+    console.log(await productsLog.log.error("hhh"))
     console.log("=====================> req.body : ", req.body);
 
     const {
@@ -428,7 +450,7 @@ router.post("/:id?", async function (req, res, next) {
     if (sort?.order === "asc") {
       order = 1;
     }
-    condition.push({
+    conditon.push({
       $sort: {
         [field]: order
       }
@@ -477,7 +499,7 @@ router.post("/:id?", async function (req, res, next) {
         size: 1,
       },
     });
-    console.log(JSON.stringify(condition, null, 3))
+    // console.log(JSON.stringify(condition, null, 3))
     let data = {
       products: await productModel.aggregate(condition)
     }
@@ -533,7 +555,8 @@ router.post("/:id?", async function (req, res, next) {
       data: data
     });
   } catch (error) {
-    console.log("error at get /products route...", error);
+    productLog.error('erro at productsdf                   ')
+    console.log("error at post /products route...", error);
     return res.json({
       type: "error",
       status: 500,
