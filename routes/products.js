@@ -8,9 +8,10 @@ const cartModel = require('../models/carts')
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 var { authentication } = require('../comman/middlewares')
-const productLog = commonFn
-
-
+const CommonFunctions = require('../comman/functions');
+const commonFn = new CommonFunctions();
+const productLog = commonFn.Logger('products')
+// console.log(JSON.stringify(Logger,null,3),"Logger")
 // let opts = {
 //   errorEventName: 'error',
 //   logDirectory: 'logfiles',
@@ -45,6 +46,7 @@ router.post('/review', authentication, async function (req, res, next) {
     })
   }
   catch (error) {
+    productLog.error("error at /product/add-review route !", error)
     console.log("error at /product/add-review route !", error)
     return res.json({
       type: "error",
@@ -108,6 +110,7 @@ router.delete('/review/remove/:reviewId', authentication, async function (req, r
     })
   }
   catch (error) {
+    productLog.error("error in /products/remove-review route", error)
     console.log("error in /products/remove-review route", error)
     return res.json({
       type: "error",
@@ -164,6 +167,7 @@ router.post('/cart', authentication, async function (req, res, next) {
     })
   }
   catch (error) {
+    productLog.error('Error in /products/cart route ', error)
     console.log('Error in /products/cart route ', error)
     return res.json({
       type: "error",
@@ -229,6 +233,7 @@ router.get('/cart', authentication, async function (req, res, next) {
     })
   }
   catch (error) {
+    productLog.error('error in /products/cart route ', error)
     console.log('error in /products/cart route ', error)
     return res.json({
       type: "error",
@@ -266,6 +271,7 @@ router.delete('/cart/remove/:cartId', authentication, async function (req, res, 
     })
   }
   catch (error) {
+    productLog.error('Error in /cart route ', error)
     console.log('Error in /cart route ', error)
     return res.json({
       type: "error",
@@ -344,6 +350,7 @@ router.get("/filters", async function (req, res, next) {
       },
     });
   } catch (error) {
+    productLog.error("error at GET /products/filters route...", error)
     console.log("error at get /products/filters route...", error);
     return res.json({
       type: "error",
@@ -356,8 +363,7 @@ router.get("/filters", async function (req, res, next) {
 // for e.g POST : /products
 router.post("/:id?", async function (req, res, next) {
   try {
-    console.log(await productsLog.log.error("hhh"))
-    console.log("=====================> req.body : ", req.body);
+    productLog.info("=====================> req.body : ", req.body);
 
     const {
       filter,
@@ -450,7 +456,7 @@ router.post("/:id?", async function (req, res, next) {
     if (sort?.order === "asc") {
       order = 1;
     }
-    conditon.push({
+    condition.push({
       $sort: {
         [field]: order
       }
@@ -555,7 +561,7 @@ router.post("/:id?", async function (req, res, next) {
       data: data
     });
   } catch (error) {
-    productLog.error('erro at productsdf                   ')
+    productLog.error("error at post /products route...", error)
     console.log("error at post /products route...", error);
     return res.json({
       type: "error",

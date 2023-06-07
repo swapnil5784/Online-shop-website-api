@@ -1,5 +1,5 @@
-module.exports = {
-    Logger: (logName) => {
+class CommonFunctions {
+    Logger(logName) {
         return require('simple-node-logger').createRollingFileLogger({
             logDirectory: 'logs',
             errorEventName: 'error',
@@ -8,4 +8,5 @@ module.exports = {
             timestampFormat: 'YYYY-MM-DD HH:mm:ss'
         });
     }
-}        
+}
+module.exports = CommonFunctions;

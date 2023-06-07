@@ -20,6 +20,18 @@ router.get('/', async function (req, res, next) {
                                     $eq: ["$_id", "$$productId"]
                                 }
                             }
+                        },
+                        {
+                            $project:{
+                                _id:1,
+                                title:1,
+                                price:1,
+                                category:1,
+                                rating:1,
+                                color:1,
+                                size:1,
+                                description:1
+                            }
                         }
                     ],
                     as: "product"
@@ -53,16 +65,16 @@ router.get('/', async function (req, res, next) {
 router.post('/add', async function (req, res, next) {
     try {
         console.log("Login user => => ", req.user);
-        let { _product } = req.body
-        console.log(`favorite product =========> user:${req.user._id} product: ${_product}`);
+        let { productId } = req.body
+        console.log(`favorite product =========> user:${req.user._id} product: ${productId}`);
         await favoriteProductModel.create({
-            _product: new ObjectId(_product),
-            _user: new ObjectId(req.user._id),
+            productId: new ObjectId(productId),
+            userId: new ObjectId(req.user._id),
         })
         return res.json({
             type: "success",
             status: 200,
-            message: `product with _id:${_product} added to favorite`
+            message: `product with _id:${productId} added to favorite`
         })
     }
     catch (error) {
@@ -79,15 +91,15 @@ router.post('/add', async function (req, res, next) {
 router.delete('/remove', async function (req, res, next) {
     try {
         console.log("Login user => => ", req.user);
-        let { _product } = req.body
-        console.log(`favorite product =========> user:${req.user._id} product: ${_product}`);
+        let { productId } = req.body
+        console.log(`favorite product =========> user:${req.user._id} product: ${productId}`);
         await favoriteProductModel.deleteOne({
-            _user: req.user._id, _product: _product
+            userId: req.user._id, productId: productId
         })
         return res.json({
             type: "success",
             status: 200,
-            message: `product with _id:${_product} removed from favorite`
+            message: `product with _id:${productId} removed from favorite`
         })
     }
     catch (error) {
