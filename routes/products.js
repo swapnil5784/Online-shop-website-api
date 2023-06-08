@@ -239,7 +239,7 @@ router.delete('/cart/remove/:cartId', authentication, async function (req, res, 
 // for e.g GET : /products/favorite  & GET : /products/favorite/646f3bac5d3d7c99439ec906
 router.get('/favorite/:productId?', authentication, async function (req, res, next) {
   try {
-    console.log("Login user => => ", req.user);
+    // console.log("Login user => => ", req.user);
     let { productId } = req.params
     if (productId) {
       if (!ObjectId.isValid(productId)) {
@@ -450,23 +450,23 @@ router.post("/:id?", async function (req, res, next) {
       isCategoryList,
     } = req.body;
     const { id } = req.params
-    // if id in parameter not in format as required
-    if (!ObjectId.isValid(id)) {
-      return res.status(409).json({
-        type: "error",
-        status: 409,
-        message: 'ObjectId is not valid !'
-      })
-    }
+
     let condition = [];
 
     //1.---------------- filter
     let match = {};
-
     // match["$or"] = [];
 
     // filter products by _id                    [ params ]
     if (id) {
+      // if id in parameter not in format as required
+      if (!ObjectId.isValid(id)) {
+        return res.status(409).json({
+          type: "error",
+          status: 409,
+          message: 'ObjectId is not valid !'
+        })
+      }
       match["_id"] = new ObjectId(id);
     }
     // filter products which is featured         [ body ]

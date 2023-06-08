@@ -16,3 +16,4 @@
 2023-06-08 11:20:10 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
 2023-06-08 11:20:41 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
 2023-06-08 11:21:08 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-08 16:45:38 INFO  Route : DELETE = products/review In:routes/product.js  cartId => => 648037e7e49c73faeaebc6be 

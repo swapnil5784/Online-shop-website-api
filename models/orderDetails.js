@@ -14,7 +14,12 @@ const orderDetail = new mongoose.Schema({
         required: true,
         ref: "orders"
     },
-    price: {
+    userId: {
+        type: ObjectId,
+        required: true,
+        ref: "users"
+    },
+    orderAmount: {
         type: Number,
         required: true
     },

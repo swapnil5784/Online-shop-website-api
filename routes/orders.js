@@ -3,6 +3,7 @@ var router = express.Router();
 var moment = require('moment')
 const orderModel = require('../models/orders')
 const orderDetailModel = require('../models/orderDetails')
+const cartModel = require('../models/carts')
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
 /* GET users listing. */
@@ -11,7 +12,6 @@ const ObjectId = mongoose.Types.ObjectId
 router.get('/', async function (req, res, next) {
     try {
         let orders = await orderModel.find({ userId: req.user._id }, { _id: 0, orderId: "$_id", userId: 1, billingId: 1, deliveryId: 1, totalAmount: 1, shippingAmount: 1, paymentMethod: 1, createdOn: "$createdOn" })
-
         return res.status(200).json({
             type: "success",
             status: 200,
@@ -34,6 +34,14 @@ router.get('/', async function (req, res, next) {
 // for e.g POST : /orders
 router.post('/', async function (req, res, next) {
     try {
+        let isCartEmpty = await cartModel.countDocuments({ userId: req.user._id })
+        if (!isCartEmpty) {
+            return res.status(409).json({
+                type: "error",
+                status: 409,
+                message: "Cart is empty cant do order!"
+            })
+        }
         let { billingId, deliveryId, totalAmount, shippingAmount, paymentMethod } = req.body
         let orderObject = {
             billingId: new ObjectId(billingId),
@@ -43,12 +51,12 @@ router.post('/', async function (req, res, next) {
             shippingAmount: shippingAmount,
             paymentMethod: paymentMethod
         }
-        console.log("orderObject = =  > >", orderObject);
+        // console.log("orderObject = =  > >", orderObject);
         await orderModel.create(orderObject)
         return res.status(200).json({
             type: "success",
             status: 200,
-            message: 'pending POST : /orders'
+            message: 'Order successfully placed !'
         })
     }
     catch (error) {

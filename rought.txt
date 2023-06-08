@@ -172,3 +172,173 @@ Filter Object Be like below in POST request for product listing:
 //   },
 // ];
         
+
+
+
+
+
+
+
+
+
+
+
+
+
+        full order details aggregation query
+
+
+
+
+        db.getCollection('orderdetails').aggregate([
+{
+ $match:{
+     userId:ObjectId("6479dbee8cd9bd12368084ab")
+     }   
+    }
+,
+{
+    $unwind:{
+        path:"$products"
+        }
+    },
+    {
+        $lookup:{
+            from:"products",
+            let:{ "pid" : "$products.productId" },
+            pipeline:[ 
+            {
+                $match:{
+                    $expr:{
+                        $eq:[ "$_id" ,"$$pid" ]
+                        }
+                    }
+                },
+                {
+                    $project:{
+                        title:1,
+                        price:1,
+                        description:1,
+                        category:1,
+                        rating:1,
+                        color:1,
+                        size:1,
+                        _id:0
+                        }
+                    }
+            ],
+            as:"productDetails"
+            }
+        },
+        {
+            $lookup:{
+            from:"orders",
+            let:{ "oid" : "$orderId" },
+            pipeline:[ 
+            {
+                $match:{
+                    $expr:{
+                        $eq:[ "$_id" ,"$$oid" ]
+                        }
+                    }
+                },{
+                    $project:{
+                        billingId:1,
+                        deliveryId:1,
+                        totalAmount:1,
+                        shippingAmount:1,
+                        paymentMethod:1,
+                        createdOn:1,
+                        _id:0
+                        }
+                    }
+                
+            ],
+            as:"orderDetails"
+            } 
+            },
+             {
+            $project:{
+                productQuantity:"$products.quantity",
+                productDetails:{ $arrayElemAt:[ "$productDetails",0 ] },
+                orderAmount:1,
+                orderDetails:{ $arrayElemAt:[ "$orderDetails",0 ] },
+                }
+            },
+            {
+                $lookup:{
+            from:"addressbooks",
+            let:{ "aid" : "$orderDetails.billingId" },
+            pipeline:[ 
+            {
+                $match:{
+                    $expr:{
+                        $eq:[ "$_id" ,"$$aid" ]
+                        }
+                    }
+                },{
+                    
+                    $project:{
+                        title:1,
+                        country:1,
+                        name:1,
+                        mobileNo:1,
+                        pincode:1,
+                        addressLineOne:1,
+                        addressLineTwo:1,
+                        landmark:1,
+                        city:1,
+                        state:1
+                        }
+                    }
+                
+            ],
+            as:"billingAddress"
+            }
+                },
+                {
+                $lookup:{
+            from:"addressbooks",
+            let:{ "aid" : "$orderDetails.deliveryId" },
+            pipeline:[ 
+            {
+                $match:{
+                    $expr:{
+                        $eq:[ "$_id" ,"$$aid" ]
+                        }
+                    }
+                },
+                {
+                    
+                    $project:{
+                        title:1,
+                        country:1,
+                        name:1,
+                        mobileNo:1,
+                        pincode:1,
+                        addressLineOne:1,
+                        addressLineTwo:1,
+                        landmark:1,
+                        city:1,
+                        state:1
+                        }
+                    }
+                
+            ],
+            as:"deliveryAddress"
+            }
+                },
+                {
+                    $project:{
+                        orderAmount:1,
+                        productQuantity:1,
+                        productDetails:1,
+                        orderDetails:1,
+                        billingAddress:{ $arrayElemAt:[ "$billingAddress",0 ] },
+                        deliveryAddress:{ $arrayElemAt:[ "$deliveryAddress",0 ] }
+                        
+                        }
+                    }
+       
+
+])

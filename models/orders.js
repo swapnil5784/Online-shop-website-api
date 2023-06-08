@@ -46,10 +46,48 @@ order.post('save', async function () {
     try {
         // console.log("this = = > >", this)
         const _this = this
-        const productsInOrder = await cartModel.find({ userId: _this.userId.toString() }, { productId: 1, quantity: 1, _id: 0 })
+        // const check = await cartModel.find({ userId: _this.userId.toString() }, { productId: 1, quantity: 1, _id: 0 })
+        const productsInOrder = await cartModel.aggregate([
+            {
+                $match: {
+                    userId: new ObjectId(_this.userId.toString())
+                }
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    let: { "id": "$productId" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$_id", "$$id"]
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 0,
+                                price: 1
+                            }
+                        }
+                    ],
+                    as: "price"
+                }
+            },
+            {
+                $project: {
+                    productId: 1,
+                    productPrice: { $arrayElemAt: ["$price.price", 0] },
+                    quantity: 1,
+                    _id: 0
+                }
+            }])
+        // console.log('productsInOrder = => ', productsInOrder, "check = =  > >", check)
         let detailsOfOrder = {
             orderId: new ObjectId(_this._id),
-            price: _this.totalAmount + _this.shippingAmount,
+            userId: new ObjectId(_this.userId.toString()),
+            orderAmount: _this.totalAmount + _this.shippingAmount,
             products: productsInOrder
         }
         await orderDetailModel.create(detailsOfOrder)
