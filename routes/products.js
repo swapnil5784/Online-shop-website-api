@@ -4,30 +4,20 @@ var productModel = require("../models/products");
 var categoryModel = require("../models/categories");
 var reviewModel = require('../models/reviews')
 const cartModel = require('../models/carts')
-
+const favoriteProductModel = require('../models/favoriteProducts')
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 var { authentication } = require('../comman/middlewares')
 const CommonFunctions = require('../comman/functions');
+const favoriteProducts = require("../models/favoriteProducts");
 const commonFn = new CommonFunctions();
 const productLog = commonFn.Logger('products')
-// console.log(JSON.stringify(Logger,null,3),"Logger")
-// let opts = {
-//   errorEventName: 'error',
-//   logDirectory: 'logfiles',
-//   fileNamePattern: '_<DATE>.log',
-//   dateFormat: 'YYYY.MM.DD',
-//   timestampFormat: 'YYYY-MM-DD HH:mm:ss'
-// }
-// const log = require('simple-node-logger').createRollingFileLogger(opts);
 
-/* GET home page. */
-
-// for e.g /products/add-review
+// for e.g /products/review
 router.post('/review', authentication, async function (req, res, next) {
   try {
     let { productId, rating, review } = req.body
-    console.log({
+    productLog.info('Route : POST = products/review In:routes/product.js', {
       userId: req.user._id,
       productId: productId,
       review: review,
@@ -56,42 +46,7 @@ router.post('/review', authentication, async function (req, res, next) {
   }
 })
 
-// for e.g /products/update-review == > > No longer needed
-// router.put('/review', authentication, async function (req, res, next) {
-//   try {
-//     let { reviewId, rating, review } = req.body
-//     let reviewToUpdate = await reviewModel.countDocuments({ _id: reviewId })
-//     if (!reviewToUpdate) {
-//       return res.json({
-//         type: "error",
-//         status: 409,
-//         message: 'Review not found!'
-//       })
-//     }
-//     let updateDetails = {
-//       _id: reviewId,
-//       rating: rating,
-//       review: review
-//     }
-//     console.log("updateDetails = = > > ", updateDetails)
-//     await reviewModel.updateOne({ _id: reviewId }, { $set: { rating: rating, review: review } })
-//     return res.json({
-//       type: "success",
-//       status: 200,
-//       message: 'Review updated successfully!'
-//     })
-//   }
-//   catch (error) {
-//     console.log("error in /products/update-review", error);
-//     return res.json({
-//       type: "error",
-//       status: 500,
-//       message: 'Server error in /products/update-review API'
-//     })
-//   }
-// })
-
-// for e.g /products/remove-review
+// for e.g /products/review/remove/<reviewId>
 router.delete('/review/remove/:reviewId', authentication, async function (req, res, next) {
   try {
     let reviewToDelete = await reviewModel.countDocuments({ _id: req.params.reviewId })
@@ -159,7 +114,7 @@ router.post('/cart', authentication, async function (req, res, next) {
       }
     )
 
-    console.log("updateCheck", updateCheck);
+    // console.log("updateCheck", updateCheck);
     return res.json({
       type: "success",
       status: 200,
@@ -180,7 +135,7 @@ router.post('/cart', authentication, async function (req, res, next) {
 //for e.g GET : /products/cart
 router.get('/cart', authentication, async function (req, res, next) {
   try {
-    console.log("req.user._id = = > ", req.user._id)
+    productLog.info("Route : GET = products/review In:routes/product.js ", "req.user._id = = > ", req.user._id)
     let products = await cartModel.aggregate([
       {
         $match: {
@@ -222,7 +177,7 @@ router.get('/cart', authentication, async function (req, res, next) {
         }
       }
     ])
-    console.log("products = =>>", products)
+    // console.log("products = =>>", products)
     return res.json({
       type: "success",
       status: 200,
@@ -246,7 +201,7 @@ router.get('/cart', authentication, async function (req, res, next) {
 // for e.g DELETE : /products/cart/remove
 router.delete('/cart/remove/:cartId', authentication, async function (req, res, next) {
   try {
-    console.log("cartId => => ", req.params.cartId);
+    productLog.info("Route : DELETE = products/review In:routes/product.js  ", "cartId => => ", req.params.cartId);
     if (!req.params.cartId) {
       return res.json({
         type: "error",
@@ -280,6 +235,130 @@ router.delete('/cart/remove/:cartId', authentication, async function (req, res, 
     })
   }
 });
+
+// for e.g GET : /products/favorite  & GET : /products/favorite/646f3bac5d3d7c99439ec906
+router.get('/favorite/:productId?', authentication, async function (req, res, next) {
+  try {
+    console.log("Login user => => ", req.user);
+    let { productId } = req.params
+    if (productId) {
+      if (!ObjectId.isValid(productId)) {
+        return res.status(409).json({
+          type: "error",
+          status: 409,
+          message: "ObjectId is not valid !"
+        })
+      }
+      let markedFavoriteAlready = await favoriteProductModel.countDocuments({
+        productId: new ObjectId(productId),
+        userId: new ObjectId(req.user._id),
+      })
+      if (markedFavoriteAlready) {
+        return res.status(409).json({
+          type: "eror",
+          status: 409,
+          message: "Product already in favorite !"
+        })
+      }
+      await favoriteProductModel.create({
+        productId: new ObjectId(productId),
+        userId: new ObjectId(req.user._id),
+      })
+      return res.json({
+        type: "success",
+        status: 200,
+        message: "Product successfully added to favorite !"
+      })
+    }
+    let products = await favoriteProductModel.aggregate([
+      {
+        $lookup: {
+          from: "products",
+          let: { "productId": "$productId" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$_id", "$$productId"]
+                }
+              }
+            },
+            {
+              $project: {
+                _id: 1,
+                title: 1,
+                price: 1,
+                category: 1,
+                rating: 1,
+                color: 1,
+                size: 1,
+                description: 1,
+                image: 1
+              }
+            }
+          ],
+          as: "product"
+        }
+      },
+      {
+        $project: {
+          product: { $arrayElemAt: ["$product", 0] },
+        }
+      }
+    ])
+    return res.json({
+      type: "success",
+      status: 200,
+      data: {
+        products: products
+      }
+    })
+  }
+  catch (error) {
+    console.log('Error in /favorite-products route ', error)
+    return res.json({
+      type: "error",
+      status: 500,
+      message: 'Server error on /favorite-products route'
+    })
+  }
+});
+
+// for DELETE : /products/favorite/remove/646f3bac5d3d7c99439ec906
+router.delete('/favorite/remove/:productId', authentication, async function (req, res, next) {
+  try {
+    let { productId } = req.params
+    if (!ObjectId.isValid(productId)) {
+      return res.status(409).json({
+        type: "error",
+        status: 409,
+        message: "ObjectId is not valid !"
+      })
+    }
+    let documentToDeleteFound = await favoriteProductModel.countDocuments({ productId: productId, userId: req.user._id })
+    if (!documentToDeleteFound) {
+      return res.status(404).json({
+        type: "error",
+        status: 404,
+        message: "Product not found !"
+      })
+    }
+    await favoriteProductModel.deleteOne({ productId: productId, userId: req.user._id })
+    return res.status(200).json({
+      type: "success",
+      status: 200,
+      message: "Product successfully removed from favorite !"
+    })
+  }
+  catch (error) {
+    console.log('error at delete: products/favorite/<productId> ', error)
+    return res.status(500).json({
+      type: "error",
+      status: 500,
+      message: "Server at delete: products/favorite/<productId> !"
+    })
+  }
+})
 
 // for e.g /products/filters
 router.get("/filters", async function (req, res, next) {
@@ -363,8 +442,7 @@ router.get("/filters", async function (req, res, next) {
 // for e.g POST : /products
 router.post("/:id?", async function (req, res, next) {
   try {
-    productLog.info("=====================> req.body : ", req.body);
-
+    productLog.info("Route : POST  = /products In:routes/product.js", "=====================> req.body : ", req.body);
     const {
       filter,
       sort,
@@ -372,6 +450,14 @@ router.post("/:id?", async function (req, res, next) {
       isCategoryList,
     } = req.body;
     const { id } = req.params
+    // if id in parameter not in format as required
+    if (!ObjectId.isValid(id)) {
+      return res.status(409).json({
+        type: "error",
+        status: 409,
+        message: 'ObjectId is not valid !'
+      })
+    }
     let condition = [];
 
     //1.---------------- filter

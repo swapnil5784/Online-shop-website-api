@@ -28,7 +28,7 @@ var cartRouter = require('./routes/cart')
 var usersRouter = require('./routes/users');
 var favoriteProductsRouter = require('./routes/favoriteProducts')
 var addressBookRouter = require('./routes/addressBook')
-
+var orderRouter = require('./routes/orders')
 // 1. passport authentication
 const passport = require('passport');
 const { authentication, logIpOfRequest, addTwo } = require('./comman/middlewares');
@@ -60,9 +60,9 @@ app.use('/products', productsRouter);
 app.use('/users', usersRouter);
 app.use(authentication)
 // app.use('/cart', cartRouter)
-app.use('/favorite', favoriteProductsRouter)
+// app.use('/favorite', favoriteProductsRouter)
 app.use('/address', addressBookRouter)
-
+app.use('/orders', orderRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
