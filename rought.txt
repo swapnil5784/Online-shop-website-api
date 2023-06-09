@@ -342,3 +342,164 @@ Filter Object Be like below in POST request for product listing:
        
 
 ])
+
+
+=]=====================================================================
+/* 1 */
+{
+    "_id" : ObjectId("6482b9bae607c912331721f2"),
+    "orderAmount" : 600,
+    "productQuantity" : 11,
+    "productDetails" : {
+        "title" : "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
+        "price" : 100,
+        "description" : "Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday",
+        "category" : "men's clothing",
+        "rating" : {
+            "rate" : 3.9,
+            "count" : 120.0
+        },
+        "color" : "Red",
+        "size" : "S"
+    },
+    "orderDetails" : {
+        "billingId" : ObjectId("647f2eacd46ac8d233e186d4"),
+        "deliveryId" : ObjectId("64801bb26580c8fd77ad79df"),
+        "totalAmount" : 500,
+        "shippingAmount" : 100,
+        "paymentMethod" : "Cash on delivery",
+        "createdOn" : ISODate("2023-06-09T05:33:46.820Z")
+    },
+    "billingAddress" : {
+        "_id" : ObjectId("647f2eacd46ac8d233e186d4"),
+        "title" : "Home",
+        "country" : "India",
+        "name" : "Tecno testify",
+        "mobileNo" : "+911234557890",
+        "pincode" : "387341",
+        "addressLineOne" : "Ganesh meredian Block-c",
+        "addressLineTwo" : "Room No. 901",
+        "landmark" : "Kargil Petrol Pump",
+        "city" : "Ahmedabad",
+        "state" : "Gujarat"
+    },
+    "deliveryAddress" : {
+        "_id" : ObjectId("64801bb26580c8fd77ad79df"),
+        "title" : "Office",
+        "country" : "India",
+        "name" : "test testify",
+        "mobileNo" : "+911234557890",
+        "pincode" : "387341",
+        "addressLineOne" : "Ganesh meredian Block-c",
+        "addressLineTwo" : "Room No. 901",
+        "landmark" : "Kargil Petrol Pump",
+        "city" : "Ahmedabad",
+        "state" : "Gujarat"
+    }
+}
+
+/* 2 */
+{
+    "_id" : ObjectId("6482be11dfb033f56ad7f9e6"),
+    "orderAmount" : 600,
+    "productQuantity" : 12,
+    "productDetails" : {
+        "title" : "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
+        "price" : 100,
+        "description" : "Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday",
+        "category" : "men's clothing",
+        "rating" : {
+            "rate" : 3.9,
+            "count" : 120.0
+        },
+        "color" : "Red",
+        "size" : "S"
+    },
+    "orderDetails" : {
+        "billingId" : ObjectId("647f2eacd46ac8d233e186d4"),
+        "deliveryId" : ObjectId("64801bb26580c8fd77ad79df"),
+        "totalAmount" : 500,
+        "shippingAmount" : 100,
+        "paymentMethod" : "Cash on delivery",
+        "createdOn" : ISODate("2023-06-09T05:52:17.016Z")
+    },
+    "billingAddress" : {
+        "_id" : ObjectId("647f2eacd46ac8d233e186d4"),
+        "title" : "Home",
+        "country" : "India",
+        "name" : "Tecno testify",
+        "mobileNo" : "+911234557890",
+        "pincode" : "387341",
+        "addressLineOne" : "Ganesh meredian Block-c",
+        "addressLineTwo" : "Room No. 901",
+        "landmark" : "Kargil Petrol Pump",
+        "city" : "Ahmedabad",
+        "state" : "Gujarat"
+    },
+    "deliveryAddress" : {
+        "_id" : ObjectId("64801bb26580c8fd77ad79df"),
+        "title" : "Office",
+        "country" : "India",
+        "name" : "test testify",
+        "mobileNo" : "+911234557890",
+        "pincode" : "387341",
+        "addressLineOne" : "Ganesh meredian Block-c",
+        "addressLineTwo" : "Room No. 901",
+        "landmark" : "Kargil Petrol Pump",
+        "city" : "Ahmedabad",
+        "state" : "Gujarat"
+    }
+}
+
+/* 3 */
+{
+    "_id" : ObjectId("6482be11dfb033f56ad7f9e6"),
+    "orderAmount" : 600,
+    "productQuantity" : 1,
+    "productDetails" : {
+        "title" : "Mens Casual Premium Slim Fit T-Shirts ",
+        "price" : 99.9,
+        "description" : "Slim-fitting style, contrast raglan long sleeve, three-button henley placket, light weight & soft fabric for breathable and comfortable wearing. And Solid stitched shirts with round neck made for durability and a great fit for casual fashion wear and diehard baseball fans. The Henley style round neckline includes a three-button placket.",
+        "category" : "men's clothing",
+        "rating" : {
+            "rate" : 4.1,
+            "count" : 259.0
+        },
+        "color" : "Red",
+        "size" : "XL"
+    },
+    "orderDetails" : {
+        "billingId" : ObjectId("647f2eacd46ac8d233e186d4"),
+        "deliveryId" : ObjectId("64801bb26580c8fd77ad79df"),
+        "totalAmount" : 500,
+        "shippingAmount" : 100,
+        "paymentMethod" : "Cash on delivery",
+        "createdOn" : ISODate("2023-06-09T05:52:17.016Z")
+    },
+    "billingAddress" : {
+        "_id" : ObjectId("647f2eacd46ac8d233e186d4"),
+        "title" : "Home",
+        "country" : "India",
+        "name" : "Tecno testify",
+        "mobileNo" : "+911234557890",
+        "pincode" : "387341",
+        "addressLineOne" : "Ganesh meredian Block-c",
+        "addressLineTwo" : "Room No. 901",
+        "landmark" : "Kargil Petrol Pump",
+        "city" : "Ahmedabad",
+        "state" : "Gujarat"
+    },
+    "deliveryAddress" : {
+        "_id" : ObjectId("64801bb26580c8fd77ad79df"),
+        "title" : "Office",
+        "country" : "India",
+        "name" : "test testify",
+        "mobileNo" : "+911234557890",
+        "pincode" : "387341",
+        "addressLineOne" : "Ganesh meredian Block-c",
+        "addressLineTwo" : "Room No. 901",
+        "landmark" : "Kargil Petrol Pump",
+        "city" : "Ahmedabad",
+        "state" : "Gujarat"
+    }
+}

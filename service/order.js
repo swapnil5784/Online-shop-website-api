@@ -9,41 +9,82 @@ const getUserOrderDetails = async function (userId) {
             let details = await orderDetailModel.aggregate([
                 {
                     $match: {
-                        userId: userId
+                        userId: new ObjectId(userId)
                     }
-                }
-                ,
+                },
                 {
                     $unwind: {
-                        path: "$products"
+                        path: '$products'
                     }
                 },
                 {
                     $lookup: {
-                        from: "products",
-                        let: { "pid": "$products.productId" },
+                        from: 'products',
+                        let: { "pId": "$products.productId" },
                         pipeline: [
                             {
                                 $match: {
                                     $expr: {
-                                        $eq: ["$_id", "$$pid"]
+                                        $eq: ["$_id", "$$pId"]
+                                    }
+                                }
+                            }
+                        ],
+                        as: 'products.product'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$products.product'
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$_id',
+                        products: {
+                            $push: '$products'
+                        },
+                        createdOn: { $addToSet: "$createdOn" },
+                        orderAmount: { $addToSet: "$orderAmount" },
+                        orderId: { $addToSet: "$orderId" },
+                        userId: { $addToSet: "$userId" }
+
+                    }
+                },
+                {
+                    $project: {
+                        products: 1,
+                        createdOn: { $arrayElemAt: ["$createdOn", 0] },
+                        orderAmount: { $arrayElemAt: ["$orderAmount", 0] },
+                        orderId: { $arrayElemAt: ["$orderId", 0] },
+                        userId: { $arrayElemAt: ["$userId", 0] }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        let: { "id": "$userId" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+
+                                        $eq: ["$_id", "$$id"]
                                     }
                                 }
                             },
                             {
                                 $project: {
-                                    title: 1,
-                                    price: 1,
-                                    description: 1,
-                                    category: 1,
-                                    rating: 1,
-                                    color: 1,
-                                    size: 1,
-                                    _id: 0
+                                    _id: 0,
+                                    name: 1,
+                                    email: 1,
+                                    country: 1,
+                                    mobile: 1,
+                                    profileImage: 1
                                 }
                             }
                         ],
-                        as: "productDetails"
+                        as: "user"
                     }
                 },
                 {
@@ -54,47 +95,50 @@ const getUserOrderDetails = async function (userId) {
                             {
                                 $match: {
                                     $expr: {
+
                                         $eq: ["$_id", "$$oid"]
                                     }
                                 }
-                            }, {
+                            },
+                            {
                                 $project: {
+                                    _id: 0,
                                     billingId: 1,
                                     deliveryId: 1,
                                     totalAmount: 1,
                                     shippingAmount: 1,
-                                    paymentMethod: 1,
-                                    createdOn: 1,
-                                    _id: 0
+                                    paymentMethos: 1,
                                 }
                             }
-
                         ],
                         as: "orderDetails"
                     }
                 },
                 {
                     $project: {
-                        productQuantity: "$products.quantity",
-                        productDetails: { $arrayElemAt: ["$productDetails", 0] },
-                        orderAmount: 1,
+                        products: 1,
+                        createdOn: 1,
+                        user: { $arrayElemAt: ["$user", 0] },
+                        orderDetails: 1,
                         orderDetails: { $arrayElemAt: ["$orderDetails", 0] },
                     }
+
                 },
                 {
                     $lookup: {
                         from: "addressbooks",
-                        let: { "aid": "$orderDetails.billingId" },
+                        let: { "bid": "$orderDetails.billingId" },
                         pipeline: [
                             {
                                 $match: {
                                     $expr: {
-                                        $eq: ["$_id", "$$aid"]
+                                        $eq: ["$_id", "$$bid"]
                                     }
                                 }
-                            }, {
-
+                            },
+                            {
                                 $project: {
+                                    _id: 0,
                                     title: 1,
                                     country: 1,
                                     name: 1,
@@ -104,7 +148,7 @@ const getUserOrderDetails = async function (userId) {
                                     addressLineTwo: 1,
                                     landmark: 1,
                                     city: 1,
-                                    state: 1
+                                    state: 1,
                                 }
                             }
 
@@ -112,21 +156,22 @@ const getUserOrderDetails = async function (userId) {
                         as: "billingAddress"
                     }
                 },
+
                 {
                     $lookup: {
                         from: "addressbooks",
-                        let: { "aid": "$orderDetails.deliveryId" },
+                        let: { "did": "$orderDetails.deliveryId" },
                         pipeline: [
                             {
                                 $match: {
                                     $expr: {
-                                        $eq: ["$_id", "$$aid"]
+                                        $eq: ["$_id", "$$did"]
                                     }
                                 }
                             },
                             {
-
                                 $project: {
+                                    _id: 0,
                                     title: 1,
                                     country: 1,
                                     name: 1,
@@ -136,7 +181,7 @@ const getUserOrderDetails = async function (userId) {
                                     addressLineTwo: 1,
                                     landmark: 1,
                                     city: 1,
-                                    state: 1
+                                    state: 1,
                                 }
                             }
 
@@ -146,41 +191,19 @@ const getUserOrderDetails = async function (userId) {
                 },
                 {
                     $project: {
-                        orderAmount: 1,
-                        productQuantity: 1,
-                        productDetails: 1,
-                        orderDetails: 1,
+                        totalAmount: "$orderDetails.totalAmount",
+                        shippingAmount: "$orderDetails.shippingAmount",
+                        products: 1,
+                        user: 1,
                         billingAddress: { $arrayElemAt: ["$billingAddress", 0] },
-                        deliveryAddress: { $arrayElemAt: ["$deliveryAddress", 0] }
-
+                        deliveryAddress: { $arrayElemAt: ["$deliveryAddress", 0] },
+                        createdOn: 1,
                     }
+
                 }
+
             ])
-            // let products = []
-            // details.forEach(orderDetails => {
-            //     products.push({
-            //         quantity: orderDetails.productQuantity,
-            //         product: orderDetails.productDetails
-            //     })
-            // });
-            // let formattedDetails = {
-            //     order: {
-            //         billingAddress: details[0].billingAddress,
-            //         deliveryAddress: details[0].deliveryAddress,
-            //         totalAmount: details[0].orderDetails.totalAmount,
-            //         shippingAmount: details[0].orderDetails.shippingAmount,
-            //         paymentMethod: details[0].orderDetails.paymentMethod,
-            //         createdOn: details[0].orderDetails.createdOn,
-            //         products: products
-            //     },
-            // }
-            // let orders = []
-            // details.forEach(order => {
-            //     orders.push(JSON.stringify(formattedDetails, null, 3))
-            // });
-            // console.log("= =  > >", orders)
             resolve(details)
-            // resolve(formattedDetails)
         }
         catch (error) {
             console.log('error in order service for show order Details = = > > ', error)

@@ -211,7 +211,7 @@ router.get("/advertisements", async function (req, res, next) {
   }
 });
 
-router.post('/token-renew', authentication, async function (req, res, next) {
+router.post('/generate-token', authentication, async function (req, res, next) {
   try {
     const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
     res.status(200).json({

@@ -773,13 +773,11 @@ router.post("/:id?", async function (req, res, next) {
 
         ])
       }
-      if (!data?.products?.length) {
+      if (!data?.isCategoryList?.length) {
         return res.status(404).json({
           type: "error",
           status: 404,
           message: "No category found !",
-          totalProducts: totalFilteredProducts,
-          totalFilteredProducts: totalProducts,
           data: data
         })
       }

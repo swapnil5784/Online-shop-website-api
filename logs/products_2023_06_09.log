@@ -61,3 +61,7 @@ CastError: Cast to ObjectId failed for value "6482a84d9b1a4ec56debb49" (type str
 2023-06-09 14:43:27 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["adf"]}} 
 2023-06-09 14:43:28 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["adf"]}} 
 2023-06-09 16:24:43 INFO  Route : GET = products/review In:routes/product.js req.user._id = = > "6482ff515cb6f6ff68597c58" 
+2023-06-09 17:02:15 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"isCategory":true} 
+2023-06-09 17:02:42 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"isCategoryList":true} 
+2023-06-09 18:11:03 INFO  Route : GET = products/review In:routes/product.js req.user._id = = > "6482ff515cb6f6ff68597c58" 
+2023-06-09 18:11:53 INFO  Route : GET = products/review In:routes/product.js req.user._id = = > "6482ff515cb6f6ff68597c58" 
