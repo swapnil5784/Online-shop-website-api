@@ -8,8 +8,8 @@ const favoriteProductModel = require('../models/favoriteProducts')
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 var { authentication } = require('../comman/middlewares')
-const CommonFunctions = require('../comman/functions');
 const favoriteProducts = require("../models/favoriteProducts");
+const CommonFunctions = require('../comman/functions');
 const commonFn = new CommonFunctions();
 const productLog = commonFn.Logger('products')
 
@@ -17,6 +17,14 @@ const productLog = commonFn.Logger('products')
 router.post('/review', authentication, async function (req, res, next) {
   try {
     let { productId, rating, review } = req.body
+    let isProductExists = await productModel.countDocuments({ _id: productId })
+    if (!isProductExists) {
+      return res.status(409).json({
+        type: "error",
+        status: 409,
+        message: "No product found to add review !"
+      })
+    }
     productLog.info('Route : POST = products/review In:routes/product.js', {
       userId: req.user._id,
       productId: productId,
@@ -29,7 +37,7 @@ router.post('/review', authentication, async function (req, res, next) {
       review: review,
       rating: rating
     })
-    return res.json({
+    return res.status(200).json({
       type: "success",
       status: 200,
       message: "Review successfully added !"
@@ -38,7 +46,7 @@ router.post('/review', authentication, async function (req, res, next) {
   catch (error) {
     productLog.error("error at /product/add-review route !", error)
     console.log("error at /product/add-review route !", error)
-    return res.json({
+    return res.status(500).json({
       type: "error",
       status: 500,
       message: "Server error at /product/add-review route !"
@@ -49,16 +57,24 @@ router.post('/review', authentication, async function (req, res, next) {
 // for e.g /products/review/remove/<reviewId>
 router.delete('/review/remove/:reviewId', authentication, async function (req, res, next) {
   try {
-    let reviewToDelete = await reviewModel.countDocuments({ _id: req.params.reviewId })
-    if (!reviewToDelete) {
-      return res.json({
+    let { reviewId } = req.params
+    if (!ObjectId.isValid(reviewId)) {
+      return res.status(409).json({
         type: "error",
         status: 409,
+        message: "ReviewId is not valid !"
+      })
+    }
+    let reviewToDelete = await reviewModel.countDocuments({ _id: req.params.reviewId })
+    if (!reviewToDelete) {
+      return res.status(404).json({
+        type: "error",
+        status: 404,
         message: "Review not found !"
       })
     }
     await reviewModel.deleteOne({ _id: req.params.reviewId })
-    return res.json({
+    return res.status(200).json({
       type: "success",
       status: 200,
       message: "Review successfully removed !"
@@ -67,7 +83,7 @@ router.delete('/review/remove/:reviewId', authentication, async function (req, r
   catch (error) {
     productLog.error("error in /products/remove-review route", error)
     console.log("error in /products/remove-review route", error)
-    return res.json({
+    return res.status(500).json({
       type: "error",
       status: 500,
       message: "Server error in /products/remove-review route API"
@@ -81,7 +97,7 @@ router.post('/cart', authentication, async function (req, res, next) {
     let { productId, quantity, isAddedFromShop } = req.body
     let isProductExists = await productModel.countDocuments({ _id: productId })
     if (!isProductExists) {
-      return res.json({
+      return res.status(404).json({
         type: "error",
         status: 404,
         message: "Product not found !"
@@ -115,7 +131,7 @@ router.post('/cart', authentication, async function (req, res, next) {
     )
 
     // console.log("updateCheck", updateCheck);
-    return res.json({
+    return res.status(200).json({
       type: "success",
       status: 200,
       message: `Product added to cart successfully`
@@ -124,7 +140,7 @@ router.post('/cart', authentication, async function (req, res, next) {
   catch (error) {
     productLog.error('Error in /products/cart route ', error)
     console.log('Error in /products/cart route ', error)
-    return res.json({
+    return res.status(500).json({
       type: "error",
       status: 500,
       message: 'Server error on /products/cart route'
@@ -178,6 +194,17 @@ router.get('/cart', authentication, async function (req, res, next) {
       }
     ])
     // console.log("products = =>>", products)
+    if (!products.length) {
+      return res.status(404).json({
+        type: "error",
+        status: 404,
+        message: "No products in cart!",
+        data: {
+          totalProductsInCart: products.length,
+          products: products
+        }
+      })
+    }
     return res.json({
       type: "success",
       status: 200,
@@ -190,7 +217,7 @@ router.get('/cart', authentication, async function (req, res, next) {
   catch (error) {
     productLog.error('error in /products/cart route ', error)
     console.log('error in /products/cart route ', error)
-    return res.json({
+    return res.status(500).json({
       type: "error",
       status: 500,
       message: 'server error on /products/cart route'
@@ -201,25 +228,33 @@ router.get('/cart', authentication, async function (req, res, next) {
 // for e.g DELETE : /products/cart/remove
 router.delete('/cart/remove/:cartId', authentication, async function (req, res, next) {
   try {
-    productLog.info("Route : DELETE = products/review In:routes/product.js  ", "cartId => => ", req.params.cartId);
-    if (!req.params.cartId) {
-      return res.json({
+    let { cartId } = req.params
+    productLog.info("Route : DELETE = products/review In:routes/product.js  ", "cartId => => ", cartId);
+    if (!cartId) {
+      return res.status(404).json({
         type: "error",
-        status: 409,
+        status: 404,
         message: "CartId not found !"
       })
     }
-    let cartFoundForDelete = await cartModel.countDocuments({ _id: req.params.cartId })
+    if (!ObjectId.isValid(cartId)) {
+      return res.status(409).json({
+        type: "error",
+        status: 409,
+        message: "CartIs not valid !"
+      })
+    }
+    let cartFoundForDelete = await cartModel.countDocuments({ _id: cartId })
     if (!cartFoundForDelete) {
-      return res.json({
+      return res.status(409).json({
         type: "error",
         status: 409,
         message: "Cart not found !"
       })
     }
-    console.log("cartId", req.params.cartId);
-    await cartModel.deleteOne({ _id: req.params.cartId })
-    return res.json({
+    console.log("cartId", cartId);
+    await cartModel.deleteOne({ _id: cartId })
+    return res.status(200).json({
       type: "success",
       status: 200,
       message: "Successfully removed from cart."
@@ -228,7 +263,7 @@ router.delete('/cart/remove/:cartId', authentication, async function (req, res, 
   catch (error) {
     productLog.error('Error in /cart route ', error)
     console.log('Error in /cart route ', error)
-    return res.json({
+    return res.status(500).json({
       type: "error",
       status: 500,
       message: 'Server error on /cart route'
@@ -264,7 +299,7 @@ router.get('/favorite/:productId?', authentication, async function (req, res, ne
         productId: new ObjectId(productId),
         userId: new ObjectId(req.user._id),
       })
-      return res.json({
+      return res.status(200).json({
         type: "success",
         status: 200,
         message: "Product successfully added to favorite !"
@@ -306,7 +341,17 @@ router.get('/favorite/:productId?', authentication, async function (req, res, ne
         }
       }
     ])
-    return res.json({
+    if (!products.length) {
+      return res.status(404).json({
+        type: "error",
+        status: 404,
+        message: "No favorite products found",
+        data: {
+          products: products
+        }
+      })
+    }
+    return res.status(200).json({
       type: "success",
       status: 200,
       data: {
@@ -316,7 +361,7 @@ router.get('/favorite/:productId?', authentication, async function (req, res, ne
   }
   catch (error) {
     console.log('Error in /favorite-products route ', error)
-    return res.json({
+    return res.status(500).json({
       type: "error",
       status: 500,
       message: 'Server error on /favorite-products route'
@@ -417,8 +462,19 @@ router.get("/filters", async function (req, res, next) {
         },
       },
     ]);
-
-    return res.json({
+    if (!colorsArray.length && !sizesArray.length && !priceRanges.length) {
+      return res.status(404).json({
+        type: "error",
+        status: 404,
+        message: "No filters found !",
+        data: {
+          colors: colorsArray,
+          sizes: sizesArray,
+          priceRanges: priceRanges,
+        },
+      })
+    }
+    return res.status(200).json({
       type: "success",
       status: 200,
       message: `response from /products/filters to render filter details`,
@@ -431,7 +487,7 @@ router.get("/filters", async function (req, res, next) {
   } catch (error) {
     productLog.error("error at GET /products/filters route...", error)
     console.log("error at get /products/filters route...", error);
-    return res.json({
+    return res.status(500).json({
       type: "error",
       status: 500,
       message: `Server error at /products/filters API `,
@@ -591,11 +647,93 @@ router.post("/:id?", async function (req, res, next) {
         size: 1,
       },
     });
+
+    if (id) {
+      condition.pop()
+      condition.push({
+        $lookup: {
+          from: "reviews",
+          let: { "id": "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$productId", "$$id"]
+                }
+              }
+            },
+            {
+              $lookup: {
+                from: "users",
+                let: { "user": "$userId" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $eq: ["$_id", "$$user"]
+                      }
+                    }
+                  }, {
+                    $project: {
+                      name: 1,
+                      profileImage: 1,
+                      email: 1,
+                      country: 1,
+                      _id: 0
+                    }
+                  }
+                ],
+                as: "user"
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                reviewId: "$_id",
+                rating: 1,
+                review: 1,
+                createdOn: 1,
+                user: { $arrayElemAt: ["$user", 0] }
+              }
+            }
+          ],
+          as: "reviews"
+        }
+      })
+      condition.push({
+        $project: {
+          _id: 1,
+          productId: "$_id",
+          id: 1,
+          title: 1,
+          price: 1,
+          description: 1,
+          category: 1,
+          image: 1,
+          rating: 1,
+          isfeatured: 1,
+          isMarkedFavorite: 1,
+          color: 1,
+          size: 1,
+          reviews: 1
+        }
+      })
+    }
     // console.log(JSON.stringify(condition, null, 3))
     let data = {
       products: await productModel.aggregate(condition)
     }
-
+    let totalProducts = data.products?.length;
+    if (!data.products.length) {
+      return res.status(404).json({
+        type: "error",
+        status: 404,
+        message: "No products found !",
+        totalProducts: totalFilteredProducts,
+        totalFilteredProducts: totalProducts,
+        data: data
+      })
+    }
     if (isCategoryList) {
       data = {
         categories: await categoryModel.aggregate([
@@ -635,10 +773,20 @@ router.post("/:id?", async function (req, res, next) {
 
         ])
       }
+      if (!data.products.length) {
+        return res.status(404).json({
+          type: "error",
+          status: 404,
+          message: "No category found !",
+          totalProducts: totalFilteredProducts,
+          totalFilteredProducts: totalProducts,
+          data: data
+        })
+      }
     }
 
-    let totalProducts = data.products?.length;
-    return res.json({
+
+    return res.status(200).json({
       type: "success",
       status: 200,
       message: `product list`,
@@ -649,7 +797,7 @@ router.post("/:id?", async function (req, res, next) {
   } catch (error) {
     productLog.error("error at post /products route...", error)
     console.log("error at post /products route...", error);
-    return res.json({
+    return res.status(500).json({
       type: "error",
       status: 500,
       message: `Server error in /products/ API `,

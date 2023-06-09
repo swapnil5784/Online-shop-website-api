@@ -6,30 +6,14 @@ const orderDetailModel = require('../models/orderDetails')
 const cartModel = require('../models/carts')
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
+
+
+// functions from controller
+const { showOrderDetails } = require('../controller/order/showDetails')
 /* GET users listing. */
 
 // for e.g GET : /orders
-router.get('/', async function (req, res, next) {
-    try {
-        let orders = await orderModel.find({ userId: req.user._id }, { _id: 0, orderId: "$_id", userId: 1, billingId: 1, deliveryId: 1, totalAmount: 1, shippingAmount: 1, paymentMethod: 1, createdOn: "$createdOn" })
-        return res.status(200).json({
-            type: "success",
-            status: 200,
-            message: "User's order details.",
-            data: {
-                orders: orders
-            }
-        })
-    }
-    catch (error) {
-        console.log("error at /order", error)
-        return res.status(500).json({
-            type: "error",
-            status: 500,
-            message: "Server error at /orders !"
-        })
-    }
-});
+router.get('/', showOrderDetails);
 
 // for e.g POST : /orders
 router.post('/', async function (req, res, next) {

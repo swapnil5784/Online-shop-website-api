@@ -10,7 +10,7 @@ var md5 = require('md5')
 
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-
+const { authentication } = require('../comman/middlewares')
 // 1.import node mailer
 var nodemailer = require("nodemailer");
 const { registerUser } = require("../controller/auth/register.controller");
@@ -35,7 +35,7 @@ router.post('/login', async function (req, res, next) {
           res.send(err);
         }
 
-        const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, 'swapnil');
+        const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, { expiresIn: 60 * 60, }, process.env.JWT_SECRET_KEY);
         return res.json({
           type: "success",
           status: 200,
@@ -80,7 +80,15 @@ router.get('/logout', function (req, res, next) {
 router.get("/vendors", async function (req, res, next) {
   try {
     let vendors = await vendorModel.find({});
-    return res.json({
+    if (!vendors.length) {
+      return res.status(404).json({
+        type: "error",
+        status: 404,
+        message: `No vendors found`,
+        data: vendors,
+      });
+    }
+    return res.status(200).json({
       type: "success",
       status: 200,
       message: `All vendors from /vendors`,
@@ -88,7 +96,7 @@ router.get("/vendors", async function (req, res, next) {
     });
   } catch (error) {
     console.log("error at /products/vendors --> index.js route", error);
-    return res.json({
+    return res.status(200).json({
       type: "error",
       status: 500,
       message: `Server error at /vendors API `,
@@ -101,13 +109,12 @@ router.post("/subscribe", async function (req, res, next) {
   try {
 
     console.log("----------------------> req.body", req.body.userEmail);
-
     let isEmailExists = await newsModel.findOne({ userEmail: req.body.userEmail })
     if (isEmailExists) {
-      return res.json({
+      return res.status(200).json({
         type: "error",
-        status: 409,
-        message: "Email already registred !",
+        status: 200,
+        message: "Email registred for updates!",
       });
     }
 
@@ -153,17 +160,17 @@ router.post("/subscribe", async function (req, res, next) {
         }
       });
     }
-    return res.json({
+    return res.status(200).json({
       type: "success",
       status: 200,
       message: "successfully registered !",
     });
   } catch (error) {
-    console.log("error at post /signup route in index.js", error);
-    return res.json({
+    console.log("error at post /subscribe route in index.js", error);
+    return res.status(500).json({
       type: "error",
       status: 500,
-      message: "server error at post /signup route",
+      message: "server error at post /subscribe route",
     });
   }
 });
@@ -175,8 +182,18 @@ router.get("/advertisements", async function (req, res, next) {
     let advertisements = await advertisementModel.find({});
 
     let offers = await offerModel.find({})
-
-    return res.json({
+    if (!offers.length && !advertisements.length) {
+      return res.status(404).json({
+        type: "error",
+        status: 404,
+        message: `No advertisements or offer found !`,
+        data: {
+          carousels: advertisements,
+          offers: offers,
+        },
+      });
+    }
+    return res.status(200).json({
       type: "success",
       status: 200,
       message: `For /advertisements route`,
@@ -195,5 +212,24 @@ router.get("/advertisements", async function (req, res, next) {
   }
 });
 
+router.post('/token-renew', authentication, async function (req, res, next) {
+  try {
+    const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, { expiresIn: 60 * 60, }, process.env.JWT_SECRET_KEY);
+    res.status(200).json({
+      type: "sucess",
+      status: 200,
+      token: token,
+      message: "Successfully rengenerated token ."
+    })
+  }
+  catch (error) {
+    console.log('error in /token-renew route at index.js', error)
+    res.status(500).json({
+      type: "error",
+      status: 500,
+      message: "Server error at /token-review !"
+    })
+  }
+})
 
 module.exports = router;

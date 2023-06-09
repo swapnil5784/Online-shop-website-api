@@ -24,9 +24,7 @@ db.once('open', () => {
 
 var indexRouter = require('./routes/index');
 var productsRouter = require('./routes/products');
-var cartRouter = require('./routes/cart')
 var usersRouter = require('./routes/users');
-var favoriteProductsRouter = require('./routes/favoriteProducts')
 var addressBookRouter = require('./routes/addressBook')
 var orderRouter = require('./routes/orders')
 // 1. passport authentication
@@ -59,8 +57,6 @@ app.use('/', indexRouter);
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);
 app.use(authentication)
-// app.use('/cart', cartRouter)
-// app.use('/favorite', favoriteProductsRouter)
 app.use('/address', addressBookRouter)
 app.use('/orders', orderRouter)
 

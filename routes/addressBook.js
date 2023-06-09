@@ -19,6 +19,16 @@ router.get('/', async function (req, res, next) {
             city: 1,
             state: 1,
         })
+        if (!userAddressBook.length) {
+            return res.status(404).json({
+                type: "error",
+                status: 404,
+                message: 'No address found',
+                data: {
+                    addressBook: userAddressBook
+                },
+            })
+        }
         return res.json({
             type: "success",
             status: 200,
@@ -42,25 +52,19 @@ router.get('/', async function (req, res, next) {
 router.post('/add', async function (req, res, next) {
     try {
         let { title, country, name, mobileNo, pincode, addressLineOne, addressLineTwo, landmark, city, state } = req.body
-        await addressBookModel.updateOne(
+        await addressBookModel.create(
             {
                 userId: req.user._id,
                 title: title,
-            }, {
-            userId: req.user._id,
-            title: title,
-            name: name,
-            country: country,
-            mobileNo: mobileNo,
-            pincode: pincode,
-            addressLineOne: addressLineOne,
-            addressLineTwo: addressLineTwo,
-            landmark: landmark,
-            city: city,
-            state: state
-        },
-            {
-                upsert: true
+                name: name,
+                country: country,
+                mobileNo: mobileNo,
+                pincode: pincode,
+                addressLineOne: addressLineOne,
+                addressLineTwo: addressLineTwo,
+                landmark: landmark,
+                city: city,
+                state: state
             })
         return res.json({
             type: 'success',
@@ -81,10 +85,9 @@ router.post('/add', async function (req, res, next) {
 // for e.g /address/update/647ed9b9282beb26211b7d09
 router.put('/update/:addressId', async function (req, res, next) {
     try {
-        console.log("req.body = = > >", req.body, "req.params = = > >", req.params)
+        // console.log("req.body = = > >", req.body, "req.params = = > >", req.params)
 
         let addressFoundForUpdate = await addressBookModel.countDocuments({ _id: req.params.addressId })
-
         if (!addressFoundForUpdate) {
             return res.json({
                 type: "error",
@@ -112,7 +115,7 @@ router.put('/update/:addressId', async function (req, res, next) {
 // for e.g /address/remove/647ed9b9282beb26211b7d09
 router.delete('/remove/:addressId', async function (req, res, next) {
     try {
-        console.log("req.params.addressId = = > >", req.params.addressId);
+        // console.log("req.params.addressId = = > >", req.params.addressId);
         let addressFoundForUpdate = await addressBookModel.countDocuments({ _id: req.params.addressId })
 
         if (!addressFoundForUpdate) {

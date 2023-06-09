@@ -1,0 +1,62 @@
+2023-06-09 09:40:56 INFO  Route : DELETE = products/review In:routes/product.js  cartId => => 6482a63cdcff39d469295d9g 
+2023-06-09 09:45:13 ERROR Error in /cart route Cannot access 'cartId' before initialization
+{}
+ReferenceError: Cannot access 'cartId' before initialization
+    at /home/swapnils/Desktop/11.APIs with Angular teamates/Day-12-09-06-2023/updates/Online-shop-website-api/routes/products.js:204:97
+    at Layer.handle [as handle_request] (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-12-09-06-2023/updates/Online-shop-website-api/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-12-09-06-2023/updates/Online-shop-website-api/node_modules/express/lib/router/route.js:137:13)
+    at authentication (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-12-09-06-2023/updates/Online-shop-website-api/comman/middlewares.js:38:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+2023-06-09 09:45:39 INFO  Route : DELETE = products/review In:routes/product.js  cartId => => 6482a63cdcff39d469295d9g 
+2023-06-09 09:45:49 INFO  Route : DELETE = products/review In:routes/product.js  cartId => => 6482a63cdcff39d469295d9 
+2023-06-09 09:45:52 INFO  Route : DELETE = products/review In:routes/product.js  cartId => => 6482a63cdcff39d469295d9f 
+2023-06-09 09:48:37 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 09:49:25 INFO  Route : POST = products/review In:routes/product.js{"userId":"647d73b89a66f700667ab363","productId":"646f3bac5d3d7c99439ec903","review":"Nice product date:7/6/2023","rating":4} 
+2023-06-09 09:49:45 ERROR error in /products/remove-review routeCast to ObjectId failed for value "6482a84d9b1a4ec56debb49" (type string) at path "_id" for model "reviews"
+{"stringValue":"\"6482a84d9b1a4ec56debb49\"","valueType":"string","kind":"ObjectId","value":"6482a84d9b1a4ec56debb49","path":"_id","reason":{},"name":"CastError","message":"Cast to ObjectId failed for value \"6482a84d9b1a4ec56debb49\" (type string) at path \"_id\" for model \"reviews\""}
+CastError: Cast to ObjectId failed for value "6482a84d9b1a4ec56debb49" (type string) at path "_id" for model "reviews"
+    at ObjectId.cast (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-12-09-06-2023/updates/Online-shop-website-api/node_modules/mongoose/lib/schema/objectid.js:248:11)
+    at SchemaType.applySetters (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-12-09-06-2023/updates/Online-shop-website-api/node_modules/mongoose/lib/schematype.js:1204:12)
+    at SchemaType.castForQuery (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-12-09-06-2023/updates/Online-shop-website-api/node_modules/mongoose/lib/schematype.js:1616:15)
+    at cast (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-12-09-06-2023/updates/Online-shop-website-api/node_modules/mongoose/lib/cast.js:348:32)
+    at Query.cast (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-12-09-06-2023/updates/Online-shop-website-api/node_modules/mongoose/lib/query.js:4874:12)
+    at model.Query._countDocuments (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-12-09-06-2023/updates/Online-shop-website-api/node_modules/mongoose/lib/query.js:2626:10)
+    at model.Query.exec (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-12-09-06-2023/updates/Online-shop-website-api/node_modules/mongoose/lib/query.js:4404:28)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /home/swapnils/Desktop/11.APIs with Angular teamates/Day-12-09-06-2023/updates/Online-shop-website-api/routes/products.js:52:26 
+2023-06-09 11:47:38 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:47:43 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:48:06 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:51:59 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:52:34 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:52:45 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:52:52 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:52:58 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:53:40 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:54:15 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:54:36 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:54:43 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:55:00 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:55:24 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 11:56:03 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 12:00:13 INFO  Route : POST = products/review In:routes/product.js{"userId":"6479dbee8cd9bd12368084ab","productId":"646f3bac5d3d7c99439ec903","review":"Nice product date:7/6/2023","rating":4} 
+2023-06-09 12:00:19 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 12:30:13 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["green"]}} 
+2023-06-09 12:31:11 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["Red"]}} 
+2023-06-09 12:31:53 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["Red"]}} 
+2023-06-09 12:32:01 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["find"]}} 
+2023-06-09 12:33:44 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["find"]}} 
+2023-06-09 12:34:08 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["find"]}} 
+2023-06-09 12:34:44 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["find"]}} 
+2023-06-09 12:34:49 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["Red"]}} 
+2023-06-09 12:34:53 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["adf"]}} 
+2023-06-09 12:35:12 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["adf"]}} 
+2023-06-09 13:28:14 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 13:30:56 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 14:36:48 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-09 14:43:24 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["adf"]}} 
+2023-06-09 14:43:26 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["adf"]}} 
+2023-06-09 14:43:27 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["adf"]}} 
+2023-06-09 14:43:27 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["adf"]}} 
+2023-06-09 14:43:27 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["adf"]}} 
+2023-06-09 14:43:28 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"color":["adf"]}} 

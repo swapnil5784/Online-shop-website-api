@@ -1,12 +1,12 @@
 
 const authService = require('../../service/auth/auth.service')
-
+const md5 = require('md5')
 const registerUser = async (req, res) => {
   try {
-    console.log(req.body)
     const { name, email, country, password, mobile, timezone, language } = req.body
 
     // if any field missing in body
+    console.log(req.body)
     if (!name || !email || !country || !password || !mobile || !timezone || !language) {
       return res.json({
         type: "error",
@@ -17,8 +17,7 @@ const registerUser = async (req, res) => {
 
     // if emailId or mobile already registered
     let userFound = await authService.findUserByIdorMobile(email, mobile)
-    console.log(userFound, "userFound....");
-
+    // console.log(userFound, "userFound....");
     if (userFound) {
       return res.json({
         type: "error",
@@ -46,7 +45,7 @@ const registerUser = async (req, res) => {
   }
   catch (error) {
     console.log("error post: /register --> index.js route", error);
-    return res.json({
+    return res.status(500).json({
       type: "error",
       status: 500,
       message: `User registration failed !`,
@@ -54,6 +53,7 @@ const registerUser = async (req, res) => {
   }
 }
 
+
 module.exports = {
-  registerUser
+  registerUser,
 }
