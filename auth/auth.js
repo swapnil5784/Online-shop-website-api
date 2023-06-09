@@ -7,15 +7,14 @@ const ExtractJWT = passportJWT.ExtractJwt;
 
 const LocalStrategy = require('passport-local').Strategy;
 const JWTStrategy = passportJWT.Strategy;
-
 passport.use(new LocalStrategy({
     usernameField: "email",
     passwordField: "password",
 },
     async function (email, password, cb) {
-        // console.log(`{email:${email},password:${password}}`)
+        // console.log(`{email:${email},password:${md5(password)}}`)
         //Assume there is a DB module pproviding a global UserModel
-        return usersModel.findOne({
+        return await usersModel.findOne({
             email: email, password: md5(password)
         }).then(user => {
             if (!user) {
@@ -25,6 +24,7 @@ passport.use(new LocalStrategy({
                     message: "Login failed , entered  details are not correct ! ",
                 });
             }
+            // console.log("user = = > >", user)
             return cb(null, user, {
                 message: 'Logged In Successfully'
             });

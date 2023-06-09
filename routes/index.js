@@ -22,20 +22,19 @@ router.post('/register', registerUser)
 router.post('/login', async function (req, res, next) {
   try {
     passport.authenticate('local', { session: false }, (err, user, info) => {
-      // console.log(err);
       if (err || !user) {
         return res.status(400).json({
           message: info ? info.message : 'Login failed , entered details are not correct ! ',
           user: user
         });
       }
-
       req.login(user, { session: false }, (err) => {
         if (err) {
           res.send(err);
         }
 
-        const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, { expiresIn: 60 * 60, }, process.env.JWT_SECRET_KEY);
+        const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
+        console.log("user = = > > 3000 :", user)
         return res.json({
           type: "success",
           status: 200,
@@ -214,9 +213,9 @@ router.get("/advertisements", async function (req, res, next) {
 
 router.post('/token-renew', authentication, async function (req, res, next) {
   try {
-    const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, { expiresIn: 60 * 60, }, process.env.JWT_SECRET_KEY);
+    const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
     res.status(200).json({
-      type: "sucess",
+      type: "success",
       status: 200,
       token: token,
       message: "Successfully rengenerated token ."

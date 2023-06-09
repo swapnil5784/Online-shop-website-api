@@ -194,7 +194,7 @@ router.get('/cart', authentication, async function (req, res, next) {
       }
     ])
     // console.log("products = =>>", products)
-    if (!products.length) {
+    if (!products?.length) {
       return res.status(404).json({
         type: "error",
         status: 404,
@@ -341,7 +341,7 @@ router.get('/favorite/:productId?', authentication, async function (req, res, ne
         }
       }
     ])
-    if (!products.length) {
+    if (!products?.length) {
       return res.status(404).json({
         type: "error",
         status: 404,
@@ -462,7 +462,7 @@ router.get("/filters", async function (req, res, next) {
         },
       },
     ]);
-    if (!colorsArray.length && !sizesArray.length && !priceRanges.length) {
+    if (!colorsArray?.length && !sizesArray?.length && !priceRanges?.length) {
       return res.status(404).json({
         type: "error",
         status: 404,
@@ -724,7 +724,7 @@ router.post("/:id?", async function (req, res, next) {
       products: await productModel.aggregate(condition)
     }
     let totalProducts = data.products?.length;
-    if (!data.products.length) {
+    if (!data?.products?.length) {
       return res.status(404).json({
         type: "error",
         status: 404,
@@ -773,7 +773,7 @@ router.post("/:id?", async function (req, res, next) {
 
         ])
       }
-      if (!data.products.length) {
+      if (!data?.products?.length) {
         return res.status(404).json({
           type: "error",
           status: 404,
