@@ -20,7 +20,7 @@ router.get('/', async function (req, res, next) {
             state: 1,
         })
         if (!userAddressBook.length) {
-            return res.status(404).json({
+            return res.json({
                 type: "error",
                 status: 404,
                 message: 'No address found',
@@ -40,7 +40,7 @@ router.get('/', async function (req, res, next) {
     }
     catch (error) {
         console.log('error in /address route', error)
-        return res.json({
+        return res.status(500).json({
             type: "error",
             status: 500,
             message: 'Error in server at /address route !'
@@ -52,20 +52,25 @@ router.get('/', async function (req, res, next) {
 router.post('/add', async function (req, res, next) {
     try {
         let { title, country, name, mobileNo, pincode, addressLineOne, addressLineTwo, landmark, city, state } = req.body
-        await addressBookModel.create(
-            {
-                userId: req.user._id,
-                title: title,
-                name: name,
-                country: country,
-                mobileNo: mobileNo,
-                pincode: pincode,
-                addressLineOne: addressLineOne,
-                addressLineTwo: addressLineTwo,
-                landmark: landmark,
-                city: city,
-                state: state
-            })
+        let addressDetails = {
+            userId: req.user._id,
+            title: title,
+            name: name,
+            country: country,
+            mobileNo: mobileNo,
+            pincode: pincode,
+            addressLineOne: addressLineOne,
+            addressLineTwo: addressLineTwo,
+            landmark: landmark,
+            city: city,
+            state: state
+        }
+        let userAddedAddress = await addressBookModel.countDocuments({ userId: req.user._id })
+        // console.log(" = = > > ", userAddedAddress)
+        if (!userAddedAddress) {
+            addressDetails.isDefault = true
+        }
+        await addressBookModel.create(addressDetails)
         return res.json({
             type: 'success',
             status: 200,

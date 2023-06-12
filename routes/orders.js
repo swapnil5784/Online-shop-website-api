@@ -20,7 +20,7 @@ router.post('/', async function (req, res, next) {
     try {
         let isCartEmpty = await cartModel.countDocuments({ userId: req.user._id })
         if (!isCartEmpty) {
-            return res.status(409).json({
+            return res.json({
                 type: "error",
                 status: 409,
                 message: "Cart is empty cant do order!"
@@ -37,7 +37,7 @@ router.post('/', async function (req, res, next) {
         }
         // console.log("orderObject = =  > >", orderObject);
         await orderModel.create(orderObject)
-        return res.status(200).json({
+        return res.json({
             type: "success",
             status: 200,
             message: 'Order successfully placed !'
@@ -45,7 +45,7 @@ router.post('/', async function (req, res, next) {
     }
     catch (error) {
         console.log("error at POST : /order", error)
-        return res.status(500).json({
+        return res.json({
             type: "error",
             status: 500,
             message: "Server error at POST : /order !"

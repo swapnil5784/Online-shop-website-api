@@ -1,0 +1,3 @@
+2023-06-12 09:42:14 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-12 09:43:12 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-12 09:43:22 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 

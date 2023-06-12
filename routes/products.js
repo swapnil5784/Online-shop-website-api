@@ -19,7 +19,7 @@ router.post('/review', authentication, async function (req, res, next) {
     let { productId, rating, review } = req.body
     let isProductExists = await productModel.countDocuments({ _id: productId })
     if (!isProductExists) {
-      return res.status(409).json({
+      return res.json({
         type: "error",
         status: 409,
         message: "No product found to add review !"
@@ -37,7 +37,7 @@ router.post('/review', authentication, async function (req, res, next) {
       review: review,
       rating: rating
     })
-    return res.status(200).json({
+    return res.json({
       type: "success",
       status: 200,
       message: "Review successfully added !"
@@ -46,7 +46,7 @@ router.post('/review', authentication, async function (req, res, next) {
   catch (error) {
     productLog.error("error at /product/add-review route !", error)
     console.log("error at /product/add-review route !", error)
-    return res.status(500).json({
+    return res.json({
       type: "error",
       status: 500,
       message: "Server error at /product/add-review route !"
@@ -59,7 +59,7 @@ router.delete('/review/remove/:reviewId', authentication, async function (req, r
   try {
     let { reviewId } = req.params
     if (!ObjectId.isValid(reviewId)) {
-      return res.status(409).json({
+      return res.json({
         type: "error",
         status: 409,
         message: "ReviewId is not valid !"
@@ -67,14 +67,14 @@ router.delete('/review/remove/:reviewId', authentication, async function (req, r
     }
     let reviewToDelete = await reviewModel.countDocuments({ _id: req.params.reviewId })
     if (!reviewToDelete) {
-      return res.status(404).json({
+      return res.json({
         type: "error",
         status: 404,
         message: "Review not found !"
       })
     }
     await reviewModel.deleteOne({ _id: req.params.reviewId })
-    return res.status(200).json({
+    return res.json({
       type: "success",
       status: 200,
       message: "Review successfully removed !"
@@ -83,7 +83,7 @@ router.delete('/review/remove/:reviewId', authentication, async function (req, r
   catch (error) {
     productLog.error("error in /products/remove-review route", error)
     console.log("error in /products/remove-review route", error)
-    return res.status(500).json({
+    return res.json({
       type: "error",
       status: 500,
       message: "Server error in /products/remove-review route API"
@@ -97,7 +97,7 @@ router.post('/cart', authentication, async function (req, res, next) {
     let { productId, quantity, isAddedFromShop } = req.body
     let isProductExists = await productModel.countDocuments({ _id: productId })
     if (!isProductExists) {
-      return res.status(404).json({
+      return res.json({
         type: "error",
         status: 404,
         message: "Product not found !"
@@ -131,7 +131,7 @@ router.post('/cart', authentication, async function (req, res, next) {
     )
 
     // console.log("updateCheck", updateCheck);
-    return res.status(200).json({
+    return res.json({
       type: "success",
       status: 200,
       message: `Product added to cart successfully`
@@ -140,7 +140,7 @@ router.post('/cart', authentication, async function (req, res, next) {
   catch (error) {
     productLog.error('Error in /products/cart route ', error)
     console.log('Error in /products/cart route ', error)
-    return res.status(500).json({
+    return res.json({
       type: "error",
       status: 500,
       message: 'Server error on /products/cart route'
@@ -195,7 +195,7 @@ router.get('/cart', authentication, async function (req, res, next) {
     ])
     // console.log("products = =>>", products)
     if (!products?.length) {
-      return res.status(404).json({
+      return res.json({
         type: "error",
         status: 404,
         message: "No products in cart!",
@@ -217,7 +217,7 @@ router.get('/cart', authentication, async function (req, res, next) {
   catch (error) {
     productLog.error('error in /products/cart route ', error)
     console.log('error in /products/cart route ', error)
-    return res.status(500).json({
+    return res.json({
       type: "error",
       status: 500,
       message: 'server error on /products/cart route'
@@ -231,14 +231,14 @@ router.delete('/cart/remove/:cartId', authentication, async function (req, res, 
     let { cartId } = req.params
     productLog.info("Route : DELETE = products/review In:routes/product.js  ", "cartId => => ", cartId);
     if (!cartId) {
-      return res.status(404).json({
+      return res.json({
         type: "error",
         status: 404,
         message: "CartId not found !"
       })
     }
     if (!ObjectId.isValid(cartId)) {
-      return res.status(409).json({
+      return res.json({
         type: "error",
         status: 409,
         message: "CartIs not valid !"
@@ -246,7 +246,7 @@ router.delete('/cart/remove/:cartId', authentication, async function (req, res, 
     }
     let cartFoundForDelete = await cartModel.countDocuments({ _id: cartId })
     if (!cartFoundForDelete) {
-      return res.status(409).json({
+      return res.json({
         type: "error",
         status: 409,
         message: "Cart not found !"
@@ -254,7 +254,7 @@ router.delete('/cart/remove/:cartId', authentication, async function (req, res, 
     }
     console.log("cartId", cartId);
     await cartModel.deleteOne({ _id: cartId })
-    return res.status(200).json({
+    return res.json({
       type: "success",
       status: 200,
       message: "Successfully removed from cart."
@@ -263,7 +263,7 @@ router.delete('/cart/remove/:cartId', authentication, async function (req, res, 
   catch (error) {
     productLog.error('Error in /cart route ', error)
     console.log('Error in /cart route ', error)
-    return res.status(500).json({
+    return res.json({
       type: "error",
       status: 500,
       message: 'Server error on /cart route'
@@ -278,7 +278,7 @@ router.get('/favorite/:productId?', authentication, async function (req, res, ne
     let { productId } = req.params
     if (productId) {
       if (!ObjectId.isValid(productId)) {
-        return res.status(409).json({
+        return res.json({
           type: "error",
           status: 409,
           message: "ObjectId is not valid !"
@@ -289,7 +289,7 @@ router.get('/favorite/:productId?', authentication, async function (req, res, ne
         userId: new ObjectId(req.user._id),
       })
       if (markedFavoriteAlready) {
-        return res.status(409).json({
+        return res.json({
           type: "eror",
           status: 409,
           message: "Product already in favorite !"
@@ -299,7 +299,7 @@ router.get('/favorite/:productId?', authentication, async function (req, res, ne
         productId: new ObjectId(productId),
         userId: new ObjectId(req.user._id),
       })
-      return res.status(200).json({
+      return res.json({
         type: "success",
         status: 200,
         message: "Product successfully added to favorite !"
@@ -342,7 +342,7 @@ router.get('/favorite/:productId?', authentication, async function (req, res, ne
       }
     ])
     if (!products?.length) {
-      return res.status(404).json({
+      return res.json({
         type: "error",
         status: 404,
         message: "No favorite products found",
@@ -351,7 +351,7 @@ router.get('/favorite/:productId?', authentication, async function (req, res, ne
         }
       })
     }
-    return res.status(200).json({
+    return res.json({
       type: "success",
       status: 200,
       data: {
@@ -361,7 +361,7 @@ router.get('/favorite/:productId?', authentication, async function (req, res, ne
   }
   catch (error) {
     console.log('Error in /favorite-products route ', error)
-    return res.status(500).json({
+    return res.json({
       type: "error",
       status: 500,
       message: 'Server error on /favorite-products route'
@@ -374,7 +374,7 @@ router.delete('/favorite/remove/:productId', authentication, async function (req
   try {
     let { productId } = req.params
     if (!ObjectId.isValid(productId)) {
-      return res.status(409).json({
+      return res.json({
         type: "error",
         status: 409,
         message: "ObjectId is not valid !"
@@ -382,14 +382,14 @@ router.delete('/favorite/remove/:productId', authentication, async function (req
     }
     let documentToDeleteFound = await favoriteProductModel.countDocuments({ productId: productId, userId: req.user._id })
     if (!documentToDeleteFound) {
-      return res.status(404).json({
+      return res.json({
         type: "error",
         status: 404,
         message: "Product not found !"
       })
     }
     await favoriteProductModel.deleteOne({ productId: productId, userId: req.user._id })
-    return res.status(200).json({
+    return res.json({
       type: "success",
       status: 200,
       message: "Product successfully removed from favorite !"
@@ -397,7 +397,7 @@ router.delete('/favorite/remove/:productId', authentication, async function (req
   }
   catch (error) {
     console.log('error at delete: products/favorite/<productId> ', error)
-    return res.status(500).json({
+    return res.json({
       type: "error",
       status: 500,
       message: "Server at delete: products/favorite/<productId> !"
@@ -463,7 +463,7 @@ router.get("/filters", async function (req, res, next) {
       },
     ]);
     if (!colorsArray?.length && !sizesArray?.length && !priceRanges?.length) {
-      return res.status(404).json({
+      return res.json({
         type: "error",
         status: 404,
         message: "No filters found !",
@@ -474,7 +474,7 @@ router.get("/filters", async function (req, res, next) {
         },
       })
     }
-    return res.status(200).json({
+    return res.json({
       type: "success",
       status: 200,
       message: `response from /products/filters to render filter details`,
@@ -487,7 +487,7 @@ router.get("/filters", async function (req, res, next) {
   } catch (error) {
     productLog.error("error at GET /products/filters route...", error)
     console.log("error at get /products/filters route...", error);
-    return res.status(500).json({
+    return res.json({
       type: "error",
       status: 500,
       message: `Server error at /products/filters API `,
@@ -517,7 +517,7 @@ router.post("/:id?", async function (req, res, next) {
     if (id) {
       // if id in parameter not in format as required
       if (!ObjectId.isValid(id)) {
-        return res.status(409).json({
+        return res.json({
           type: "error",
           status: 409,
           message: 'ObjectId is not valid !'
@@ -725,7 +725,7 @@ router.post("/:id?", async function (req, res, next) {
     }
     let totalProducts = data.products?.length;
     if (!data?.products?.length) {
-      return res.status(404).json({
+      return res.json({
         type: "error",
         status: 404,
         message: "No products found !",
@@ -773,8 +773,8 @@ router.post("/:id?", async function (req, res, next) {
 
         ])
       }
-      if (!data?.isCategoryList?.length) {
-        return res.status(404).json({
+      if (!data?.categories?.length) {
+        return res.json({
           type: "error",
           status: 404,
           message: "No category found !",
@@ -784,7 +784,7 @@ router.post("/:id?", async function (req, res, next) {
     }
 
 
-    return res.status(200).json({
+    return res.json({
       type: "success",
       status: 200,
       message: `product list`,
@@ -795,7 +795,7 @@ router.post("/:id?", async function (req, res, next) {
   } catch (error) {
     productLog.error("error at post /products route...", error)
     console.log("error at post /products route...", error);
-    return res.status(500).json({
+    return res.json({
       type: "error",
       status: 500,
       message: `Server error in /products/ API `,

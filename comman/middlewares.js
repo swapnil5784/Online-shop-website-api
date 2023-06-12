@@ -17,11 +17,17 @@ module.exports = {
                     message: "token required for authentication !"
                 })
             }
+            // console.log("token = = > >", token);
             let decoded = jwt.verify(token, process.env.JWT_SECRET_KEY, function (error, decoded) {
                 if (error) {
+                    // console.log("===>>")
                     console.log({
                         message: error.message,
-                        expiredAt: error.expiredAt
+                    })
+                    return res.status(409).json({
+                        type: "error",
+                        status: 409,
+                        message: error.message
                     })
                 }
                 return decoded

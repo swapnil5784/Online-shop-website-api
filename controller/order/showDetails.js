@@ -5,14 +5,14 @@ const showOrderDetails = async function (req, res, next) {
     try {
         let orderDetails = await orderService.getUserOrderDetails(req.user._id)
         if (!orderDetails.length) {
-            return res.status(404).json({
+            return res.json({
                 type: "error",
                 status: 404,
                 message: "No orderDetails found !",
                 data: orderDetails
             })
         }
-        return res.status(200).json({
+        return res.json({
             type: "success",
             status: 200,
             message: "User's order details.",
@@ -22,7 +22,7 @@ const showOrderDetails = async function (req, res, next) {
     }
     catch (error) {
         console.log("error at /order", error)
-        return res.status(500).json({
+        return res.json({
             type: "error",
             status: 500,
             message: "Server error at /orders !"

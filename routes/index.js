@@ -23,7 +23,7 @@ router.post('/login', async function (req, res, next) {
   try {
     passport.authenticate('local', { session: false }, (err, user, info) => {
       if (err || !user) {
-        return res.status(400).json({
+        return res.json({
           message: info ? info.message : 'Login failed , entered details are not correct ! ',
           user: user
         });
@@ -80,14 +80,14 @@ router.get("/vendors", async function (req, res, next) {
   try {
     let vendors = await vendorModel.find({});
     if (!vendors.length) {
-      return res.status(404).json({
+      return res.json({
         type: "error",
         status: 404,
         message: `No vendors found`,
         data: vendors,
       });
     }
-    return res.status(200).json({
+    return res.json({
       type: "success",
       status: 200,
       message: `All vendors from /vendors`,
@@ -95,7 +95,7 @@ router.get("/vendors", async function (req, res, next) {
     });
   } catch (error) {
     console.log("error at /products/vendors --> index.js route", error);
-    return res.status(200).json({
+    return res.json({
       type: "error",
       status: 500,
       message: `Server error at /vendors API `,
@@ -110,7 +110,7 @@ router.post("/subscribe", async function (req, res, next) {
     console.log("----------------------> req.body", req.body.userEmail);
     let isEmailExists = await newsModel.findOne({ userEmail: req.body.userEmail })
     if (isEmailExists) {
-      return res.status(200).json({
+      return res.json({
         type: "error",
         status: 200,
         message: "Email registred for updates!",
@@ -159,14 +159,14 @@ router.post("/subscribe", async function (req, res, next) {
         }
       });
     }
-    return res.status(200).json({
+    return res.json({
       type: "success",
       status: 200,
       message: "successfully registered !",
     });
   } catch (error) {
     console.log("error at post /subscribe route in index.js", error);
-    return res.status(500).json({
+    return res.json({
       type: "error",
       status: 500,
       message: "server error at post /subscribe route",
@@ -182,7 +182,7 @@ router.get("/advertisements", async function (req, res, next) {
 
     let offers = await offerModel.find({})
     if (!offers.length && !advertisements.length) {
-      return res.status(404).json({
+      return res.json({
         type: "error",
         status: 404,
         message: `No advertisements or offer found !`,
@@ -192,7 +192,7 @@ router.get("/advertisements", async function (req, res, next) {
         },
       });
     }
-    return res.status(200).json({
+    return res.json({
       type: "success",
       status: 200,
       message: `For /advertisements route`,
@@ -214,7 +214,7 @@ router.get("/advertisements", async function (req, res, next) {
 router.post('/generate-token', authentication, async function (req, res, next) {
   try {
     const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
-    res.status(200).json({
+    res.json({
       type: "success",
       status: 200,
       token: token,
@@ -223,7 +223,7 @@ router.post('/generate-token', authentication, async function (req, res, next) {
   }
   catch (error) {
     console.log('error in /token-renew route at index.js', error)
-    res.status(500).json({
+    res.json({
       type: "error",
       status: 500,
       message: "Server error at /token-review !"

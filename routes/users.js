@@ -2,10 +2,10 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.json({
-    name:"swapnil",
-    age:21
+    name: "swapnil",
+    age: 21
   });
 });
 
