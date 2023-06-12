@@ -14,7 +14,7 @@ const { authentication } = require('../comman/middlewares')
 // 1.import node mailer
 var nodemailer = require("nodemailer");
 const { registerUser } = require("../controller/auth/register.controller");
-
+const { forgotPassword, resetPassword } = require('../controller/auth/forgotPwd.controller')
 //for e.g POST : /register
 router.post('/register', registerUser)
 
@@ -103,7 +103,7 @@ router.get("/vendors", async function (req, res, next) {
   }
 });
 
-// post route to register user and send mail about registration
+// post route to subsribe user and send mail about newsletter
 router.post("/subscribe", async function (req, res, next) {
   try {
 
@@ -130,6 +130,7 @@ router.post("/subscribe", async function (req, res, next) {
         pass: "lxoldjnefineriei",
       },
     });
+
     let emailToValidate = req.body.userEmail
 
     // check email in reality exists or not 
@@ -211,6 +212,7 @@ router.get("/advertisements", async function (req, res, next) {
   }
 });
 
+// regenerate token on post request
 router.post('/generate-token', authentication, async function (req, res, next) {
   try {
     const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
@@ -230,5 +232,11 @@ router.post('/generate-token', authentication, async function (req, res, next) {
     })
   }
 })
+
+// forgot-password
+router.post('/forgot', forgotPassword)
+
+// reset password
+router.post('/reset', resetPassword)
 
 module.exports = router;

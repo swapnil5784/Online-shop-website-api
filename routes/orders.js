@@ -26,14 +26,17 @@ router.post('/', async function (req, res, next) {
                 message: "Cart is empty cant do order!"
             })
         }
-        let { billingId, deliveryId, totalAmount, shippingAmount, paymentMethod } = req.body
+        let { shipToDifferentAddress, billingId, deliveryId, totalAmount, shippingAmount, paymentMethod } = req.body
         let orderObject = {
             billingId: new ObjectId(billingId),
-            deliveryId: new ObjectId(deliveryId),
+            deliveryId: new ObjectId(billingId),
             userId: new ObjectId(req.user._id),
             totalAmount: totalAmount,
             shippingAmount: shippingAmount,
             paymentMethod: paymentMethod
+        }
+        if (shipToDifferentAddress) {
+            orderObject.deliveryId = new ObjectId(deliveryId)
         }
         // console.log("orderObject = =  > >", orderObject);
         await orderModel.create(orderObject)

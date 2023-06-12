@@ -95,6 +95,7 @@ router.delete('/review/remove/:reviewId', authentication, async function (req, r
 router.post('/cart', authentication, async function (req, res, next) {
   try {
     let { productId, quantity, isAddedFromShop } = req.body
+    console.log("productId = = > >", productId)
     let isProductExists = await productModel.countDocuments({ _id: productId })
     if (!isProductExists) {
       return res.json({

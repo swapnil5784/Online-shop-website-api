@@ -1,9 +1,29 @@
 
 const authService = require('../../service/auth/auth.service')
+var emailValidator = require("deep-email-validator")
+
 const md5 = require('md5')
 const registerUser = async (req, res) => {
   try {
+
+
+    // check email in reality exists or not 
+    let isEmailValid = async function (email) {
+      return emailValidator.validate(email)
+    }
+
     const { name, email, country, password, mobile, timezone, language } = req.body
+
+    const { valid } = await isEmailValid(email)
+    // valid ==> true or false
+    console.log("Email in reality exists or not ====> ", valid);
+    if (!valid) {
+      return res.json({
+        type: "error",
+        status: 409,
+        message: `Enter email that exixts in real !`,
+      })
+    }
 
     // if any field missing in body
     console.log(req.body)
@@ -56,4 +76,5 @@ const registerUser = async (req, res) => {
 
 module.exports = {
   registerUser,
+
 }
