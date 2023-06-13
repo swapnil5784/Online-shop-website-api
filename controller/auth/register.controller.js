@@ -1,30 +1,13 @@
 
 const authService = require('../../service/auth/auth.service')
 var emailValidator = require("deep-email-validator")
+const emailChecker = require('email-existence')
 
 const md5 = require('md5')
-const registerUser = async (req, res) => {
+const registerUser = async function (req, res) {
   try {
 
-
-    // check email in reality exists or not 
-    let isEmailValid = async function (email) {
-      return emailValidator.validate(email)
-    }
-
     const { name, email, country, password, mobile, timezone, language } = req.body
-
-    const { valid } = await isEmailValid(email)
-    // valid ==> true or false
-    console.log("Email in reality exists or not ====> ", valid);
-    if (!valid) {
-      return res.json({
-        type: "error",
-        status: 409,
-        message: `Enter email that exixts in real !`,
-      })
-    }
-
     // if any field missing in body
     console.log(req.body)
     if (!name || !email || !country || !password || !mobile || !timezone || !language) {
@@ -32,6 +15,32 @@ const registerUser = async (req, res) => {
         type: "error",
         status: 409,
         message: `Not complete details ! User registration failed !`,
+      })
+    }
+    //--------------------------email exists or not
+    // check email in reality exists or not 
+    // let valid = true;
+    let isEmailValid = async function (email) {
+      return emailValidator.validate(email)
+    }
+
+    const { valid } = await isEmailValid(email)
+    // valid ==> true or false
+    console.log("Email in reality exists or not ====> ", valid);
+    // console.log('------------------> >')
+    // await emailChecker.check(email, function (error, response) {
+    //   valid = response
+    //   console.log("email exists : ", response)
+    //   console.log("after", valid)
+    //   return valid
+    // });
+    //------------------------------------------
+    console.log('valid = = > >', valid)
+    if (!valid) {
+      return res.json({
+        type: "error",
+        status: 409,
+        message: `Enter email that exists in real !`,
       })
     }
 

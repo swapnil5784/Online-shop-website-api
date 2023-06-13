@@ -106,6 +106,15 @@ const resetPassword = async (req, res) => {
         console.log("email = = > >", email, "resetOtp = = > >", resetOtp, " newPassword = = > >", newPassword, md5(newPassword))
         let userDetails = await forgetService.findUser(email)
 
+        // if any required field not found in body
+        if (!email || !resetOtp || !newPassword) {
+            return res.json({
+                type: 'error',
+                status: 409,
+                message: "Incomplete details !"
+            })
+        }
+
         // time exceeds the otp-expiration time
         if (!(userDetails.otpExpiredAt > moment().utc('Asia/Kolkata').format('DD-MM-YYYY hh:mm:ss'))) {
             return res.json({
@@ -115,14 +124,7 @@ const resetPassword = async (req, res) => {
 
             })
         }
-        // if any required field not found in body
-        if (!email || !resetOtp || !newPassword) {
-            return res.json({
-                type: 'error',
-                status: 409,
-                message: "Incomplete details !"
-            })
-        }
+
         // check otp is same as generated
         if (!(userDetails.resetOtp === resetOtp)) {
             return res.json({

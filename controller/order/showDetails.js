@@ -16,7 +16,9 @@ const showOrderDetails = async function (req, res, next) {
             type: "success",
             status: 200,
             message: "User's order details.",
-            data: orderDetails
+            data: {
+                orders: orderDetails
+            }
 
         })
     }

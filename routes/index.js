@@ -15,6 +15,8 @@ const { authentication } = require('../comman/middlewares')
 var nodemailer = require("nodemailer");
 const { registerUser } = require("../controller/auth/register.controller");
 const { forgotPassword, resetPassword } = require('../controller/auth/forgotPwd.controller')
+
+
 //for e.g POST : /register
 router.post('/register', registerUser)
 

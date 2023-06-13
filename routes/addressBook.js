@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 const addressBookModel = require('../models/addressBook')
+const mongoose = require('mongoose')
+const ObjectId = mongoose.Types.ObjectId;
+
 // for e.g /address
 router.get('/', async function (req, res, next) {
     try {
@@ -70,11 +73,13 @@ router.post('/add', async function (req, res, next) {
         if (!userAddedAddress) {
             addressDetails.isDefault = true
         }
-        await addressBookModel.create(addressDetails)
+        let addedAddress = await addressBookModel.create(addressDetails)
+        // console.log("addedAddress = = > >",addedAddress)
         return res.json({
             type: 'success',
             status: 200,
-            message: 'Address added successfully !'
+            message: 'Address added successfully !',
+            addedAddressId: addedAddress._id
         })
     }
     catch (error) {
@@ -91,12 +96,18 @@ router.post('/add', async function (req, res, next) {
 router.put('/update/:addressId', async function (req, res, next) {
     try {
         // console.log("req.body = = > >", req.body, "req.params = = > >", req.params)
-
+        if (!ObjectId.isValid(req.params.addressId)) {
+            return res.json({
+                type: "error",
+                status: 409,
+                message: `AddressId not valid !`
+            })
+        }
         let addressFoundForUpdate = await addressBookModel.countDocuments({ _id: req.params.addressId })
         if (!addressFoundForUpdate) {
             return res.json({
                 type: "error",
-                status: 409,
+                status: 404,
                 message: `Address not found !`
             })
         }
