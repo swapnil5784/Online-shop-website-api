@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
-const message = {
+const options = {
     timestamps: {
         createdAt: "createdOn",
         updatedAt: "updatedOn"
@@ -32,5 +32,5 @@ const message = new mongoose.Schema({
 }, options)
 
 // model export
-const messages = mongoose.model('messages', message);
-module.exports = messages;
+const contactUs = mongoose.model('messages', message);
+module.exports = contactUs;

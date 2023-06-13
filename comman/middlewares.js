@@ -8,6 +8,7 @@ module.exports = {
 
     authentication: async function (req, res, next) {
         try {
+            // console.log("=----------------")
             let { token } = req.headers
             // if token is not in request headers
             if (!token) {

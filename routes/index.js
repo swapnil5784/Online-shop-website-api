@@ -11,7 +11,7 @@ var md5 = require('md5')
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const { authentication } = require('../comman/middlewares')
-const {contactUsController} = require('../controller/contactUs/contactUs.controller.js')
+const { contactUsController } = require('../controller/contactUs/contactUs.controller.js')
 // 1.import node mailer
 var nodemailer = require("nodemailer");
 const { registerUser } = require("../controller/auth/register.controller");
@@ -37,7 +37,7 @@ router.post('/login', async function (req, res, next) {
         }
 
         const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
-        console.log("user = = > > 3000 :", user)
+        // console.log("user = = > > 3000 :", user)
         return res.json({
           type: "success",
           status: 200,
@@ -243,6 +243,6 @@ router.post('/forgot', forgotPassword)
 router.post('/reset', resetPassword)
 
 // contact-us
-router.post('/contact-us',contactUsController)
+router.post('/contact-us',authentication,contactUsController)
 
 module.exports = router;
