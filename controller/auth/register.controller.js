@@ -4,7 +4,7 @@ var emailValidator = require("deep-email-validator")
 const emailChecker = require('email-existence')
 
 const md5 = require('md5')
-const registerUser = async function (req, res) {
+const registerUser = async function (req, res) {  
   try {
 
     const { name, email, country, password, mobile, timezone, language } = req.body

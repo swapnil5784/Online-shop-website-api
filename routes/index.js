@@ -11,6 +11,7 @@ var md5 = require('md5')
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const { authentication } = require('../comman/middlewares')
+const {contactUsController} = require('../controller/contactUs/contactUs.controller.js')
 // 1.import node mailer
 var nodemailer = require("nodemailer");
 const { registerUser } = require("../controller/auth/register.controller");
@@ -240,5 +241,8 @@ router.post('/forgot', forgotPassword)
 
 // reset password
 router.post('/reset', resetPassword)
+
+// contact-us
+router.post('/contact-us',contactUsController)
 
 module.exports = router;

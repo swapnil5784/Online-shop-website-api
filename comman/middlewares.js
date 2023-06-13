@@ -27,7 +27,7 @@ module.exports = {
                 }
                 return decoded
             })
-            console.log("decoded = = > >", decoded);
+            // console.log("decoded = = > >", decoded);
             // console.log("req.headers----req.headers==>", req.headers.token)
             // console.log("decoded", decoded)
             req.user = await userModel.findById(decoded._id)
