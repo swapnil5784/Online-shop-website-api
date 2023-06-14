@@ -1,14 +1,18 @@
+// packages
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
 
-// import models
+// models
 const cartModel = require('../../models/carts.js')
 const orderModel = require('../../models/orders.js')
 
-module.exports ={
-    placeOrder:async function (req, res, next) {
+module.exports = {
+    // function to place order
+    placeOrder: async function (req, res, next) {
         try {
+            // query to get number of products in cart
             let isCartEmpty = await cartModel.countDocuments({ userId: req.user._id })
+            // if cart is empty
             if (!isCartEmpty) {
                 return res.json({
                     type: "error",
@@ -25,10 +29,11 @@ module.exports ={
                 shippingAmount: shippingAmount,
                 paymentMethod: paymentMethod
             }
+            // if shipping and delivery addresses are different 
             if (shipToDifferentAddress) {
                 orderObject.deliveryId = new ObjectId(deliveryId)
             }
-            // console.log("orderObject = =  > >", orderObject);
+            // query to store order details into db
             await orderModel.create(orderObject)
             return res.json({
                 type: "success",
@@ -37,6 +42,7 @@ module.exports ={
             })
         }
         catch (error) {
+            // if error in place order process
             console.log("error at POST : /order", error)
             return res.json({
                 type: "error",

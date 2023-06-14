@@ -1,9 +1,13 @@
 
+//services
 const orderService = require('../../service/order')
 
+// To show order details  logged user made
 const showOrderDetails = async function (req, res, next) {
     try {
+        // query to get orderdetails of all orders of logged in user
         let orderDetails = await orderService.getUserOrderDetails(req.user._id)
+        // if logged-in user has no order
         if (!orderDetails.length) {
             return res.json({
                 type: "error",
@@ -23,6 +27,7 @@ const showOrderDetails = async function (req, res, next) {
         })
     }
     catch (error) {
+        // if error in sending order details
         console.log("error at /order", error)
         return res.json({
             type: "error",
@@ -32,6 +37,7 @@ const showOrderDetails = async function (req, res, next) {
     }
 }
 
+// export function
 module.exports = {
     showOrderDetails
 }

@@ -1,13 +1,18 @@
-
-const userModel = require('../../models/users')
-const forgetService = require('../../service/auth/forgot.service')
-const otpGenerator = require('otp-generator')
+// packages
 const handlebars = require('hbs')
 const moment = require('moment')
 const md5 = require('md5')
 const fs = require('fs')
 // 1. import node mailer
 var nodemailer = require("nodemailer");
+
+// models
+const userModel = require('../../models/users')
+
+// services
+const forgetService = require('../../service/auth/forgot.service')
+const otpGenerator = require('otp-generator')
+
 // 2. node transporter
 var transporter = nodemailer.createTransport({
     service: "gmail",
@@ -20,12 +25,13 @@ var transporter = nodemailer.createTransport({
     },
 });
 
+// To send 6 character OTP to email received in body if email exist in db
 const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body
         console.log("email = = > >", email)
-        console.log(await forgetService.userWithEmailExists(email))
-
+        console.log("userWithEmailExists = = > >", await forgetService.userWithEmailExists(email))
+        // if user with email in body not found
         if (!await forgetService.userWithEmailExists(email)) {
             return res.json({
                 type: "error",
@@ -33,32 +39,24 @@ const forgotPassword = async (req, res) => {
                 message: "User not found"
             })
         }
+
         // generate random 6 character string as resetOtp
         let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false })
         // set time 5 minutes ahead of now
         let otpExpireAt = moment().add(5, 'minutes').utc('Asia/Kolkata').format('DD-MM-YYYY hh:mm:ss')
         // setting resetOtp and expiration time in userModel
         await forgetService.addResetOtpAndExpirytimeFieldToUser(email, otp, otpExpireAt)
-
-        // for html variable replacements-----------------
-
-        // fs.readFile('htmlTemplate/mail.html', async function (err, html) {
-        //     if (err) {
-        //         console.log('error reading file', err);
-        //         return;
-        //     }
-
+        // read html file in utf-8 encoding
         let readFile = fs.readFileSync('htmlTemplate/mail.hbs', { encoding: 'utf-8' })
+        // compile as template
         var template = handlebars.compile(readFile);
-        // console.log("template = = >", template)
+        // replace Object for variable replacement in email sending
         var replacements = {
             resetOtp: otp,
             email: email,
             otpExpireAt: otpExpireAt
-
         };
         var htmlToSend = template(replacements);
-
 
         // 3. mailoptions
         var mailOptions = {
@@ -76,10 +74,6 @@ const forgotPassword = async (req, res) => {
                 console.log("Reset OTP send to : " + email);
             }
         });
-
-
-        // })
-        //-------------------------------------------------------
         return res.json({
             type: 'success',
             // data: {
@@ -91,6 +85,7 @@ const forgotPassword = async (req, res) => {
         })
     }
     catch (error) {
+        // if error while sending otp to email
         console.log("error at post: /forgot", error)
         return res.json({
             type: 'error',
@@ -100,6 +95,7 @@ const forgotPassword = async (req, res) => {
     }
 }
 
+//To update password by verifying otp sent and its expiry time
 const resetPassword = async (req, res) => {
     try {
         const { email, resetOtp, newPassword } = req.body
@@ -135,8 +131,9 @@ const resetPassword = async (req, res) => {
         }
         console.log(`(${userDetails.otpExpiredAt} > ${moment().utc('Asia/Kolkata').format('DD-MM-YYYY hh:mm:ss')})`, (userDetails.otpExpiredAt > moment().utc('Asia/Kolkata').format('DD-MM-YYYY hh:mm:ss')))
 
-
+        // query to update password in db 
         let resetPassword = await forgetService.updatePassword(email, resetOtp, newPassword)
+        console.log("resetPassword = = > >", resetPassword);
         return res.json({
             type: 'success',
             status: 300,
@@ -144,6 +141,7 @@ const resetPassword = async (req, res) => {
         })
     }
     catch (error) {
+        // if error in pass reset process
         console.log("error at post: /forgot", error)
         return res.json({
             type: 'error',

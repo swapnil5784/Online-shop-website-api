@@ -1,160 +1,26 @@
+//packages
 var express = require('express');
 var router = express.Router();
-const addressBookModel = require('../models/addressBook')
-const mongoose = require('mongoose')
-const ObjectId = mongoose.Types.ObjectId;
 
-// for e.g /address
-router.get('/', async function (req, res, next) {
-    try {
-        let userAddressBook = await addressBookModel.find({ userId: req.user._id }, {
-            _id: 0,
-            addressId: "$_id",
-            userId: 1,
-            title: 1,
-            country: 1,
-            name: 1,
-            mobileNo: 1,
-            pincode: 1,
-            addressLineOne: 1,
-            addressLineTwo: 1,
-            landmark: 1,
-            city: 1,
-            state: 1,
-        })
-        if (!userAddressBook.length) {
-            return res.json({
-                type: "error",
-                status: 404,
-                message: 'No address found',
-                data: {
-                    addressBook: userAddressBook
-                },
-            })
-        }
-        return res.json({
-            type: "success",
-            status: 200,
-            data: {
-                addressBook: userAddressBook
-            },
-            message: 'Response from /address API.'
-        })
-    }
-    catch (error) {
-        console.log('error in /address route', error)
-        return res.status(500).json({
-            type: "error",
-            status: 500,
-            message: 'Error in server at /address route !'
-        })
-    }
-});
+// controllers
+const {
+    addAddress,
+    removeAddress,
+    showAddressList,
+    updateAddress
+} = require('../controller/address/address.controller')
 
-// for e.g /address/add
-router.post('/add', async function (req, res, next) {
-    try {
-        let { title, country, name, mobileNo, pincode, addressLineOne, addressLineTwo, landmark, city, state } = req.body
-        let addressDetails = {
-            userId: req.user._id,
-            title: title,
-            name: name,
-            country: country,
-            mobileNo: mobileNo,
-            pincode: pincode,
-            addressLineOne: addressLineOne,
-            addressLineTwo: addressLineTwo,
-            landmark: landmark,
-            city: city,
-            state: state
-        }
-        let userAddedAddress = await addressBookModel.countDocuments({ userId: req.user._id })
-        // console.log(" = = > > ", userAddedAddress)
-        if (!userAddedAddress) {
-            addressDetails.isDefault = true
-        }
-        let addedAddress = await addressBookModel.create(addressDetails)
-        // console.log("addedAddress = = > >",addedAddress)
-        return res.json({
-            type: 'success',
-            status: 200,
-            message: 'Address added successfully !',
-            addedAddressId: addedAddress._id
-        })
-    }
-    catch (error) {
-        console.log('error in /address route', error)
-        return res.json({
-            type: "error",
-            status: 500,
-            message: 'Error in server at /address route !'
-        })
-    }
-});
+// For send address list in response
+router.get('/', showAddressList);
 
-// for e.g /address/update/647ed9b9282beb26211b7d09
-router.put('/update/:addressId', async function (req, res, next) {
-    try {
-        // console.log("req.body = = > >", req.body, "req.params = = > >", req.params)
-        if (!ObjectId.isValid(req.params.addressId)) {
-            return res.json({
-                type: "error",
-                status: 409,
-                message: `AddressId not valid !`
-            })
-        }
-        let addressFoundForUpdate = await addressBookModel.countDocuments({ _id: req.params.addressId })
-        if (!addressFoundForUpdate) {
-            return res.json({
-                type: "error",
-                status: 404,
-                message: `Address not found !`
-            })
-        }
-        await addressBookModel.updateOne({ _id: req.params.addressId }, { $set: req.body })
-        return res.json({
-            type: "success",
-            status: 200,
-            message: `Address updated Successfully !`
-        })
-    }
-    catch (error) {
-        console.log(`error at Patch: /address/update/${req.params.addressId}`, error);
-        return res.json({
-            type: "error",
-            status: 500,
-            message: `Error at Patch: /address/update/${req.params.addressId}`
-        })
-    }
-})
+// For get address details in body and store to db
+router.post('/add', addAddress);
 
-// for e.g /address/remove/647ed9b9282beb26211b7d09
-router.delete('/remove/:addressId', async function (req, res, next) {
-    try {
-        // console.log("req.params.addressId = = > >", req.params.addressId);
-        let addressFoundForUpdate = await addressBookModel.countDocuments({ _id: req.params.addressId })
+// For get address details to update and update into db
+router.put('/update/:addressId', updateAddress)
 
-        if (!addressFoundForUpdate) {
-            return res.json({
-                type: "error",
-                status: 409,
-                message: `Address not found !`
-            })
-        }
-        await addressBookModel.deleteOne({ _id: req.params.addressId })
-        return res.json({
-            type: "success",
-            status: 200,
-            message: "Address successfully deleted !"
-        })
-    }
-    catch (error) {
-        console.log(`error at /address/remove/${req.params.addressId}`, error);
-        return res.json({
-            type: "error",
-            status: 500,
-            message: `Server error due to error at /address/remove/${req.params.addressId} `
-        })
-    }
-})
+// For delete address details
+router.delete('/remove/:addressId', removeAddress)
+
+//export
 module.exports = router;

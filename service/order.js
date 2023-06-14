@@ -1,5 +1,9 @@
+// import models
 const orderDetailModel = require('../models/orderDetails')
 const orderModel = require('../models/orders')
+
+
+
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
 const getUserOrderDetails = async function (userId) {
@@ -107,7 +111,8 @@ const getUserOrderDetails = async function (userId) {
                                     deliveryId: 1,
                                     totalAmount: 1,
                                     shippingAmount: 1,
-                                    paymentMethos: 1,
+                                    paymentMethod: 1,
+
                                 }
                             }
                         ],
@@ -195,11 +200,19 @@ const getUserOrderDetails = async function (userId) {
                         shippingAmount: "$orderDetails.shippingAmount",
                         products: 1,
                         user: 1,
+                        // billingAddress: 1,
                         billingAddress: { $arrayElemAt: ["$billingAddress", 0] },
                         deliveryAddress: { $arrayElemAt: ["$deliveryAddress", 0] },
                         createdOn: 1,
-                    }
+                        orderDetails: 1,
+                        paymentMethod: "$orderDetails.paymentMethod",
 
+                    }
+                },
+                {
+                    $sort: {
+                        createdOn: -1
+                    }
                 }
 
             ])

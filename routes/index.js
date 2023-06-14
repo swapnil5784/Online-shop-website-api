@@ -1,248 +1,48 @@
+// packages
 var express = require("express");
 var router = express.Router();
-var vendorModel = require("../models/vendors");
-var newsModel = require("../models/newsletter");
-var advertisementModel = require('../models/advertisements')
-var offerModel = require('../models/offers')
-var usermodel = require('../models/users')
-var emailValidator = require("deep-email-validator")
-var md5 = require('md5')
 
-const jwt = require('jsonwebtoken');
-const passport = require('passport');
+// middlewares
 const { authentication } = require('../comman/middlewares')
+
+//controllers
 const { contactUsController } = require('../controller/contactUs/contactUs.controller.js')
-// 1.import node mailer
-var nodemailer = require("nodemailer");
 const { registerUser } = require("../controller/auth/register.controller");
 const { forgotPassword, resetPassword } = require('../controller/auth/forgotPwd.controller')
+const { userLogin } = require('../controller/auth/login.controller')
+const { userLogout } = require('../controller/auth/logout.controller')
+const { carouselsList, vendorList } = require('../controller/advertisementAndVendors/advertisements.controller')
+const { subscribeToNewsletter } = require('../controller/newsletter/subscribe.controller')
+const { regerateToken } = require('../controller/token/regenerate.controller')
 
-
-//for e.g POST : /register
+// For get user details and store to db 
 router.post('/register', registerUser)
 
-// for e.g POST : /login
-router.post('/login', async function (req, res, next) {
-  try {
-    passport.authenticate('local', { session: false }, (err, user, info) => {
-      if (err || !user) {
-        return res.json({
-          message: info ? info.message : 'Login failed , entered details are not correct ! ',
-          user: user
-        });
-      }
-      req.login(user, { session: false }, (err) => {
-        if (err) {
-          res.send(err);
-        }
+// For get user details , sign to JWT token and login
+router.post('/login', userLogin)
 
-        const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
-        // console.log("user = = > > 3000 :", user)
-        return res.json({
-          type: "success",
-          status: 200,
-          message: "successfully login",
-          token: token
-        });
-      });
-    })
-      (req, res);
-  }
-  catch (error) {
-    console.log("error post: /login --> index.js route", error);
-    return res.json({
-      type: "error",
-      status: 500,
-      message: `User registration failed !`,
-    })
-  }
-})
+// For user to logout
+router.get('/logout', userLogout)
 
-// for e.g GET : /logout
-router.get('/logout', function (req, res, next) {
-  try {
-    req.logout();
-    return res.json({
-      type: "success",
-      status: 400,
-      message: 'Logged out successful !'
-    })
-  }
-  catch (error) {
-    console.log('error while logout', error)
-    return res.json({
-      type: 'error',
-      status: 500,
-      message: "Error while logout !"
-    })
-  }
-})
+// For send vendor details
+router.get("/vendors", vendorList);
 
-// for e.g /vendors
-router.get("/vendors", async function (req, res, next) {
-  try {
-    let vendors = await vendorModel.find({});
-    if (!vendors.length) {
-      return res.json({
-        type: "error",
-        status: 404,
-        message: `No vendors found`,
-        data: vendors,
-      });
-    }
-    return res.json({
-      type: "success",
-      status: 200,
-      message: `All vendors from /vendors`,
-      data: vendors,
-    });
-  } catch (error) {
-    console.log("error at /products/vendors --> index.js route", error);
-    return res.json({
-      type: "error",
-      status: 500,
-      message: `Server error at /vendors API `,
-    });
-  }
-});
+// For get email and save to db for update notification
+router.post("/subscribe", subscribeToNewsletter);
 
-// post route to subsribe user and send mail about newsletter
-router.post("/subscribe", async function (req, res, next) {
-  try {
+// For send advertisement details
+router.get("/advertisements", carouselsList);
 
-    console.log("----------------------> req.body", req.body.userEmail);
-    let isEmailExists = await newsModel.findOne({ userEmail: req.body.userEmail })
-    if (isEmailExists) {
-      return res.json({
-        type: "error",
-        status: 200,
-        message: "Email registred for updates!",
-      });
-    }
+// For regenerate token on post request
+router.post('/generate-token', authentication, regerateToken)
 
-    await newsModel.create(req.body)
-
-    // 2.define transporter
-    var transporter = nodemailer.createTransport({
-      service: "gmail",
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: true,
-      auth: {
-        user: "swapnil.mycircle@gmail.com",
-        pass: "lxoldjnefineriei",
-      },
-    });
-
-    let emailToValidate = req.body.userEmail
-
-    // check email in reality exists or not 
-    async function isEmailValid(email) {
-      return emailValidator.validate(email)
-    }
-
-    const { valid } = await isEmailValid(emailToValidate)
-    // valid ==> true or false
-    console.log("Email in reality exists or not ====> ", valid);
-
-    // 3. mail option
-    var mailOptions = {
-      from: "swapnil.mycircle@gmail.com",
-      to: req.body.userEmail,
-      subject: "Newsletter Email",
-      text: "Congradulations ! You have successfully registered on Multi-Shop Online E-store ( angular-node joint venture)",
-    };
-
-    // 4. send email with mail options
-    if (valid) {
-      await transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log("Email sent: " + req.body.userEmail);
-        }
-      });
-    }
-    return res.json({
-      type: "success",
-      status: 200,
-      message: "successfully registered !",
-    });
-  } catch (error) {
-    console.log("error at post /subscribe route in index.js", error);
-    return res.json({
-      type: "error",
-      status: 500,
-      message: "server error at post /subscribe route",
-    });
-  }
-});
-
-// for e.g /advertisements
-router.get("/advertisements", async function (req, res, next) {
-  try {
-
-    let advertisements = await advertisementModel.find({});
-
-    let offers = await offerModel.find({})
-    if (!offers.length && !advertisements.length) {
-      return res.json({
-        type: "error",
-        status: 404,
-        message: `No advertisements or offer found !`,
-        data: {
-          carousels: advertisements,
-          offers: offers,
-        },
-      });
-    }
-    return res.json({
-      type: "success",
-      status: 200,
-      message: `For /advertisements route`,
-      data: {
-        carousels: advertisements,
-        offers: offers,
-      },
-    });
-  } catch (error) {
-    console.log("error at /banner route", error);
-    return res.json({
-      type: "error",
-      status: 500,
-      message: `Server error at /banner API `,
-    });
-  }
-});
-
-// regenerate token on post request
-router.post('/generate-token', authentication, async function (req, res, next) {
-  try {
-    const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
-    res.json({
-      type: "success",
-      status: 200,
-      token: token,
-      message: "Successfully rengenerated token ."
-    })
-  }
-  catch (error) {
-    console.log('error in /token-renew route at index.js', error)
-    res.json({
-      type: "error",
-      status: 500,
-      message: "Server error at /token-review !"
-    })
-  }
-})
-
-// forgot-password
+// For get email to send otp on email
 router.post('/forgot', forgotPassword)
 
-// reset password
+// For get details for reset password , verify and update password into db
 router.post('/reset', resetPassword)
 
-// contact-us
-router.post('/contact-us',authentication,contactUsController)
+// For get user details & message and store to db
+router.post('/contact-us', contactUsController)
 
 module.exports = router;

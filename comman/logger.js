@@ -1,3 +1,4 @@
+//simple node logger usage as function and export
 const SimpleNodeLogger = require('simple-node-logger');
 const opts = {
     logDirectory: 'logs',

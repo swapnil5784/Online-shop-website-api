@@ -29,7 +29,7 @@ var addressBookRouter = require('./routes/addressBook')
 var orderRouter = require('./routes/orders')
 // 1. passport authentication
 const passport = require('passport');
-const { authentication, logIpOfRequest, addTwo } = require('./comman/middlewares');
+const { authentication, logIpOfRequest } = require('./comman/middlewares');
 // load passport local for login process
 require('./auth/auth');
 

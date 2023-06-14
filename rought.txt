@@ -503,3 +503,351 @@ Filter Object Be like below in POST request for product listing:
         "state" : "Gujarat"
     }
 }
+
+
+
+
+----------------------------------------------------------------------------------
+
+db.getCollection('orderdetails').aggregate([
+                {
+                    $match: {
+                        userId:ObjectId("64869f983d1a7e8aa20c78f8")
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$products'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'products',
+                        let: { "pId": "$products.productId" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: ["$_id", "$$pId"]
+                                    }
+                                }
+                            }
+                        ],
+                        as: 'products.product'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$products.product'
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$_id',
+                        products: {
+                            $push: '$products'
+                        },
+                        createdOn: { $addToSet: "$createdOn" },
+                        orderAmount: { $addToSet: "$orderAmount" },
+                        orderId: { $addToSet: "$orderId" },
+                        userId: { $addToSet: "$userId" }
+
+                    }
+                },
+                {
+                    $project: {
+                        products: 1,
+                        createdOn: { $arrayElemAt: ["$createdOn", 0] },
+                        orderAmount: { $arrayElemAt: ["$orderAmount", 0] },
+                        orderId: { $arrayElemAt: ["$orderId", 0] },
+                        userId: { $arrayElemAt: ["$userId", 0] }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        let: { "id": "$userId" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+
+                                        $eq: ["$_id", "$$id"]
+                                    }
+                                }
+                            },
+                            {
+                                $project: {
+                                    _id: 0,
+                                    name: 1,
+                                    email: 1,
+                                    country: 1,
+                                    mobile: 1,
+                                    profileImage: 1
+                                }
+                            }
+                        ],
+                        as: "user"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "orders",
+                        let: { "oid": "$orderId" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+
+                                        $eq: ["$_id", "$$oid"]
+                                    }
+                                }
+                            },
+                            {
+                                $project: {
+                                    _id: 0,
+                                    billingId: 1,
+                                    deliveryId: 1,
+                                    totalAmount: 1,
+                                    shippingAmount: 1,
+                                    paymentMethod: 1,
+
+                                }
+                            }
+                        ],
+                        as: "orderDetails"
+                    }
+                },
+                {
+                    $project: {
+                        products: 1,
+                        user:1,
+                        createdOn: 1,
+                        user: { $arrayElemAt: ["$user", 0] },
+                        orderDetails: 1,
+                        orderDetails: { $arrayElemAt: ["$orderDetails", 0] },
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "addressbooks",
+                        let: { "bid": "$orderDetails.billingId" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: ["$_id", "$$bid"]
+                                    }
+                                }
+                            },
+                            {
+                                $project: {
+                                    _id: 0,
+                                    title: 1,
+                                    country: 1,
+                                    name: 1,
+                                    mobileNo: 1,
+                                    pincode: 1,
+                                    addressLineOne: 1,
+                                    addressLineTwo: 1,
+                                    landmark: 1,
+                                    city: 1,
+                                    state: 1,
+                                }
+                            }
+
+                        ],
+                        as: "billingAddress"
+                    }
+                },
+
+                {
+                    $lookup: {
+                        from: "addressbooks",
+                        let: { "did": "$orderDetails.deliveryId" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: ["$_id", "$$did"]
+                                    }
+                                }
+                            },
+                            {
+                                $project: {
+                                    _id: 0,
+                                    title: 1,
+                                    country: 1,
+                                    name: 1,
+                                    mobileNo: 1,
+                                    pincode: 1,
+                                    addressLineOne: 1,
+                                    addressLineTwo: 1,
+                                    landmark: 1,
+                                    city: 1,
+                                    state: 1,
+                                }
+                            }
+
+                        ],
+                        as: "deliveryAddress"
+                    }
+                },
+                {
+                    $project: {
+                        totalAmount: "$orderDetails.totalAmount",
+                        shippingAmount: "$orderDetails.shippingAmount",
+                        products: 1,
+                        user: 1,
+                        billingAddress: { $arrayElemAt: ["$billingAddress", 0] },
+                        deliveryAddress: { $arrayElemAt: ["$deliveryAddress", 0] },
+                        createdOn: 1,
+                        paymentMethod:1
+                        
+                    }
+                }
+
+            ])
+
+----------------------------------updated order list aggregate query----------------------
+
+[
+
+{
+    $match:{
+        userId:ObjectId("6482ff8d5cb6f6ff68597c61")
+        }
+    },
+    {
+        $unwind:{
+            path:"$products"
+            }
+        },
+        {
+            $lookup:{
+                from:"products",
+                let:{ "pId" : "$products.productId" },
+                pipeline:[
+                {
+                    $match:{
+                        $expr:{
+                            $eq:[ "$_id","$$pId" ] 
+                            }
+                        }
+                    },
+                    {
+                        $project:{
+                            image:1,
+                            title:1,
+                            price:1,                            
+                            }
+                        }
+                ],
+                as:"productDetails"     
+                }
+            },
+            {
+            $lookup:{
+                from:"orders",
+                let:{ "oId" : "$orderId" },
+                pipeline:[
+                {
+                    $match:{
+                        $expr:{
+                            $eq:[ "$_id","$$oId" ] 
+                            }
+                        }
+                    },
+                    {
+                        $project:{
+                            billingId:1,
+                            deliveryId:1,
+                            paymentMethod:1
+                            }
+                        }
+                ],
+                as:"orderDetails"     
+                }
+            },
+            {
+                $project:{
+                    productDetails:{ $arrayElemAt:[ "$productDetails",0 ] },
+                    orderDetails:{ $arrayElemAt:[ "$orderDetails",0 ] },
+                    products:1,
+                    _id:1
+                    }
+                },
+                {
+                    $lookup:{
+                        from:"addressbooks",
+                        let: { "aId":"$orderDetails.billingId" },
+                        pipeline:[ 
+                       {
+                           $match:{
+                               $expr:{
+                                   $eq:[ "$_id","$$aId" ]
+                                   }
+                               }
+                           },
+                           {
+                               $project:{
+                               title:1,
+                               _id:0,
+                               country:1,
+                               state:1,
+                               pincode:1,
+                               mobileNo:1,
+                               addressLineOne:1,
+                               addressLineTwo:1,
+                               landmark:1,
+                               city:1
+                               }
+                               }
+                       ],
+                       as:"billingAddressDetails"
+                        
+                        }
+                    },
+                    {
+                    $lookup:{
+                        from:"addressbooks",
+                        let: { "dId":"$orderDetails.deliveryId" },
+                        pipeline:[ 
+                       {
+                           $match:{
+                               $expr:{
+                                   $eq:[ "$_id","$$dId" ]
+                                   }
+                               }
+                           },
+                           {
+                               $project:{
+                               title:1,
+                               _id:0,
+                               country:1,
+                               state:1,
+                               pincode:1,
+                               mobileNo:1,
+                               addressLineOne:1,
+                               addressLineTwo:1,
+                               landmark:1,
+                               city:1
+                               }
+                               }
+                       ],
+                       as:"deliveryAddressDetails"
+                        
+                        }
+                    }
+                ,
+                    {
+                        $project:{
+                            deliveryAddressDetails:{ $arrayElemAt:[ "$deliveryAddressDetails" ,0] },
+                            billingAddressDetails:{ $arrayElemAt:[ "$billingAddressDetails" ,0] },
+                            paymentMethod:"$orderDetails.paymentMethod",
+                            productImage:"$productDetails.image",
+                            productName:"$productDetails.title",
+                            productTotal: { $multiply : [ "$productDetails.price","$products.quantity" ] } 
+                            }
+                        }
+]

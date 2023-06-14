@@ -7,11 +7,7 @@ const options = {
     }
 }
 // model schema
-const message = new mongoose.Schema({
-    userId:{
-        type:ObjectId,
-        required:true
-    },
+const contactUs = new mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -20,17 +16,17 @@ const message = new mongoose.Schema({
         type: String,
         required: true
     },
-    subject:{
-        type:String,
-        required:true
+    subject: {
+        type: String,
+        required: true
     },
-    message:{
-        type:String,
-        required:true
+    message: {
+        type: String,
+        required: true
     },
 
 }, options)
 
 // model export
-const contactUs = mongoose.model('messages', message);
-module.exports = contactUs;
+const contacus = mongoose.model('contactUs', contactUs);
+module.exports = contacus;

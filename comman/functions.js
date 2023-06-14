@@ -1,3 +1,4 @@
+// For make log file and print logs into it
 class CommonFunctions {
     Logger(logName) {
         return require('simple-node-logger').createRollingFileLogger({

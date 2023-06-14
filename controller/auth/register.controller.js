@@ -1,15 +1,17 @@
-
-const authService = require('../../service/auth/auth.service')
+// packages
 var emailValidator = require("deep-email-validator")
 const emailChecker = require('email-existence')
-
 const md5 = require('md5')
-const registerUser = async function (req, res) {  
-  try {
 
+// middleware
+const authService = require('../../service/auth/auth.service')
+
+// To register the user details in db
+const registerUser = async function (req, res) {
+  try {
     const { name, email, country, password, mobile, timezone, language } = req.body
+
     // if any field missing in body
-    console.log(req.body)
     if (!name || !email || !country || !password || !mobile || !timezone || !language) {
       return res.json({
         type: "error",
@@ -18,24 +20,17 @@ const registerUser = async function (req, res) {
       })
     }
     //--------------------------email exists or not
+
     // check email in reality exists or not 
-    // let valid = true;
     let isEmailValid = async function (email) {
       return emailValidator.validate(email)
     }
-
     const { valid } = await isEmailValid(email)
-    // valid ==> true or false
     console.log("Email in reality exists or not ====> ", valid);
-    // console.log('------------------> >')
-    // await emailChecker.check(email, function (error, response) {
-    //   valid = response
-    //   console.log("email exists : ", response)
-    //   console.log("after", valid)
-    //   return valid
-    // });
+
     //------------------------------------------
     console.log('valid = = > >', valid)
+    // if email in registration details in reality not exist
     if (!valid) {
       return res.json({
         type: "error",
@@ -43,7 +38,6 @@ const registerUser = async function (req, res) {
         message: `Enter email that exists in real !`,
       })
     }
-
     // if emailId or mobile already registered
     let userFound = await authService.findUserByIdorMobile(email, mobile)
     // console.log(userFound, "userFound....");
@@ -65,7 +59,7 @@ const registerUser = async function (req, res) {
       language: language,
       profileImage: "/images/default/user.png"
     }
-    await authService.createUser(userBody)
+    // await authService.createUser(userBody)
     return res.json({
       type: "success",
       status: 200,
@@ -73,6 +67,7 @@ const registerUser = async function (req, res) {
     });
   }
   catch (error) {
+    // if error in user registration process
     console.log("error post: /register --> index.js route", error);
     return res.status(500).json({
       type: "error",
@@ -82,7 +77,7 @@ const registerUser = async function (req, res) {
   }
 }
 
-
+// export function
 module.exports = {
   registerUser,
 
