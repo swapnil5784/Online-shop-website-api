@@ -1,19 +1,20 @@
-// import models
+// packages
+const mongoose = require('mongoose')
+const ObjectId = mongoose.Types.ObjectId
+
+// models
 const orderDetailModel = require('../models/orderDetails')
 const orderModel = require('../models/orders')
 
-
-
-const mongoose = require('mongoose')
-const ObjectId = mongoose.Types.ObjectId
-const getUserOrderDetails = async function (userId) {
-    // ------------- empty function------
-    return new Promise(async function (resolve, reject) {
+// To send orderDetails of specific order by orderId
+const SpecificOrderInDetail = async (orderId) => {
+    return new Promise(async (resolve, reject) => {
         try {
+            // query to get a order and its details
             let details = await orderDetailModel.aggregate([
                 {
                     $match: {
-                        userId: new ObjectId(userId)
+                        _id: new ObjectId(orderId)
                     }
                 },
                 {
@@ -34,12 +35,12 @@ const getUserOrderDetails = async function (userId) {
                                 }
                             }
                         ],
-                        as: 'products.product'
+                        as: 'products.productDetails'
                     }
                 },
                 {
                     $unwind: {
-                        path: '$products.product'
+                        path: '$products.productDetails'
                     }
                 },
                 {
@@ -62,6 +63,33 @@ const getUserOrderDetails = async function (userId) {
                         orderAmount: { $arrayElemAt: ["$orderAmount", 0] },
                         orderId: { $arrayElemAt: ["$orderId", 0] },
                         userId: { $arrayElemAt: ["$userId", 0] }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        let: { "id": "$userId" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+
+                                        $eq: ["$_id", "$$id"]
+                                    }
+                                }
+                            },
+                            {
+                                $project: {
+                                    _id: 0,
+                                    name: 1,
+                                    email: 1,
+                                    country: 1,
+                                    mobile: 1,
+                                    profileImage: 1
+                                }
+                            }
+                        ],
+                        as: "user"
                     }
                 },
                 {
@@ -122,12 +150,12 @@ const getUserOrderDetails = async function (userId) {
                 {
                     $project: {
                         products: 1,
+                        user: { $arrayElemAt: ["$user", 0] },
                         createdOn: 1,
                         user: { $arrayElemAt: ["$user", 0] },
                         orderDetails: 1,
                         orderDetails: { $arrayElemAt: ["$orderDetails", 0] },
                     }
-
                 },
                 {
                     $lookup: {
@@ -199,32 +227,80 @@ const getUserOrderDetails = async function (userId) {
                         totalAmount: "$orderDetails.totalAmount",
                         shippingAmount: "$orderDetails.shippingAmount",
                         products: 1,
-                        user: 1,
-                        // billingAddress: 1,
                         billingAddress: { $arrayElemAt: ["$billingAddress", 0] },
                         deliveryAddress: { $arrayElemAt: ["$deliveryAddress", 0] },
                         createdOn: 1,
-                        orderDetails: 1,
-                        paymentMethod: "$orderDetails.paymentMethod",
+                        paymentMethod: 1,
+                        user: 1
 
+                    }
+                }
+            ])
+            resolve(details)
+        } catch (error) {
+            // if error while sending orderDetails
+            console.log("error in fetching specific order details !", error)
+            reject(error)
+        }
+    })
+}
+
+// To send the list of orders of logged in user 
+const getUserOrderDetails = async function (userId) {
+    // ------------- empty function------
+    return new Promise(async function (resolve, reject) {
+        try {
+            let orderListDetails = await orderDetailModel.aggregate([
+                {
+                    $match: {
+                        userId: new ObjectId(userId)
                     }
                 },
                 {
-                    $sort: {
-                        createdOn: -1
+                    $lookup: {
+                        from: "orders",
+                        let: { "oId": "$orderId" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: ["$_id", "$$oId"]
+                                    }
+                                }
+                            },
+                            {
+                                $project: {
+                                    paymentMethod: 1
+                                }
+                            }
+                        ],
+                        as: "orderDetails"
+                    }
+                },
+                {
+                    $sort: { createdOn: -1 }
+                },
+                {
+                    $project: {
+                        createdOn: 1,
+                        orderAmount: 1,
+                        paymentMethod: { $arrayElemAt: ["$orderDetails.paymentMethod", 0] }
                     }
                 }
 
             ])
-            resolve(details)
+            resolve(orderListDetails)
         }
         catch (error) {
+            // if error in sending order List
             console.log('error in order service for show order Details = = > > ', error)
             reject(error)
         }
     })
 }
 
+// exports
 module.exports = {
-    getUserOrderDetails
+    getUserOrderDetails,
+    SpecificOrderInDetail
 }

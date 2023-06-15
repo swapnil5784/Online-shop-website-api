@@ -40,7 +40,7 @@ module.exports = {
             if (!req.user) {
                 return res.json({
                     type: "error",
-                    status: 409,
+                    status: 401,
                     message: "invalid token"
                 })
             }

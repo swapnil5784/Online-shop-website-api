@@ -1,4 +1,6 @@
 
+const newsModel = require('../../models/newsletter')
+
 // packages
 var emailValidator = require("deep-email-validator")
 

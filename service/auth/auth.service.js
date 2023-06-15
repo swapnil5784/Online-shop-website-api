@@ -1,5 +1,7 @@
+// models
 const usermodel = require('../../models/users')
 
+// To find user with mentioned email or userId
 const findUserByIdorMobile = async (email, mobile) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -11,6 +13,7 @@ const findUserByIdorMobile = async (email, mobile) => {
     })
 }
 
+// To register user 
 const createUser = async (userBody) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -27,6 +30,7 @@ const createUser = async (userBody) => {
     })
 }
 
+// exports
 module.exports = {
     findUserByIdorMobile,
     createUser

@@ -1,6 +1,10 @@
-const userModel = require('../../models/users')
+// packages
 const md5 = require('md5')
 
+// models
+const userModel = require('../../models/users')
+
+// To check user with mentioned email exists or not
 const userWithEmailExists = async (email) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -14,6 +18,7 @@ const userWithEmailExists = async (email) => {
     })
 }
 
+// To update user document with otp and its expiry time
 const addResetOtpAndExpirytimeFieldToUser = async (email, otp, otpExpireAt) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -27,6 +32,7 @@ const addResetOtpAndExpirytimeFieldToUser = async (email, otp, otpExpireAt) => {
     })
 }
 
+// To find user with email mentioned
 const findUser = async (email) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -40,6 +46,7 @@ const findUser = async (email) => {
     })
 }
 
+// TO update userDetail in collection
 const updatePassword = async (email, resetOtp, newPassword) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -52,6 +59,7 @@ const updatePassword = async (email, resetOtp, newPassword) => {
         }
     })
 }
+// exports
 module.exports = {
     userWithEmailExists,
     addResetOtpAndExpirytimeFieldToUser,

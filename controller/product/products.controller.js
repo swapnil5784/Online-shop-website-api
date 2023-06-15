@@ -1,16 +1,18 @@
+// packages
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
+
+// comman  functions
 const CommonFunctions = require('../../comman/functions');
 const commonFn = new CommonFunctions();
 const productLog = commonFn.Logger('products')
-
-const mongoose = require("mongoose");
-const ObjectId = mongoose.Types.ObjectId;
 
 // import models
 var productModel = require("../../models/products");
 var categoryModel = require('../../models/categories')
 var reviewModel = require('../../models/reviews')
 
-
+// To get product list
 const getProducts = async function (req, res, next) {
   try {
     productLog.info("Route : POST  = /products In:routes/product.js", "=====================> req.body : ", req.body);
@@ -101,7 +103,7 @@ const getProducts = async function (req, res, next) {
     }
 
 
-    // console.log(" = = = > >",JSON.stringify(condition,null,3));
+    // query to count products before applying filters
     let totalFilteredProducts = await productModel.countDocuments(match);
 
     // console.log("condition =========> ", JSON.stringify(condition, null, 3));
@@ -118,16 +120,7 @@ const getProducts = async function (req, res, next) {
         [field]: order
       }
     })
-
-
     //3.------------------ (i)skip-(ii)limit
-
-    // let limitDefault = 0;
-
-    // if (limit) {
-    //   limitDefault = parseInt(limit);
-    // }
-
     if (pagination) {
       let productsInOnePage = parseInt(pagination.productsPerPage) || 8;
       let page = parseInt(pagination.page) || 1;
@@ -140,12 +133,7 @@ const getProducts = async function (req, res, next) {
         $skip: (page - 1) * productsInOnePage,
       });
     }
-
     //4.------------------- lookup and project
-
-
-
-
     condition.push({
       $project: {
         _id: 1,
@@ -239,6 +227,7 @@ const getProducts = async function (req, res, next) {
       products: await productModel.aggregate(condition)
     }
     let totalProducts = data.products?.length;
+    // if no products in data to send after filters
     if (!data?.products?.length) {
       return res.json({
         type: "error",
@@ -249,13 +238,12 @@ const getProducts = async function (req, res, next) {
         data: data
       })
     }
+    // product's categories to send
     if (isCategoryList) {
       data = {
         categories: await categoryModel.aggregate([
-
           {
             $lookup: {
-
               from: "products",
               let: { "name": "$title" },
               pipeline: [
@@ -265,29 +253,23 @@ const getProducts = async function (req, res, next) {
                       $eq: ["$category", "$$name"]
 
                     }
-
                   }
                 }
               ],
               as: "totalProducts"
-
             }
-
           },
           {
-
             $project: {
-
               isCategoryList: 1,
               totalProducts: { $size: "$totalProducts" },
               image: 1,
               title: 1
             }
-
           }
-
         ])
       }
+      // if no category found
       if (!data?.categories?.length) {
         return res.json({
           type: "error",
@@ -297,8 +279,6 @@ const getProducts = async function (req, res, next) {
         })
       }
     }
-
-
     return res.json({
       type: "success",
       status: 200,
@@ -308,6 +288,7 @@ const getProducts = async function (req, res, next) {
       data: data
     });
   } catch (error) {
+    // if error while sending products with filters or category list
     productLog.error("error at post /products route...", error)
     console.log("error at post /products route...", error);
     return res.json({
@@ -317,7 +298,7 @@ const getProducts = async function (req, res, next) {
     });
   }
 }
-
+//exports
 module.exports = {
   getProducts
 }

@@ -13,6 +13,7 @@
     "deep-email-validator": "^0.1.21",
     "dotenv": "^16.0.3",
     "email-check": "^1.1.0",
+    "email-existence": "^0.1.6",
     "express": "~4.16.1",
     "hbs": "~4.0.4",
     "http-errors": "~1.6.3",
@@ -27,10 +28,6 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
-    "simple-node-logger": "^21.8.12",
-    "email-existence": "^0.1.6"
-
-  },
-  "devDependencies": {
+    "simple-node-logger": "^21.8.12"
   }
 }
