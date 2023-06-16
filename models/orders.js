@@ -92,7 +92,7 @@ order.post('save', async function () {
             orderAmount: _this.totalAmount + _this.shippingAmount,
             products: productsInOrder
         }
-        console.log("_this = = > > ", _this)
+        // console.log("_this = = > > ", _this)
         let productsInCart = await cartModel.aggregate([
             {
                 $match: {
@@ -187,7 +187,7 @@ order.post('save', async function () {
             billingAddress: billingAddress,
             deliveryAddress: deliveryAddress,
         }
-        console.log("fixedOrder = = > >", JSON.stringify(fixedOrder, null, 3))
+        // console.log("fixedOrder = = > >", JSON.stringify(fixedOrder, null, 3))
         await orderDetailModel.create(fixedOrder)
         await cartModel.deleteMany({ userId: _this.userId.toString() })
     }

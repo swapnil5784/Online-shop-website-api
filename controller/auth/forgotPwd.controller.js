@@ -3,8 +3,6 @@ const handlebars = require('hbs')
 const moment = require('moment')
 const md5 = require('md5')
 const fs = require('fs')
-// 1. import node mailer
-var nodemailer = require("nodemailer");
 
 // models
 const userModel = require('../../models/users')
@@ -12,18 +10,7 @@ const userModel = require('../../models/users')
 // services
 const forgetService = require('../../service/auth/forgot.service')
 const otpGenerator = require('otp-generator')
-
-// 2. node transporter
-var transporter = nodemailer.createTransport({
-    service: "gmail",
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: true,
-    auth: {
-        user: "swapnil.mycircle@gmail.com",
-        pass: "lxoldjnefineriei",
-    },
-});
+const emailService = require('../../comman/sendmail')
 
 // To send 6 character OTP to email received in body if email exist in db
 const forgotPassword = async (req, res) => {
@@ -57,23 +44,7 @@ const forgotPassword = async (req, res) => {
             otpExpireAt: otpExpireAt
         };
         var htmlToSend = template(replacements);
-
-        // 3. mailoptions
-        var mailOptions = {
-            from: "swapnil.mycircle@gmail.com",
-            to: email,
-            subject: "OTP for reset password !",
-            html: htmlToSend,
-            text: `Reset OTP : ${otp} ,will expire At ${otpExpireAt}`,
-        };
-        //4. send mail by transporter
-        await transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log("error in node-mailer send mail !", error);
-            } else {
-                console.log("Reset OTP send to : " + email);
-            }
-        });
+        emailService.sendMail(email, "OTP for reset password !", htmlToSend)
         return res.json({
             type: 'success',
             // data: {

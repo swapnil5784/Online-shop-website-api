@@ -8,7 +8,7 @@ const options = {
     }
 }
 
-const productDetails = mongoose.Schema({
+const productDetails = {
     title: {
         type: String,
         required: true
@@ -47,9 +47,9 @@ const productDetails = mongoose.Schema({
             required: true
         }
     }
-})
+}
 
-const productItem = mongoose.Schema({
+const productItem = {
     productId: {
         type: ObjectId,
         required: true,
@@ -59,9 +59,9 @@ const productItem = mongoose.Schema({
         required: true
     },
     productDetails: productDetails
-})
+}
 
-const userSchema = mongoose.Schema({
+const userSchema = {
     name: {
         type: String,
         required: true,
@@ -82,9 +82,9 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
     }
-})
+}
 
-const addressSchema = mongoose.Schema({
+const addressSchema = {
     title: {
         type: String,
         required: true
@@ -125,9 +125,9 @@ const addressSchema = mongoose.Schema({
         type: String,
         required: true
     },
-})
+}
 
-const fixedOrderDetail = mongoose.Schema({
+const orderDetail = mongoose.Schema({
     products: [productItem],
     userId: {
         type: ObjectId,
@@ -149,5 +149,5 @@ const fixedOrderDetail = mongoose.Schema({
     deliveryAddress: addressSchema,
 }, options)
 
-const orderDetails = mongoose.model('orderDetails', fixedOrderDetail)
+const orderDetails = mongoose.model('orderDetails', orderDetail)
 module.exports = orderDetails;

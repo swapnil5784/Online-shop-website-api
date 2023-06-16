@@ -5,6 +5,7 @@ var router = express.Router();
 // middlewares
 const { authentication } = require('../comman/middlewares')
 
+
 //controllers
 const { contactUsController } = require('../controller/contactUs/contactUs.controller.js')
 const { registerUser } = require("../controller/auth/register.controller");

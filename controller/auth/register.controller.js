@@ -6,6 +6,8 @@ const md5 = require('md5')
 // middleware
 const authService = require('../../service/auth/auth.service')
 
+
+
 // To register the user details in db
 const registerUser = async function (req, res) {
   try {

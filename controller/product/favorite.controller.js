@@ -10,6 +10,9 @@ const productLog = commonFn.Logger('products')
 // import models
 const favoriteProductModel = require('../../models/favoriteProducts')
 
+// services
+const productService = require('../../service/product.service')
+
 // To make product favorite as productId in parameter and get list of favorite products
 const markFavoriteAndGetFavorite = async function (req, res, next) {
   try {
@@ -25,10 +28,7 @@ const markFavoriteAndGetFavorite = async function (req, res, next) {
         })
       }
       //query to check is product in favorite collection
-      let markedFavoriteAlready = await favoriteProductModel.countDocuments({
-        productId: new ObjectId(productId),
-        userId: new ObjectId(req.user._id),
-      })
+      let markedFavoriteAlready = await productService.checkProductIsAlreadyMarkedFavorite(productId, req.user._id)
       // if product is already in favorite products collection
       if (markedFavoriteAlready) {
         return res.json({
@@ -38,10 +38,9 @@ const markFavoriteAndGetFavorite = async function (req, res, next) {
         })
       }
       // mark product favorite and store into collection
-      await favoriteProductModel.create({
-        productId: new ObjectId(productId),
-        userId: new ObjectId(req.user._id),
-      })
+
+      let markFavoriteConfirmation = await productService.markProductFavorite(productId, req.user._id)
+      console.log(markFavoriteConfirmation)
       return res.json({
         type: "success",
         status: 200,
@@ -49,47 +48,7 @@ const markFavoriteAndGetFavorite = async function (req, res, next) {
       })
     }
     // query to store favorite products of logged-in user
-    let products = await favoriteProductModel.aggregate([
-      {
-        $match: {
-          userId: new ObjectId(req.user._id)
-        }
-      },
-      {
-        $lookup: {
-          from: "products",
-          let: { "productId": "$productId" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $eq: ["$_id", "$$productId"]
-                }
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                title: 1,
-                price: 1,
-                category: 1,
-                rating: 1,
-                color: 1,
-                size: 1,
-                description: 1,
-                image: 1
-              }
-            }
-          ],
-          as: "product"
-        }
-      },
-      {
-        $project: {
-          product: { $arrayElemAt: ["$product", 0] },
-        }
-      }
-    ])
+    let products = await productService.getFavoriteProductsDetails(req.user._id)
     // if user has no favorite products
     if (!products?.length) {
       return res.json({
@@ -133,7 +92,7 @@ const deleteFavorite = async function (req, res, next) {
       })
     }
     // query to check the product to delete from favorite is their in favorite product collection
-    let documentToDeleteFound = await favoriteProductModel.countDocuments({ productId: productId, userId: req.user._id })
+    let documentToDeleteFound = await productService.checkProductIsAlreadyMarkedFavorite(productId, req.user._id)
     // if product to delete is not found
     if (!documentToDeleteFound) {
       return res.json({
@@ -143,7 +102,8 @@ const deleteFavorite = async function (req, res, next) {
       })
     }
     // query to remove favorite product
-    await favoriteProductModel.deleteOne({ productId: productId, userId: req.user._id })
+    let deleteFavoriteConfirmation = await productService.removeProductFromFavorite(productId, req.user._id)
+    console.log(deleteFavoriteConfirmation);
     return res.json({
       type: "success",
       status: 200,

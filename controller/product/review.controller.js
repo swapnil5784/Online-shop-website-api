@@ -3,16 +3,19 @@ const CommonFunctions = require('../../comman/functions');
 const commonFn = new CommonFunctions();
 const productLog = commonFn.Logger('products')
 
-// import models
+// models
 const productModel = require('../../models/products')
 const reviewModel = require('../../models/reviews')
+
+// services
+const productService = require('../../service/product.service')
 
 // To add review on product mentioned 
 const addReview = async function (req, res, next) {
   try {
     let { productId, rating, review } = req.body
     // query to check if product exists on which review to add
-    let isProductExists = await productModel.countDocuments({ _id: productId })
+    let isProductExists = await productService.checkProductExistsById(productId)
     // if product not found to add review 
     if (!isProductExists) {
       return res.json({
@@ -29,12 +32,14 @@ const addReview = async function (req, res, next) {
       rating: rating
     })
     // query to add review on product by storing into a collection
-    await reviewModel.create({
+    let reviewDetails = {
       userId: req.user._id,
       productId: productId,
       review: review,
       rating: rating
-    })
+    }
+    let reviewAddConfirmation = await productService.addReview(reviewDetails)
+    console.log(reviewAddConfirmation)
     return res.json({
       type: "success",
       status: 200,
@@ -65,7 +70,7 @@ const deleteReview = async function (req, res, next) {
       })
     }
     // query to verify review with reviewId passed in is their in  collection
-    let reviewToDelete = await reviewModel.countDocuments({ _id: req.params.reviewId })
+    let reviewToDelete = await productService.checkReviewExistsById(req.params.reviewId)
     // if review to deleteis not found
     if (!reviewToDelete) {
       return res.json({
@@ -75,7 +80,8 @@ const deleteReview = async function (req, res, next) {
       })
     }
     // query to remove a review from collection
-    await reviewModel.deleteOne({ _id: req.params.reviewId })
+    let reviewDeleteConfirmation = await productService.deleteReview(req.params.reviewId)
+    console.log(reviewDeleteConfirmation)
     return res.json({
       type: "success",
       status: 200,

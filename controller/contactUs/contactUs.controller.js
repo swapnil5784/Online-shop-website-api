@@ -13,7 +13,8 @@ const contactUsController = async (req, res) => {
             message: message
         }
         // query to store details got in body
-        await contactUsModel.create(contactObject)
+        let contactConfirmation = await contactUsModel.create(contactObject)
+        console.log(contactConfirmation)
         return res.json({
             type: "success",
             status: 200,

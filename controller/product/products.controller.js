@@ -10,7 +10,6 @@ const productLog = commonFn.Logger('products')
 // import models
 var productModel = require("../../models/products");
 var categoryModel = require('../../models/categories')
-var reviewModel = require('../../models/reviews')
 
 // To get product list
 const getProducts = async function (req, res, next) {

@@ -11,13 +11,16 @@ const productLog = commonFn.Logger('products')
 var productModel = require("../../models/products");
 const cartModel = require('../../models/carts')
 
+//services
+const productService = require('../../service/product.service')
+
 // To add and update cart as details passed in body
 const addAndUpdateCart = async function (req, res, next) {
   try {
     let { productId, quantity, isAddedFromShop } = req.body
     console.log("productId = = > >", productId)
     // query to check if product is exist in product collection with mentioned productId
-    let isProductExists = await productModel.countDocuments({ _id: productId })
+    let isProductExists = await productService.checkProductExistsById(productId)
     // if product not exist
     if (!isProductExists) {
       return res.json({
@@ -45,18 +48,8 @@ const addAndUpdateCart = async function (req, res, next) {
     }
 
     // used upsert if product is already in cart update else create a document
-    const updateCheck = await cartModel.updateOne(
-      {
-        productId: new ObjectId(productId),
-        userId: new ObjectId(req.user._id),
-      },
-      condition,
-      {
-        upsert: true
-      }
-    )
-
-    // console.log("updateCheck", updateCheck);
+    const upsertConfirmation = await productService.updateOrInsertCart(req.user._id, productId, condition)
+    console.log(upsertConfirmation);
     return res.json({
       type: "success",
       status: 200,
@@ -97,7 +90,7 @@ const deleteCart = async function (req, res, next) {
       })
     }
     // query to get count if mentioned product is in cart ot not
-    let cartFoundForDelete = await cartModel.countDocuments({ _id: cartId })
+    let cartFoundForDelete = await productService.cartExistsById(cartId)
     // if product to delete is not in cart
     if (!cartFoundForDelete) {
       return res.json({
@@ -108,7 +101,8 @@ const deleteCart = async function (req, res, next) {
     }
     console.log("cartId", cartId);
     // query to remove product from cart
-    await cartModel.deleteOne({ _id: cartId })
+    let deleteCartConfirmation = await productService.deleteCart(cartId)
+    console.log(deleteCartConfirmation)
     return res.json({
       type: "success",
       status: 200,
@@ -132,48 +126,7 @@ const showCartproducts = async function (req, res, next) {
   try {
     productLog.info("Route : GET = products/review In:routes/product.js ", "req.user._id = = > ", req.user._id)
     // query to get products in cart
-    let products = await cartModel.aggregate([
-      {
-        $match: {
-          userId: req.user._id
-        }
-      },
-      {
-        $lookup: {
-          from: "products",
-          let: { "productId": "$productId" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $eq: ["$_id", "$$productId"]
-                }
-              }
-            },
-            {
-              $project: {
-                productId: "$_id",
-                _id: 0,
-                title: 1,
-                price: 1,
-                image: 1
-              }
-            }
-          ],
-          as: "product"
-        }
-      },
-      {
-        $project: {
-          cartId: "$_id",
-          _id: 0,
-          product: { $arrayElemAt: ["$product", 0] },
-          quantity: 1,
-          total: { $multiply: ["$quantity", { $arrayElemAt: ["$product.price", 0] }] }
-        }
-      }
-    ])
-    // console.log("products = =>>", products)
+    let products = await productService.showCartProducts(req.user._id)
     // if no products in cart
     if (!products?.length) {
       return res.json({

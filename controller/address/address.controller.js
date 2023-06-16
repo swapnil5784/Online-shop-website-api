@@ -114,6 +114,7 @@ const updateAddress = async function (req, res, next) {
                 message: `Address not found !`
             })
         }
+
         // query to update address details
         let updateConfirmation = await addressBookService.updateAddress(req.params.addressId, req.body)
         console.log(updateConfirmation)

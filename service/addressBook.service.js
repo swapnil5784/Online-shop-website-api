@@ -1,5 +1,7 @@
+// models
 const addressBookModel = require('../models/addressBook')
 
+// To check user has any address exists in db
 const addressExistsOfUser = async (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -13,6 +15,7 @@ const addressExistsOfUser = async (userId) => {
     })
 }
 
+// To save address details to db userwise
 const saveAddress = async (address) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -26,6 +29,7 @@ const saveAddress = async (address) => {
     })
 }
 
+// To check address exists in db with mentioned addressId
 const addressExistsWithId = async (addressId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -39,6 +43,7 @@ const addressExistsWithId = async (addressId) => {
     })
 }
 
+// To remove address userSpecific from db
 const removeAddress = async (addressId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -52,6 +57,7 @@ const removeAddress = async (addressId) => {
     })
 }
 
+// TO update address userSpecific
 const updateAddress = async (addressId, detailsToUpdate) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -65,6 +71,7 @@ const updateAddress = async (addressId, detailsToUpdate) => {
     })
 }
 
+// export functions
 module.exports = {
     addressExistsOfUser,
     addressExistsWithId,

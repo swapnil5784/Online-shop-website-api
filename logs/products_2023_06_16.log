@@ -1,0 +1,17 @@
+2023-06-16 15:21:12 ERROR Error in /products/cart route cartModel is not defined
+{}
+ReferenceError: cartModel is not defined
+    at /home/swapnils/Desktop/11.APIs with Angular teamates/Day-17-06-06-2023/updates/Online-shop-website-api/service/product.service.js:59:24
+    at new Promise (<anonymous>)
+    at Object.updateOrInsertCart (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-17-06-06-2023/updates/Online-shop-website-api/service/product.service.js:57:12)
+    at addAndUpdateCart (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-17-06-06-2023/updates/Online-shop-website-api/controller/product/cart.controller.js:51:53)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+2023-06-16 15:22:06 ERROR Error in /products/cart route ObjectId is not defined
+{}
+ReferenceError: ObjectId is not defined
+    at /home/swapnils/Desktop/11.APIs with Angular teamates/Day-17-06-06-2023/updates/Online-shop-website-api/service/product.service.js:63:36
+    at new Promise (<anonymous>)
+    at Object.updateOrInsertCart (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-17-06-06-2023/updates/Online-shop-website-api/service/product.service.js:59:12)
+    at addAndUpdateCart (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-17-06-06-2023/updates/Online-shop-website-api/controller/product/cart.controller.js:51:53)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+2023-06-16 16:35:03 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"isFeatured":true}} 
