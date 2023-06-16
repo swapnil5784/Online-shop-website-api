@@ -5,6 +5,9 @@ const ObjectId = mongoose.Types.ObjectId;
 // models
 const addressBookModel = require('../../models/addressBook')
 
+// services
+const addressBookService = require('../../service/addressBook.service')
+
 // To add address into db as details comes in body
 const addAddress = async function (req, res, next) {
     try {
@@ -24,13 +27,13 @@ const addAddress = async function (req, res, next) {
             state: state
         }
         // query to check login user has added address before
-        let userAddedAddress = await addressBookModel.countDocuments({ userId: req.user._id })
+        let userHasAddress = await addressBookService.addressExistsOfUser(req.user._id)
         // if user has no addresses then make first address as default
-        if (!userAddedAddress) {
+        if (!userHasAddress) {
             addressDetails.isDefault = true
         }
         // query to save address details into db
-        let addedAddress = await addressBookModel.create(addressDetails)
+        let addedAddress = await addressBookService.saveAddress(addressDetails)
         return res.json({
             type: 'success',
             status: 200,
@@ -61,9 +64,9 @@ const removeAddress = async function (req, res, next) {
             })
         }
         // query to get count of address is their in db to delete
-        let addressFoundForUpdate = await addressBookModel.countDocuments({ _id: req.params.addressId })
+        let addressFoundForDelete = await addressBookService.addressExistsWithId(req.params.addressId)
         // if address to delete not found in collection
-        if (!addressFoundForUpdate) {
+        if (!addressFoundForDelete) {
             return res.json({
                 type: "error",
                 status: 409,
@@ -71,7 +74,8 @@ const removeAddress = async function (req, res, next) {
             })
         }
         // query to delete detials from db
-        await addressBookModel.deleteOne({ _id: req.params.addressId })
+        let deleteConfirmation = await addressBookService.removeAddress(req.params.addressId)
+        console.log(deleteConfirmation);
         return res.json({
             type: "success",
             status: 200,
@@ -101,7 +105,7 @@ const updateAddress = async function (req, res, next) {
             })
         }
         // query to check if address to update is in db
-        let addressFoundForUpdate = await addressBookModel.countDocuments({ _id: req.params.addressId })
+        let addressFoundForUpdate = await addressBookService.addressExistsWithId(req.params.addressId)
         // if address to update is not found in db
         if (!addressFoundForUpdate) {
             return res.json({
@@ -111,7 +115,8 @@ const updateAddress = async function (req, res, next) {
             })
         }
         // query to update address details
-        await addressBookModel.updateOne({ _id: req.params.addressId }, { $set: req.body })
+        let updateConfirmation = await addressBookService.updateAddress(req.params.addressId, req.body)
+        console.log(updateConfirmation)
         return res.json({
             type: "success",
             status: 200,

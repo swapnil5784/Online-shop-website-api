@@ -23,7 +23,7 @@ const showOrderDetails = async function (req, res, next) {
                 status: 200,
                 message: `Details of a order with orderDetailsId: ${orderId} .`,
                 data: {
-                    orderDetail: orderDetail[0]
+                    orderDetail: orderDetail
                 }
             })
         }

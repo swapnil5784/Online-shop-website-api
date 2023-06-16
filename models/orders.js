@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const orderDetailModel = require('../models/orderDetails')
+const addressBookModel = require('../models/addressBook')
 const cartModel = require('../models/carts')
 const options = {
     timestamps: {
@@ -68,7 +69,8 @@ order.post('save', async function () {
                         {
                             $project: {
                                 _id: 0,
-                                price: 1
+                                price: 1,
+
                             }
                         }
                     ],
@@ -90,7 +92,103 @@ order.post('save', async function () {
             orderAmount: _this.totalAmount + _this.shippingAmount,
             products: productsInOrder
         }
-        await orderDetailModel.create(detailsOfOrder)
+        console.log("_this = = > > ", _this)
+        let productsInCart = await cartModel.aggregate([
+            {
+                $match: {
+                    userId: new ObjectId(_this.userId.toString())
+                }
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    let: { "pId": "$productId" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$_id", "$$pId"]
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                title: 1,
+                                price: 1,
+                                description: 1,
+                                image: 1,
+                                rating: 1,
+                                color: 1,
+                                size: 1,
+                                category: 1,
+                                _id: 0,
+                            }
+                        }
+                    ],
+                    as: "productDetails"
+                }
+            },
+            {
+                $project: {
+                    productId: 1,
+                    quantity: 1,
+                    productDetails: { $arrayElemAt: ["$productDetails", 0] },
+                    _id: 0
+                }
+            }
+        ])
+
+        let billingAddress = await addressBookModel.findOne(
+            {
+                _id: new ObjectId(_this.billingId.toString())
+            }
+            ,
+            {
+                title: 1,
+                country: 1,
+                name: 1,
+                mobileNo: 1,
+                pincode: 1,
+                addressLineOne: 1,
+                addressLineTwo: 1,
+                landmark: 1,
+                city: 1,
+                state: 1,
+                _id: 0
+            }
+        )
+
+        let deliveryAddress = await addressBookModel.findOne(
+            {
+                _id: new ObjectId(_this.deliveryId.toString())
+            }
+            ,
+            {
+                title: 1,
+                country: 1,
+                name: 1,
+                mobileNo: 1,
+                pincode: 1,
+                addressLineOne: 1,
+                addressLineTwo: 1,
+                landmark: 1,
+                city: 1,
+                state: 1,
+                _id: 0
+            }
+        )
+        let fixedOrder = {
+            products: productsInCart,
+            // createdOn:,
+            userId: _this.userId.toString(),
+            totalAmount: _this.totalAmount,
+            shippingAmount: _this.shippingAmount,
+            paymentMethod: _this.paymentMethod,
+            billingAddress: billingAddress,
+            deliveryAddress: deliveryAddress,
+        }
+        console.log("fixedOrder = = > >", JSON.stringify(fixedOrder, null, 3))
+        await orderDetailModel.create(fixedOrder)
         await cartModel.deleteMany({ userId: _this.userId.toString() })
     }
     catch (error) {

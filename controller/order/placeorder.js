@@ -21,6 +21,22 @@ module.exports = {
                 })
             }
             let { shipToDifferentAddress, billingId, deliveryId, totalAmount, shippingAmount, paymentMethod } = req.body
+            if (!billingId) {
+                return res.json({
+                    type: "error",
+                    status: 409,
+                    message: "BillingId is not found !"
+                })
+            }
+            if (billingId) {
+                if (!ObjectId.isValid(billingId)) {
+                    return res.json({
+                        type: "error",
+                        status: 409,
+                        message: "BillingId is not valid !"
+                    })
+                }
+            }
             let orderObject = {
                 billingId: new ObjectId(billingId),
                 deliveryId: new ObjectId(billingId),
@@ -31,6 +47,22 @@ module.exports = {
             }
             // if shipping and delivery addresses are different 
             if (shipToDifferentAddress) {
+                if (!deliveryId) {
+                    return res.json({
+                        type: "error",
+                        status: 409,
+                        message: "DeliveryId not found !"
+                    })
+                }
+                if (deliveryId) {
+                    if (!ObjectId.isValid(deliveryId)) {
+                        return res.json({
+                            type: "error",
+                            status: 409,
+                            message: "DeliveryId is not valid !"
+                        })
+                    }
+                }
                 orderObject.deliveryId = new ObjectId(deliveryId)
             }
             // query to store order details into db
