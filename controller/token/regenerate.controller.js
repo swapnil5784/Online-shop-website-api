@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const regerateToken = async function (req, res, next) {
     try {
         // token register with _id , email and name with secret key and expiry time as mentioned in .env file
-        const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
+        const token = jwt.sign({ _id: req.user._id, email: req.user.email, name: req.user.name }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_TOKEN_EXPIRY_TIME });
         res.json({
             type: "success",
             status: 200,

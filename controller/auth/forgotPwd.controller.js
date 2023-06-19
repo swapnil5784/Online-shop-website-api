@@ -44,7 +44,8 @@ const forgotPassword = async (req, res) => {
             otpExpireAt: otpExpireAt
         };
         var htmlToSend = template(replacements);
-        emailService.sendMail(email, "OTP for reset password !", htmlToSend)
+        console.log("htmlToSend = =>>", htmlToSend);
+        await emailService.sendMail(email, "OTP for reset password !", htmlToSend)
         return res.json({
             type: 'success',
             // data: {

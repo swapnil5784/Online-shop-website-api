@@ -59,7 +59,7 @@ module.exports = {
     // Middleware function to console ip and time of request passed in server
     logIpOfRequest: async function (req, res, next) {
         appJsLog.info("= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = > > Ip : ", req.ip)
-        console.log("= = = = = = = = = = = = = = = = = = = = = = > > Ip : ", req.ip, " ", moment(req._startTime).format("DD:MM:YYYY h:mm:ss"))
+        console.log("= = = = = = = = = = = = = = = = = = = = = = > > Ip : ", req.ip, " ", moment(req._startTime).format(" h:mm:ss"))
         console.log()
         return next()
     },

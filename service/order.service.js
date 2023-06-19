@@ -16,7 +16,7 @@ const SpecificOrderInDetail = async (orderId) => {
                     _id: new ObjectId(orderId)
                 }
             )
-            console.log('details = = > >', details)
+            // console.log('details = = > >', details)
             resolve(details)
         } catch (error) {
             // if error while sending orderDetails
@@ -40,8 +40,8 @@ const getUserOrderDetails = async function (userId) {
                     orderAmount: { $sum: ["$totalAmount", "$shippingAmount"] },
                     paymentMethod: 1
                 }
-
-            )
+            ).sort({ createdOn: -1 })
+            console.log("orderListDetails = = > >", orderListDetails)
             resolve(orderListDetails)
         }
         catch (error) {

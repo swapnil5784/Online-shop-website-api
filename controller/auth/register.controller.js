@@ -24,22 +24,22 @@ const registerUser = async function (req, res) {
     //--------------------------email exists or not
 
     // check email in reality exists or not 
-    let isEmailValid = async function (email) {
-      return emailValidator.validate(email)
-    }
-    const { valid } = await isEmailValid(email)
-    console.log("Email in reality exists or not ====> ", valid);
+    // let isEmailValid = async function (email) {
+    //   return emailValidator.validate(email)
+    // }
+    // const { valid } = await isEmailValid(email)
+    // console.log("Email in reality exists or not ====> ", valid);
 
-    //------------------------------------------
-    console.log('valid = = > >', valid)
-    // if email in registration details in reality not exist
-    if (!valid) {
-      return res.json({
-        type: "error",
-        status: 409,
-        message: `Enter email that exists in real !`,
-      })
-    }
+    // //------------------------------------------
+    // console.log('valid = = > >', valid)
+    // // if email in registration details in reality not exist
+    // if (!valid) {
+    //   return res.json({
+    //     type: "error",
+    //     status: 409,
+    //     message: `Enter email that exists in real !`,
+    //   })
+    // }
     // if emailId or mobile already registered
     let userFound = await authService.findUserByIdorMobile(email, mobile)
     // console.log(userFound, "userFound....");
@@ -61,7 +61,7 @@ const registerUser = async function (req, res) {
       language: language,
       profileImage: "/images/default/user.png"
     }
-    // await authService.createUser(userBody)
+    await authService.createUser(userBody)
     return res.json({
       type: "success",
       status: 200,

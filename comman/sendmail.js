@@ -18,29 +18,29 @@ var transporter = nodemailer.createTransport({
 module.exports = {
     sendMail: async (email, subject, textContent) => {
         // check email in reality exists or not 
-        async function isEmailValid(email) {
-            return emailValidator.validate(email)
-        }
-        const { valid } = await isEmailValid(email)
+        // async function isEmailValid(email) {
+        //     return emailValidator.validate(email)
+        // }
+        // const { valid } = await isEmailValid(email)
         // valid ==> true or false
-        console.log("Email in reality exists or not ====> ", valid);
+        // console.log("Email in reality exists or not ====> ", valid);
         // 3. mail option
         var mailOptions = {
             from: process.env.SEND_MAIL_SERVICE_AUTH_USER,
             to: email,
             subject: subject,
-            text: textContent,
+            html: textContent,
         };
         // 4. send email with mail options
-        if (valid) {
-            await transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log("Email sent: " + email);
-                }
-            });
-        }
+        // if (valid) {
+        await transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("Email sent: " + email);
+            }
+        });
+        // }
 
     }
 }

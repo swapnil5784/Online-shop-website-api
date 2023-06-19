@@ -153,6 +153,11 @@ const showCartProducts = async (userId) => {
                     }
                 },
                 {
+                    $sort: {
+                        createdOn: -1
+                    }
+                },
+                {
                     $project: {
                         cartId: "$_id",
                         _id: 0,
@@ -215,6 +220,11 @@ const getFavoriteProductsDetails = async (userId) => {
                     }
                 },
                 {
+                    $sort: {
+                        createdOn: -1
+                    }
+                },
+                {
                     $lookup: {
                         from: "products",
                         let: { "productId": "$productId" },
@@ -247,7 +257,10 @@ const getFavoriteProductsDetails = async (userId) => {
                     $project: {
                         product: { $arrayElemAt: ["$product", 0] },
                     }
-                }
+                },
+                // {
+
+                // }
             ])
             resolve(data)
         }

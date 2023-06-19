@@ -197,6 +197,11 @@ const getProducts = async function (req, res, next) {
                 createdOn: 1,
                 user: { $arrayElemAt: ["$user", 0] }
               }
+            },
+            {
+              $sort: {
+                createdOn: -1
+              }
             }
           ],
           as: "reviews"
