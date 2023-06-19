@@ -147,6 +147,11 @@ const orderDetail = mongoose.Schema({
     },
     billingAddress: addressSchema,
     deliveryAddress: addressSchema,
+    status: {
+        type: String,
+        enum: ["Success", "Pending", "Failed"],
+        required: true
+    }
 }, options)
 
 const orderDetails = mongoose.model('orderDetails', orderDetail)

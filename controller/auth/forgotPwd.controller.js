@@ -26,7 +26,6 @@ const forgotPassword = async (req, res) => {
                 message: "User not found"
             })
         }
-
         // generate random 6 character string as resetOtp
         let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false })
         // set time 5 minutes ahead of now
@@ -44,7 +43,6 @@ const forgotPassword = async (req, res) => {
             otpExpireAt: otpExpireAt
         };
         var htmlToSend = template(replacements);
-        console.log("htmlToSend = =>>", htmlToSend);
         await emailService.sendMail(email, "OTP for reset password !", htmlToSend)
         return res.json({
             type: 'success',
@@ -104,8 +102,8 @@ const resetPassword = async (req, res) => {
         console.log(`(${userDetails.otpExpiredAt} > ${moment().utc('Asia/Kolkata').format('DD-MM-YYYY hh:mm:ss')})`, (userDetails.otpExpiredAt > moment().utc('Asia/Kolkata').format('DD-MM-YYYY hh:mm:ss')))
 
         // query to update password in db 
-        let resetPassword = await forgetService.updatePassword(email, resetOtp, newPassword)
-        console.log("resetPassword = = > >", resetPassword);
+        let resetPasswordConfirmation = await forgetService.updatePassword(email, resetOtp, newPassword)
+        console.log("resetPasswordConfirmation = = > >", resetPasswordConfirmation);
         return res.json({
             type: 'success',
             status: 300,

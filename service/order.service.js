@@ -38,7 +38,8 @@ const getUserOrderDetails = async function (userId) {
                 {
                     createdOn: 1,
                     orderAmount: { $sum: ["$totalAmount", "$shippingAmount"] },
-                    paymentMethod: 1
+                    paymentMethod: 1,
+                    status: 1
                 }
             ).sort({ createdOn: -1 })
             console.log("orderListDetails = = > >", orderListDetails)

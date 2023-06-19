@@ -186,6 +186,7 @@ order.post('save', async function () {
             paymentMethod: _this.paymentMethod,
             billingAddress: billingAddress,
             deliveryAddress: deliveryAddress,
+            status: "Success"
         }
         // console.log("fixedOrder = = > >", JSON.stringify(fixedOrder, null, 3))
         await orderDetailModel.create(fixedOrder)

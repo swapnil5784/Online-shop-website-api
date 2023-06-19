@@ -12,7 +12,8 @@ const productModel = require('../../models/products')
 const reviewModel = require('../../models/reviews')
 
 // services
-const productService = require('../../service/product.service')
+const productService = require('../../service/product.service');
+const favoriteProducts = require('../../models/favoriteProducts');
 
 // To add review on product mentioned 
 const addReview = async function (req, res, next) {
@@ -43,7 +44,28 @@ const addReview = async function (req, res, next) {
       rating: rating
     }
     let reviewAddConfirmation = await productService.addReview(reviewDetails)
-    console.log(reviewAddConfirmation)
+    let product = await reviewModel.aggregate([
+      {
+        $match: {
+          userId: new ObjectId(req.user._id),
+          productId: new ObjectId(productId)
+        }
+      },
+      {
+        $group: {
+          _id: ["$userId", "$productId"],
+          count: {
+            $sum: 1
+          },
+          rating: {
+            $sum: "$rating"
+          }
+        }
+      }
+    ])
+    let reviewCountOnProduct = await reviewModel.countDocuments({ userId: req.user._id, productId: productId })
+    console.log("product ====", product, reviewCountOnProduct);
+    await productModel.updateOne({ _id: productId }, { $set: { "rating.rate": ((product[0].rating) / reviewCountOnProduct) } })
     return res.json({
       type: "success",
       status: 200,

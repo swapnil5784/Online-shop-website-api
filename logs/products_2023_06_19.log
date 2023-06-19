@@ -67,3 +67,172 @@ ReferenceError: ObjectId is not defined
 2023-06-19 11:59:06 INFO  Route : GET = products/review In:routes/product.js req.user._id = = > "648fe1cf50be1fddce448d84" 
 2023-06-19 12:00:33 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"isMarkedFavorite":true}} 
 2023-06-19 12:22:24 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"filter":{"isMarkedFavorite":true}} 
+2023-06-19 13:05:58 INFO  Route : GET = products/review In:routes/product.js req.user._id = = > "6490023b542c160deb8aecca" 
+2023-06-19 15:13:33 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-19 15:13:49 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-19 15:14:19 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-19 15:53:51 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 15:56:21 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-19 16:05:08 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-19 16:15:04 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 16:16:05 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 16:16:12 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 16:20:32 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 16:22:51 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 16:37:55 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 16:38:08 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 16:39:21 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 16:39:40 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 16:42:34 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 16:46:01 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 16:51:41 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 16:51:49 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:04:13 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-19 17:04:13 ERROR error at post /products route...productsToSend is not defined
+{}
+ReferenceError: productsToSend is not defined
+    at getProducts (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/controller/product/products.controller.js:231:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+2023-06-19 17:04:59 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-19 17:08:51 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:09:18 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:09:39 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:25:07 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:25:07 ERROR error at /product/add-review route !Class constructor ObjectId cannot be invoked without 'new'
+{}
+TypeError: Class constructor ObjectId cannot be invoked without 'new'
+    at addReview (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/controller/product/review.controller.js:48:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+2023-06-19 17:26:05 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:26:05 ERROR error at /product/add-review route !unknown top level operator: $match. If you have a field name that starts with a '$' symbol, consider using $getField or $setField.
+{"ok":0,"code":2,"codeName":"BadValue"}
+MongoServerError: unknown top level operator: $match. If you have a field name that starts with a '$' symbol, consider using $getField or $setField.
+    at Connection.onMessage (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/connection.js:202:26)
+    at MessageStream.<anonymous> (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/connection.js:61:60)
+    at MessageStream.emit (node:events:512:28)
+    at processIncomingData (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/message_stream.js:124:16)
+    at MessageStream._write (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/message_stream.js:33:9)
+    at writeOrBuffer (node:internal/streams/writable:392:12)
+    at _write (node:internal/streams/writable:333:10)
+    at Writable.write (node:internal/streams/writable:337:10)
+    at Socket.ondata (node:internal/streams/readable:766:22)
+    at Socket.emit (node:events:512:28) 
+2023-06-19 17:26:43 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:26:43 ERROR error at /product/add-review route !unknown top level operator: $match. If you have a field name that starts with a '$' symbol, consider using $getField or $setField.
+{"ok":0,"code":2,"codeName":"BadValue"}
+MongoServerError: unknown top level operator: $match. If you have a field name that starts with a '$' symbol, consider using $getField or $setField.
+    at Connection.onMessage (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/connection.js:202:26)
+    at MessageStream.<anonymous> (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/connection.js:61:60)
+    at MessageStream.emit (node:events:512:28)
+    at processIncomingData (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/message_stream.js:124:16)
+    at MessageStream._write (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/message_stream.js:33:9)
+    at writeOrBuffer (node:internal/streams/writable:392:12)
+    at _write (node:internal/streams/writable:333:10)
+    at Writable.write (node:internal/streams/writable:337:10)
+    at Socket.ondata (node:internal/streams/readable:766:22)
+    at Socket.emit (node:events:512:28) 
+2023-06-19 17:29:49 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:29:49 ERROR error at /product/add-review route !unknown top level operator: $match. If you have a field name that starts with a '$' symbol, consider using $getField or $setField.
+{"ok":0,"code":2,"codeName":"BadValue"}
+MongoServerError: unknown top level operator: $match. If you have a field name that starts with a '$' symbol, consider using $getField or $setField.
+    at Connection.onMessage (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/connection.js:202:26)
+    at MessageStream.<anonymous> (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/connection.js:61:60)
+    at MessageStream.emit (node:events:512:28)
+    at processIncomingData (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/message_stream.js:124:16)
+    at MessageStream._write (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/message_stream.js:33:9)
+    at writeOrBuffer (node:internal/streams/writable:392:12)
+    at _write (node:internal/streams/writable:333:10)
+    at Writable.write (node:internal/streams/writable:337:10)
+    at Socket.ondata (node:internal/streams/readable:766:22)
+    at Socket.emit (node:events:512:28) 
+2023-06-19 17:31:32 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:31:32 ERROR error at /product/add-review route !unknown top level operator: $match. If you have a field name that starts with a '$' symbol, consider using $getField or $setField.
+{"ok":0,"code":2,"codeName":"BadValue"}
+MongoServerError: unknown top level operator: $match. If you have a field name that starts with a '$' symbol, consider using $getField or $setField.
+    at Connection.onMessage (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/connection.js:202:26)
+    at MessageStream.<anonymous> (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/connection.js:61:60)
+    at MessageStream.emit (node:events:512:28)
+    at processIncomingData (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/message_stream.js:124:16)
+    at MessageStream._write (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/message_stream.js:33:9)
+    at writeOrBuffer (node:internal/streams/writable:392:12)
+    at _write (node:internal/streams/writable:333:10)
+    at Writable.write (node:internal/streams/writable:337:10)
+    at Socket.ondata (node:internal/streams/readable:766:22)
+    at Socket.emit (node:events:512:28) 
+2023-06-19 17:32:34 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:32:34 ERROR error at /product/add-review route !unknown top level operator: $match. If you have a field name that starts with a '$' symbol, consider using $getField or $setField.
+{"ok":0,"code":2,"codeName":"BadValue"}
+MongoServerError: unknown top level operator: $match. If you have a field name that starts with a '$' symbol, consider using $getField or $setField.
+    at Connection.onMessage (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/connection.js:202:26)
+    at MessageStream.<anonymous> (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/connection.js:61:60)
+    at MessageStream.emit (node:events:512:28)
+    at processIncomingData (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/message_stream.js:124:16)
+    at MessageStream._write (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/message_stream.js:33:9)
+    at writeOrBuffer (node:internal/streams/writable:392:12)
+    at _write (node:internal/streams/writable:333:10)
+    at Writable.write (node:internal/streams/writable:337:10)
+    at Socket.ondata (node:internal/streams/readable:766:22)
+    at Socket.emit (node:events:512:28) 
+2023-06-19 17:32:52 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:32:52 ERROR error at /product/add-review route !unknown top level operator: $match. If you have a field name that starts with a '$' symbol, consider using $getField or $setField.
+{"ok":0,"code":2,"codeName":"BadValue"}
+MongoServerError: unknown top level operator: $match. If you have a field name that starts with a '$' symbol, consider using $getField or $setField.
+    at Connection.onMessage (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/connection.js:202:26)
+    at MessageStream.<anonymous> (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/connection.js:61:60)
+    at MessageStream.emit (node:events:512:28)
+    at processIncomingData (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/message_stream.js:124:16)
+    at MessageStream._write (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/node_modules/mongodb/lib/cmap/message_stream.js:33:9)
+    at writeOrBuffer (node:internal/streams/writable:392:12)
+    at _write (node:internal/streams/writable:333:10)
+    at Writable.write (node:internal/streams/writable:337:10)
+    at Socket.ondata (node:internal/streams/readable:766:22)
+    at Socket.emit (node:events:512:28) 
+2023-06-19 17:33:43 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:33:43 ERROR error at /product/add-review route !reviewsOnProduct is not defined
+{}
+ReferenceError: reviewsOnProduct is not defined
+    at addReview (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/controller/product/review.controller.js:65:45)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+2023-06-19 17:33:48 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:33:48 ERROR error at /product/add-review route !reviewsOnProduct is not defined
+{}
+ReferenceError: reviewsOnProduct is not defined
+    at addReview (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/controller/product/review.controller.js:65:45)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+2023-06-19 17:34:09 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:34:09 ERROR error at /product/add-review route !Cannot read properties of undefined (reading 'rating')
+{}
+TypeError: Cannot read properties of undefined (reading 'rating')
+    at addReview (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/controller/product/review.controller.js:64:40)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+2023-06-19 17:34:43 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:34:43 ERROR error at /product/add-review route !reviewsOnProduct is not defined
+{}
+ReferenceError: reviewsOnProduct is not defined
+    at addReview (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/controller/product/review.controller.js:65:45)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+2023-06-19 17:35:11 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:35:11 ERROR error at /product/add-review route !reviewsOnProduct is not defined
+{}
+ReferenceError: reviewsOnProduct is not defined
+    at addReview (/home/swapnils/Desktop/11.APIs with Angular teamates/Day-18-19-06-2023/updates-2/Online-shop-website-api/controller/product/review.controller.js:65:45)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) 
+2023-06-19 17:35:38 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:35:52 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:37:11 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:37:46 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:38:42 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:41:38 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:41:55 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-19 17:42:12 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:42:25 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-19 17:43:06 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {} 
+2023-06-19 17:43:11 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:43:59 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:45:07 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:47:11 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 17:48:03 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 18:32:36 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 18:33:06 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 18:33:32 INFO  Route : POST = products/review In:routes/product.js{"userId":"6490023b542c160deb8aecca","productId":"646f3bac5d3d7c99439ec912","review":"Fire product date:19/6/2023","rating":4} 
+2023-06-19 18:38:00 INFO  Route : POST  = /products In:routes/product.js=====================> req.body : {"sort":{"field":"rating","order":"desc"}} 

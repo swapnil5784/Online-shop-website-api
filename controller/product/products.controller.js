@@ -69,7 +69,7 @@ const getProducts = async function (req, res, next) {
     }
 
     // filter colors in product
-    if (filter?.color) {
+    if (filter?.color && filter.color.length) {
       match.color = { $in: filter.color }
     }
 

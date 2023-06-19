@@ -1,5 +1,10 @@
+// packages
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
+
+// models
+const reviewModel = require('../models/reviews')
+
 const options = {
     timestamps: {
         createdAt: "createdOn",
@@ -27,6 +32,8 @@ const review = new mongoose.Schema({
 
 
 }, options)
+
+
 
 // model export
 const reviews = mongoose.model('reviews', review);

@@ -37,6 +37,28 @@ module.exports = {
                     })
                 }
             }
+            if (typeof totalAmount != "number") {
+                return res.json({
+                    type: "error",
+                    status: 409,
+                    message: "totalAmount is not valid !"
+                })
+            }
+            if (typeof shippingAmount != "number") {
+                return res.json({
+                    type: "error",
+                    status: 409,
+                    message: "shippingAmount is not valid !"
+                })
+            }
+            if (typeof paymentMethod != "number") {
+                return res.json({
+                    type: "error",
+                    status: 409,
+                    message: "paymentMethod is not valid !"
+                })
+            }
+            console.log(typeof totalAmount)
             let orderObject = {
                 billingId: new ObjectId(billingId),
                 deliveryId: new ObjectId(billingId),
