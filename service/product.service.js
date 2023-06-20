@@ -285,6 +285,20 @@ const removeProductFromFavorite = async (productId, userId) => {
     })
 }
 
+// To count the favorite products of login user
+const getFavoriteProductsCount = async (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let data = await favoriteProductModel.countDocuments({ userId: userId })
+            resolve(data)
+        }
+        catch (error) {
+            console.log("error in query to count favorite product from favorite , file : /service/product.service.js", error)
+            reject(error)
+        }
+    })
+}
+
 // To find max and min price in all available products
 const findMaximumAndMinumumProductPrice = async () => {
     return new Promise(async (resolve, reject) => {
@@ -398,6 +412,7 @@ module.exports = {
     markProductFavorite,
     getFavoriteProductsDetails,
     removeProductFromFavorite,
+    getFavoriteProductsCount,
     //filters
     findMaximumAndMinumumProductPrice,
     productsInPriceRange,

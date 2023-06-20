@@ -49,6 +49,8 @@ const markFavoriteAndGetFavorite = async function (req, res, next) {
     }
     // query to store favorite products of logged-in user
     let products = await productService.getFavoriteProductsDetails(req.user._id)
+    let favoriteProductsCount = await productService.getFavoriteProductsCount(req.user._id) 
+
     // if user has no favorite products
     if (!products?.length) {
       return res.json({
@@ -64,6 +66,7 @@ const markFavoriteAndGetFavorite = async function (req, res, next) {
       type: "success",
       status: 200,
       data: {
+        totalProducts: favoriteProductsCount,
         products: products
       }
     })

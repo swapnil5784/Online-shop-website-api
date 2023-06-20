@@ -1,0 +1,4 @@
+2023-06-20 07:42:37 INFO  Route : GET = products/review In:routes/product.js req.user._id = = > "64891c419ce5444b68de8c17" 
+2023-06-20 07:43:45 INFO  Route : GET = products/review In:routes/product.js req.user._id = = > "64891c419ce5444b68de8c17" 
+2023-06-20 07:44:14 INFO  Route : GET = products/review In:routes/product.js req.user._id = = > "64891c419ce5444b68de8c17" 
+2023-06-20 07:44:44 INFO  Route : GET = products/review In:routes/product.js req.user._id = = > "64891c419ce5444b68de8c17" 
