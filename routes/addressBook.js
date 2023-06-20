@@ -17,7 +17,7 @@ const {
 router.get('/', showAddressList);
 
 // For get address details in body and store to db
-router.post('/add', validation("save-address"), addAddress);
+router.post('/add', addAddress);
 
 // For get address details to update and update into db
 router.put('/update/:addressId', validation("update-address"), updateAddress)

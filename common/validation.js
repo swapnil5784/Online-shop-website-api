@@ -52,20 +52,6 @@ module.exports = {
                     errorMessage: 'billingId is invalid'
                 }
             },
-            deliveryId: {
-                trim: true,
-                notEmpty: true,
-                errorMessage: "Please Provide deliveryId",
-                custom: {
-                    options: function (Id) {
-                        if (commonFn.isValidObjectId(Id)) {
-                            return true;
-                        }
-                        return false;
-                    },
-                    errorMessage: 'deliveryId is invalid'
-                }
-            }
         }
     }
 

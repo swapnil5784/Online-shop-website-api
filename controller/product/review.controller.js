@@ -7,9 +7,6 @@ const CommonFunctions = require('../../common/functions');
 const commonFn = new CommonFunctions();
 const productLog = commonFn.Logger('products')
 
-// models
-const productModel = require('../../models/products')
-const reviewModel = require('../../models/reviews')
 
 // services
 const productService = require('../../service/product.service');
@@ -44,7 +41,7 @@ const addReview = async function (req, res, next) {
       rating: rating
     }
     await productService.addReview(reviewDetails)
-    let product = await reviewModel.aggregate([
+    let product = await db.models.reviews.aggregate([
       {
         $match: {
           userId: new ObjectId(req.user._id),
@@ -63,9 +60,8 @@ const addReview = async function (req, res, next) {
         }
       }
     ])
-    let reviewCountOnProduct = await reviewModel.countDocuments({ userId: req.user._id, productId: productId })
-    console.log("product ====", product, reviewCountOnProduct);
-    await productModel.updateOne({ _id: productId }, { $set: { "rating.rate": ((product[0].rating) / reviewCountOnProduct) } })
+    let reviewCountOnProduct = await db.models.reviews.countDocuments({ userId: req.user._id, productId: productId })
+    await db.models.products.updateOne({ _id: productId }, { $set: { "rating.rate": ((product[0].rating) / reviewCountOnProduct) } })
     return res.json({
       type: "success",
       status: 200,

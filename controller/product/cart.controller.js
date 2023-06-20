@@ -15,7 +15,6 @@ const productService = require('../../service/product.service')
 const addAndUpdateCart = async function (req, res, next) {
   try {
     let { productId, quantity, isAddedFromShop } = req.body
-    console.log("productId = = > >", productId)
     // query to check if product is exist in product collection with mentioned productId
     let isProductExists = await productService.checkProductExistsById(productId)
     // if product not exist
@@ -44,6 +43,7 @@ const addAndUpdateCart = async function (req, res, next) {
     return res.json({
       type: "success",
       status: 200,
+      productsInCart: await db.models.carts.countDocuments({ userId: req.user._id }),
       message: `Product added to cart successfully`
     })
   }

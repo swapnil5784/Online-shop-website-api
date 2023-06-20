@@ -38,7 +38,6 @@ const getUserOrderDetails = async function (userId) {
                     status: 1
                 }
             ).sort({ createdOn: -1 })
-            console.log("orderListDetails = = > >", orderListDetails)
             resolve(orderListDetails)
         }
         catch (error) {

@@ -20,11 +20,14 @@ const getProductFilter = async function (req, res, next) {
       i < Math.ceil(maxPriceDetails[0].MaximumPrice);
       i = i + 100
     ) {
-      priceRanges.push({
-        min: i,
-        max: i + 100,
-        totalProducts: await productServices.productsInPriceRange(i, i + 100),
-      });
+      let productsInRange = await productServices.productsInPriceRange(i, i + 100)
+      if (productsInRange) {
+        priceRanges.push({
+          min: i,
+          max: i + 100,
+          totalProducts: productsInRange,
+        });
+      }
     }
     // query to get the colors list of product in collection
     let colorsArray = await productServices.colorsAvailableInProducts();

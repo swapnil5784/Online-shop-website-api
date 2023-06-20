@@ -7,9 +7,6 @@ const CommonFunctions = require('../../common/functions');
 const commonFn = new CommonFunctions();
 const productLog = commonFn.Logger('products')
 
-// import models
-const productModel = require("../../models/products");
-const categoryModel = require('../../models/categories')
 
 // To get product list
 const getProducts = async function (req, res, next) {
@@ -118,7 +115,7 @@ const getProducts = async function (req, res, next) {
           reviews: 1
         }
       })
-      let productDetails = await productModel.aggregate(condition)
+      let productDetails = await db.models.products.aggregate(condition)
 
       return res.json({
         type: "success",
@@ -191,7 +188,7 @@ const getProducts = async function (req, res, next) {
 
 
     // query to count products before applying filters
-    let totalFilteredProducts = await productModel.countDocuments(match);
+    let totalFilteredProducts = await db.models.products.countDocuments(match);
 
     //2.----------------- sort
 
@@ -238,7 +235,7 @@ const getProducts = async function (req, res, next) {
 
     // console.log(JSON.stringify(condition, null, 3))
     let data = {
-      products: await productModel.aggregate(condition)
+      products: await db.models.products.aggregate(condition)
     }
     let totalProducts = data.products?.length;
     // if no products in data to send after filters
@@ -255,7 +252,7 @@ const getProducts = async function (req, res, next) {
     // product's categories to send
     if (isCategoryList) {
       data = {
-        categories: await categoryModel.aggregate([
+        categories: await db.models.categories.aggregate([
           {
             $lookup: {
               from: "products",

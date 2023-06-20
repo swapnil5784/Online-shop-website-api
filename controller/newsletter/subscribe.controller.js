@@ -14,7 +14,7 @@ const nodemailer = require("nodemailer");
 const subscribeToNewsletter = async function (req, res, next) {
     try {
         // query to find email passed with that email already exists in db 
-        let isEmailExists = await db.models.news.findOne({ userEmail: req.body.userEmail }).lean()
+        let isEmailExists = await db.models.newsletter.findOne({ userEmail: req.body.userEmail }).lean()
         // if email already exists
         if (isEmailExists) {
             return res.json({
@@ -24,7 +24,7 @@ const subscribeToNewsletter = async function (req, res, next) {
             });
         }
         // query to store email in db
-        await newsModel.create(req.body)
+        await db.models.newsletter.create(req.body)
         let email = req.body.userEmail
         let subject = 'Registration successfull !'
         let content = "From email service  : Congradulations ! You have successfully registered on Multi-Shop Online E-store ( angular-node joint venture)"

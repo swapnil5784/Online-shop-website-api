@@ -45,11 +45,10 @@ module.exports = function (mongoose) {
         try {
             // console.log("this = = > >", this)
             const _this = this
-            // const check = await cartModel.find({ userId: _this.userId.toString() }, { productId: 1, quantity: 1, _id: 0 })
-            const productsInOrder = await cartModel.aggregate([
+            const productsInOrder = await db.models.carts.aggregate([
                 {
                     $match: {
-                        userId: new ObjectId(_this.userId.toString())
+                        userId: new mongoose.Types.ObjectId(_this.userId.toString())
                     }
                 },
                 {
@@ -85,16 +84,16 @@ module.exports = function (mongoose) {
                 }])
             // console.log('productsInOrder = => ', productsInOrder, "check = =  > >", check)
             let detailsOfOrder = {
-                orderId: new ObjectId(_this._id),
-                userId: new ObjectId(_this.userId.toString()),
+                orderId: new mongoose.Types.ObjectId(_this._id),
+                userId: new mongoose.Types.ObjectId(_this.userId.toString()),
                 orderAmount: _this.totalAmount + _this.shippingAmount,
                 products: productsInOrder
             }
             // console.log("_this = = > > ", _this)
-            let productsInCart = await cartModel.aggregate([
+            let productsInCart = await db.models.carts.aggregate([
                 {
                     $match: {
-                        userId: new ObjectId(_this.userId.toString())
+                        userId: new mongoose.Types.ObjectId(_this.userId.toString())
                     }
                 },
                 {
@@ -136,9 +135,9 @@ module.exports = function (mongoose) {
                 }
             ])
 
-            let billingAddress = await addressBookModel.findOne(
+            let billingAddress = await db.models.addressBook.findOne(
                 {
-                    _id: new ObjectId(_this.billingId.toString())
+                    _id: new mongoose.Types.ObjectId(_this.billingId.toString())
                 }
                 ,
                 {
@@ -156,9 +155,9 @@ module.exports = function (mongoose) {
                 }
             ).lean()
 
-            let deliveryAddress = await addressBookModel.findOne(
+            let deliveryAddress = await db.models.addressBook.findOne(
                 {
-                    _id: new ObjectId(_this.deliveryId.toString())
+                    _id: new mongoose.Types.ObjectId(_this.deliveryId.toString())
                 }
                 ,
                 {
@@ -187,8 +186,8 @@ module.exports = function (mongoose) {
                 status: "Success"
             }
             // console.log("fixedOrder = = > >", JSON.stringify(fixedOrder, null, 3))
-            await orderDetailModel.create(fixedOrder)
-            await cartModel.deleteMany({ userId: _this.userId.toString() })
+            await db.models.orderDetails.create(fixedOrder)
+            await db.models.carts.deleteMany({ userId: _this.userId.toString() })
         }
         catch (error) {
             console.log("error at post hook in order model ", error)

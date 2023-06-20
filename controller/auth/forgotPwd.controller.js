@@ -13,8 +13,6 @@ const emailService = require('../../common/sendmail')
 const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body
-        console.log("email = = > >", email)
-        console.log("userWithEmailExists = = > >", await forgetService.userWithEmailExists(email))
         // if user with email in body not found
         if (!await forgetService.userWithEmailExists(email)) {
             return res.json({
@@ -66,7 +64,6 @@ const forgotPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
     try {
         const { email, resetOtp, newPassword } = req.body
-        console.log("email = = > >", email, "resetOtp = = > >", resetOtp, " newPassword = = > >", newPassword, md5(newPassword))
         let userDetails = await forgetService.findUser(email)
 
         // if any required field not found in body

@@ -38,11 +38,13 @@ const markFavoriteAndGetFavorite = async function (req, res, next) {
         })
       }
       // mark product favorite and store into collection
-
+      let forTest = await db.models.favoriteProducts.countDocuments({ userId: new ObjectId(req.user._id.toString()), productId: new ObjectId(productId.toString()) })
+      console.log("forTest = = > >", forTest, "req.user._id = = > >", req.user._id, "productId = = > >", productId.toString());
       await productService.markProductFavorite(productId, req.user._id)
       return res.json({
         type: "success",
         status: 200,
+        favoriteProducts: await db.models.favoriteProducts.countDocuments({ usertId: req.user._id, productId: req.user._id }),
         message: "Product successfully added to favorite !"
       })
     }
