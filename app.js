@@ -1,40 +1,53 @@
 //-1---------------------------------------------------
 require('dotenv').config()
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var cors = require('cors')
-
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors');
+const expressValidator = require('express-validator');
 // mongodb connection
 
 // 2. --------------------------------------------
-const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGO_URL);
-const db = mongoose.connection;
-console.log(process.env.MONGO_URL)
-db.on('error', (error) => {
-  console.log(error)
-});
-db.once('open', () => {
-  console.log('mongodb connected of online-website!')
-})
+global.db = require('./models')
 //---------------------------------------------------
+const { authentication, logIpOfRequest, validations } = require('./common/middlewares');
+global.validation = validations;
 
-var indexRouter = require('./routes/index');
-var productsRouter = require('./routes/products');
-var usersRouter = require('./routes/users');
-var addressBookRouter = require('./routes/addressBook')
-var orderRouter = require('./routes/orders')
+const CommonFunctions = require('./common/functions');
+global.commonFn = new CommonFunctions();
+console.log();
+
+const indexRouter = require('./routes/index');
+const productsRouter = require('./routes/products');
+const usersRouter = require('./routes/users');
+const addressBookRouter = require('./routes/addressBook')
+const orderRouter = require('./routes/orders')
 // 1. passport authentication
 const passport = require('passport');
-const { authentication, logIpOfRequest } = require('./comman/middlewares');
+
+
 // load passport local for login process
 require('./auth/auth');
 
-var app = express();
-
+const app = express();
+app.use(
+  expressValidator({
+    errorFormatter: function (param, msg, value) {
+      const namespace = param.split(".");
+      const root = namespace.shift();
+      let formParam = root;
+      while (namespace.length) {
+        formParam += `[${namespace.shift()}]`;
+      }
+      return {
+        param: formParam,
+        msg: msg
+      };
+    }
+  })
+);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -52,7 +65,6 @@ app.use(cors({
 // })
 
 // addTwo(1, 2)
-app.use(logIpOfRequest)
 app.use('/', indexRouter);
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);

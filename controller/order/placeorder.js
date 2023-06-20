@@ -1,17 +1,12 @@
 // packages
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
-
-// models
-const cartModel = require('../../models/carts.js')
-const orderModel = require('../../models/orders.js')
-
 module.exports = {
     // function to place order
     placeOrder: async function (req, res, next) {
         try {
             // query to get number of products in cart
-            let isCartEmpty = await cartModel.countDocuments({ userId: req.user._id })
+            let isCartEmpty = await db.models.carts.countDocuments({ userId: req.user._id })
             // if cart is empty
             if (!isCartEmpty) {
                 return res.json({
@@ -21,50 +16,12 @@ module.exports = {
                 })
             }
             let { shipToDifferentAddress, billingId, deliveryId, totalAmount, shippingAmount, paymentMethod } = req.body
-            if (!billingId) {
-                return res.json({
-                    type: "error",
-                    status: 409,
-                    message: "BillingId is not found !"
-                })
-            }
-            if (billingId) {
-                if (!ObjectId.isValid(billingId)) {
-                    return res.json({
-                        type: "error",
-                        status: 409,
-                        message: "BillingId is not valid !"
-                    })
-                }
-            }
-            if (typeof totalAmount != "number") {
-                return res.json({
-                    type: "error",
-                    status: 409,
-                    message: "totalAmount is not valid !"
-                })
-            }
-            if (typeof shippingAmount != "number") {
-                return res.json({
-                    type: "error",
-                    status: 409,
-                    message: "shippingAmount is not valid !"
-                })
-            }
-            if (typeof paymentMethod != "number") {
-                return res.json({
-                    type: "error",
-                    status: 409,
-                    message: "paymentMethod is not valid !"
-                })
-            }
-            console.log(typeof totalAmount)
             let orderObject = {
                 billingId: new ObjectId(billingId),
                 deliveryId: new ObjectId(billingId),
                 userId: new ObjectId(req.user._id),
-                totalAmount: totalAmount,
-                shippingAmount: shippingAmount,
+                totalAmount: parseInt(totalAmount),
+                shippingAmount: parseInt(shippingAmount),
                 paymentMethod: paymentMethod
             }
             // if shipping and delivery addresses are different 
@@ -88,7 +45,7 @@ module.exports = {
                 orderObject.deliveryId = new ObjectId(deliveryId)
             }
             // query to store order details into db
-            await orderModel.create(orderObject)
+            await db.models.orders.create(orderObject)
             return res.json({
                 type: "success",
                 status: 200,

@@ -1,11 +1,10 @@
-// models
-const usermodel = require('../../models/users')
+
 
 // To find user with mentioned email or userId
 const findUserByIdorMobile = async (email, mobile) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await usermodel.countDocuments({ $or: [{ email: email }, { mobile: mobile }] })
+            let data = await db.models.users.countDocuments({ $or: [{ email: email }, { mobile: mobile }] })
             resolve(data)
         } catch (error) {
             reject(error)
@@ -18,7 +17,7 @@ const createUser = async (userBody) => {
     return new Promise(async (resolve, reject) => {
         try {
 
-            let data = await usermodel.create(userBody)
+            let data = await db.models.users.create(userBody)
             if (data) {
                 resolve(data)
             } else {

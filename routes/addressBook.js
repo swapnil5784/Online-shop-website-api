@@ -1,6 +1,9 @@
 //packages
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+
+// Middlewares
+
 
 // controllers
 const {
@@ -14,13 +17,13 @@ const {
 router.get('/', showAddressList);
 
 // For get address details in body and store to db
-router.post('/add', addAddress);
+router.post('/add', validation("save-address"), addAddress);
 
 // For get address details to update and update into db
-router.put('/update/:addressId', updateAddress)
+router.put('/update/:addressId', validation("update-address"), updateAddress)
 
 // For delete address details
-router.delete('/remove/:addressId', removeAddress)
+router.delete('/remove/:addressId', validation("remove-address"), removeAddress);
 
 //export
 module.exports = router;

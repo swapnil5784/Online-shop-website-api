@@ -14,7 +14,7 @@ passport.use(new LocalStrategy({
     async function (email, password, cb) {
         // console.log(`{email:${email},password:${md5(password)}}`)
         //Assume there is a DB module pproviding a global UserModel
-        return await usersModel.findOne({
+        return await db.models.users.findOne({
             email: email, password: md5(password)
         }).then(user => {
             if (!user) {
@@ -34,20 +34,3 @@ passport.use(new LocalStrategy({
             });
     }
 ));
-
-// passport.use(new JWTStrategy({
-//     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-//     secretOrKey: 'swapnil'
-// },
-//     function (jwtPayload, cb) {
-//         console.log(jwtPayload)
-//         //find the user in db if needed
-//         return usersModel.findOneById(jwtPayload.id)
-//             .then(user => {
-//                 return cb(null, user);
-//             })
-//             .catch(err => {
-//                 return cb(err);
-//             });
-//     }
-// ));

@@ -4,13 +4,10 @@ const moment = require('moment')
 const md5 = require('md5')
 const fs = require('fs')
 
-// models
-const userModel = require('../../models/users')
-
 // services
 const forgetService = require('../../service/auth/forgot.service')
 const otpGenerator = require('otp-generator')
-const emailService = require('../../comman/sendmail')
+const emailService = require('../../common/sendmail')
 
 // To send 6 character OTP to email received in body if email exist in db
 const forgotPassword = async (req, res) => {
@@ -29,20 +26,20 @@ const forgotPassword = async (req, res) => {
         // generate random 6 character string as resetOtp
         let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false })
         // set time 5 minutes ahead of now
-        let otpExpireAt = moment().add(5, 'minutes').utc('Asia/Kolkata').format('DD-MM-YYYY hh:mm:ss')
+        // let otpExpireAt = moment().add(5, 'minutes').utc('Asia/Kolkata').format('DD-MM-YYYY hh:mm:ss')
+        let otpExpireAt = moment().add(5, 'minutes')
         // setting resetOtp and expiration time in userModel
         await forgetService.addResetOtpAndExpirytimeFieldToUser(email, otp, otpExpireAt)
         // read html file in utf-8 encoding
         let readFile = fs.readFileSync('htmlTemplate/mail.hbs', { encoding: 'utf-8' })
         // compile as template
-        var template = handlebars.compile(readFile);
+        const template = handlebars.compile(readFile);
         // replace Object for variable replacement in email sending
-        var replacements = {
+        const replacements = {
             resetOtp: otp,
             email: email,
-            otpExpireAt: otpExpireAt
         };
-        var htmlToSend = template(replacements);
+        const htmlToSend = template(replacements);
         await emailService.sendMail(email, "OTP for reset password !", htmlToSend)
         return res.json({
             type: 'success',
@@ -82,11 +79,11 @@ const resetPassword = async (req, res) => {
         }
 
         // time exceeds the otp-expiration time
-        if (!(userDetails.otpExpiredAt > moment().utc('Asia/Kolkata').format('DD-MM-YYYY hh:mm:ss'))) {
+        if (!(userDetails.otpExpiredAt > moment())) {
             return res.json({
                 type: 'error',
                 status: 409,
-                message: "Reset Otp Expired!"
+                message: "Invalid OTP !"
 
             })
         }
@@ -96,18 +93,15 @@ const resetPassword = async (req, res) => {
             return res.json({
                 type: 'error',
                 status: 409,
-                message: "Reset-Otp mismatched !"
+                message: "Invalid OTP !"
             })
         }
-        console.log(`(${userDetails.otpExpiredAt} > ${moment().utc('Asia/Kolkata').format('DD-MM-YYYY hh:mm:ss')})`, (userDetails.otpExpiredAt > moment().utc('Asia/Kolkata').format('DD-MM-YYYY hh:mm:ss')))
-
         // query to update password in db 
-        let resetPasswordConfirmation = await forgetService.updatePassword(email, resetOtp, newPassword)
-        console.log("resetPasswordConfirmation = = > >", resetPasswordConfirmation);
+        await forgetService.updatePassword(email, resetOtp, newPassword)
         return res.json({
             type: 'success',
             status: 300,
-            message: "Successfully password reset!"
+            message: "Password reset successfully !"
         })
     }
     catch (error) {

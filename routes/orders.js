@@ -1,6 +1,6 @@
 // packages
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
 
 // controller
@@ -11,7 +11,7 @@ const { placeOrder } = require('../controller/order/placeorder')
 router.get('/:orderId?', showOrderDetails);
 
 // For get order details and place order
-router.post('/', placeOrder);
+router.post('/', validation('place-order'), placeOrder);
 
 
 module.exports = router;

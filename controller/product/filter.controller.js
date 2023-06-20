@@ -1,10 +1,10 @@
-// comman functions
-const CommonFunctions = require('../../comman/functions');
+// common functions
+const CommonFunctions = require('../../common/functions');
 const commonFn = new CommonFunctions();
 const productLog = commonFn.Logger('products')
 
 // import models
-var productModel = require("../../models/products");
+const productModel = require("../../models/products");
 
 // services
 const productServices = require('../../service/product.service')

@@ -1,3 +1,6 @@
+const mongoose = require('mongoose')
+const ObjectId = mongoose.Types.ObjectId
+
 // For make log file and print logs into it
 class CommonFunctions {
     Logger(logName) {
@@ -10,5 +13,15 @@ class CommonFunctions {
             timestampFormat: 'YYYY-MM-DD HH:mm:ss'
         });
     }
+
+    isValidObjectId(Id) {
+        if (ObjectId.isValid(Id)) {
+            return true
+        }
+        return false
+    }
+
+
+
 }
 module.exports = CommonFunctions;

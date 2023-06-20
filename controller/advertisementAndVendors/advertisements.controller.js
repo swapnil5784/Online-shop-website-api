@@ -7,7 +7,7 @@ const offerModel = require('../../models/offers')
 const vendorList = async function (req, res, next) {
     try {
         // query to get all vendors as list
-        let vendors = await vendorModel.find({});
+        let vendors = await db.models.vendors.find({});
         // if no vendors in db
         if (!vendors.length) {
             return res.json({
@@ -38,9 +38,9 @@ const vendorList = async function (req, res, next) {
 const carouselsList = async function (req, res, next) {
     try {
         // query to get all carousels for advertisement as list
-        let advertisements = await advertisementModel.find({});
+        let advertisements = await db.models.advertisements.find({});
         // query to get offer list from db as list
-        let offers = await offerModel.find({})
+        let offers = await db.models.offers.find({})
         if (!offers.length && !advertisements.length) {
             return res.json({
                 type: "error",

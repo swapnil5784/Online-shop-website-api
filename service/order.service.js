@@ -2,20 +2,16 @@
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
 
-// models
-const orderDetailModel = require('../models/orderDetails')
-const orderModel = require('../models/orders')
-
 // To send orderDetails of specific order by orderId
 const SpecificOrderInDetail = async (orderId) => {
     return new Promise(async (resolve, reject) => {
         try {
             // query to get a order and its details
-            let details = await orderDetailModel.findOne(
+            let details = await db.models.orderDetails.findOne(
                 {
                     _id: new ObjectId(orderId)
                 }
-            )
+            ).lean()
             // console.log('details = = > >', details)
             resolve(details)
         } catch (error) {
@@ -31,7 +27,7 @@ const getUserOrderDetails = async function (userId) {
     // ------------- empty function------
     return new Promise(async function (resolve, reject) {
         try {
-            let orderListDetails = await orderDetailModel.find(
+            let orderListDetails = await db.models.orderDetails.find(
                 {
                     userId: new ObjectId(userId)
                 },

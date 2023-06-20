@@ -2,17 +2,11 @@
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId
 
-// models
-const productModel = require('../models/products')
-const reviewModel = require('../models/reviews')
-const cartModel = require('../models/carts')
-const favoriteProductModel = require('../models/favoriteProducts')
-
 // To check the product exists with userId passed
 const checkProductExistsById = async (productId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await productModel.findById(productId)
+            let data = await db.models.products.findById(productId)
             resolve(data)
         }
         catch (error) {
@@ -26,7 +20,7 @@ const checkProductExistsById = async (productId) => {
 const addReview = async (reviewDetails) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await reviewModel.create(reviewDetails)
+            let data = await db.models.reviews.create(reviewDetails)
             resolve(data)
         }
         catch (error) {
@@ -38,9 +32,10 @@ const addReview = async (reviewDetails) => {
 
 // To check review exists in collection by reviewId 
 const checkReviewExistsById = async (reviewId) => {
+    db.models.review
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await reviewModel.findById(reviewId)
+            let data = await db.models.reviews.findById(reviewId)
             resolve(data)
         }
         catch (error) {
@@ -54,7 +49,7 @@ const checkReviewExistsById = async (reviewId) => {
 const deleteReview = async (reviewId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await reviewModel.deleteOne({ _id: reviewId })
+            let data = await db.models.reviews.deleteOne({ _id: reviewId })
             resolve(data)
         }
         catch (error) {
@@ -68,7 +63,7 @@ const deleteReview = async (reviewId) => {
 const updateOrInsertCart = async (userId, productId, condition) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await cartModel.updateOne(
+            let data = await db.models.carts.updateOne(
                 {
                     productId: new ObjectId(productId),
                     userId: new ObjectId(userId),
@@ -92,7 +87,7 @@ const updateOrInsertCart = async (userId, productId, condition) => {
 const cartExistsById = async (cartId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await cartModel.findById(cartId)
+            let data = await db.models.carts.findById(cartId)
             resolve(data)
         }
         catch (error) {
@@ -107,7 +102,7 @@ const cartExistsById = async (cartId) => {
 const deleteCart = async (cartId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await cartModel.deleteOne({ _id: cartId })
+            let data = await db.models.carts.deleteOne({ _id: cartId })
             resolve(data)
         }
         catch (error) {
@@ -121,7 +116,7 @@ const deleteCart = async (cartId) => {
 const showCartProducts = async (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await cartModel.aggregate([
+            let data = await db.models.carts.aggregate([
                 {
                     $match: {
                         userId: new ObjectId(userId)
@@ -179,7 +174,7 @@ const showCartProducts = async (userId) => {
 const checkProductIsAlreadyMarkedFavorite = async (productId, userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await favoriteProductModel.countDocuments({
+            let data = await db.models.favoriteProducts.countDocuments({
                 productId: new ObjectId(productId),
                 userId: new ObjectId(userId),
             })
@@ -196,7 +191,7 @@ const checkProductIsAlreadyMarkedFavorite = async (productId, userId) => {
 const markProductFavorite = async (productId, userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await favoriteProductModel.create({
+            let data = await db.models.favoriteProducts.create({
                 productId: productId,
                 userId: userId,
             })
@@ -213,7 +208,7 @@ const markProductFavorite = async (productId, userId) => {
 const getFavoriteProductsDetails = async (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await favoriteProductModel.aggregate([
+            let data = await db.models.favoriteProducts.aggregate([
                 {
                     $match: {
                         userId: new ObjectId(userId)
@@ -275,7 +270,7 @@ const getFavoriteProductsDetails = async (userId) => {
 const removeProductFromFavorite = async (productId, userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await favoriteProductModel.deleteOne({ productId: productId, userId: userId })
+            let data = await db.models.favoriteProducts.deleteOne({ productId: productId, userId: userId })
             resolve(data)
         }
         catch (error) {
@@ -289,7 +284,7 @@ const removeProductFromFavorite = async (productId, userId) => {
 const getFavoriteProductsCount = async (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await favoriteProductModel.countDocuments({ userId: userId })
+            let data = await db.models.favoriteProducts.countDocuments({ userId: userId })
             resolve(data)
         }
         catch (error) {
@@ -303,7 +298,7 @@ const getFavoriteProductsCount = async (userId) => {
 const findMaximumAndMinumumProductPrice = async () => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await productModel.aggregate([
+            let data = await db.models.products.aggregate([
                 {
                     $group: {
                         _id: null,
@@ -325,7 +320,7 @@ const findMaximumAndMinumumProductPrice = async () => {
 const productsInPriceRange = async (min, max) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await productModel.countDocuments({
+            let data = await db.models.products.countDocuments({
                 $and: [{ price: { $gte: min } }, { price: { $lte: max } }],
             })
             resolve(data)
@@ -341,7 +336,7 @@ const productsInPriceRange = async (min, max) => {
 const colorsAvailableInProducts = async (min, max) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await productModel.aggregate([
+            let data = await db.models.products.aggregate([
                 {
                     $group: {
                         _id: "$color",
@@ -370,7 +365,7 @@ const colorsAvailableInProducts = async (min, max) => {
 const sizesAvailableInProducts = async (min, max) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = productModel.aggregate([
+            let data = db.models.products.aggregate([
                 {
                     $group: {
                         _id: "$size",

@@ -2,9 +2,6 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
-// models
-const addressBookModel = require('../../models/addressBook')
-
 // services
 const addressBookService = require('../../service/addressBook.service')
 
@@ -34,7 +31,7 @@ const addAddress = async function (req, res, next) {
                 message: 'country is not valid !'
             })
         }
-        if (typeof pincode != "number ") {
+        if (typeof pincode != "string") {
             return res.json({
                 type: "error",
                 status: 409,
@@ -104,27 +101,7 @@ const addAddress = async function (req, res, next) {
 // To remove address from user's address collection
 const removeAddress = async function (req, res, next) {
     try {
-        // if addressId in url paramter is not in ObjectId format
-        if (!ObjectId.isValid(req.params.addressId)) {
-            return res.json({
-                type: "error",
-                status: 409,
-                message: `AddressId not valid !`
-            })
-        }
-        // query to get count of address is their in db to delete
-        let addressFoundForDelete = await addressBookService.addressExistsWithId(req.params.addressId)
-        // if address to delete not found in collection
-        if (!addressFoundForDelete) {
-            return res.json({
-                type: "error",
-                status: 409,
-                message: `Address not found !`
-            })
-        }
-        // query to delete detials from db
-        let deleteConfirmation = await addressBookService.removeAddress(req.params.addressId)
-        console.log(deleteConfirmation);
+        await addressBookService.removeAddress(req.params.addressId)
         return res.json({
             type: "success",
             status: 200,
@@ -145,14 +122,6 @@ const removeAddress = async function (req, res, next) {
 // To update address details as passed in body
 const updateAddress = async function (req, res, next) {
     try {
-        // if addressId in url paramter is not in ObjectId format
-        if (!ObjectId.isValid(req.params.addressId)) {
-            return res.json({
-                type: "error",
-                status: 409,
-                message: `AddressId not valid !`
-            })
-        }
         // query to check if address to update is in db
         let addressFoundForUpdate = await addressBookService.addressExistsWithId(req.params.addressId)
         // if address to update is not found in db
@@ -165,8 +134,7 @@ const updateAddress = async function (req, res, next) {
         }
 
         // query to update address details
-        let updateConfirmation = await addressBookService.updateAddress(req.params.addressId, req.body)
-        console.log(updateConfirmation)
+        await addressBookService.updateAddress(req.params.addressId, req.body)
         return res.json({
             type: "success",
             status: 200,
@@ -187,7 +155,7 @@ const updateAddress = async function (req, res, next) {
 // To find the logged-in user's addresses
 const showAddressList = async function (req, res, next) {
     try {
-        let userAddressBook = await addressBookModel.find({ userId: req.user._id }, {
+        let userAddressBook = await db.models.addressBook.find({ userId: req.user._id }, {
             _id: 0,
             addressId: "$_id",
             userId: 1,

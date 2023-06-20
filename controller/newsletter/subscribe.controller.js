@@ -2,19 +2,19 @@
 const newsModel = require('../../models/newsletter')
 
 // packages
-var emailValidator = require("deep-email-validator")
+const emailValidator = require("deep-email-validator")
 
 // services
-const emailService = require('../../comman/sendmail')
+const emailService = require('../../common/sendmail')
 
 // 1. import node mailer
-var nodemailer = require("nodemailer");
+const nodemailer = require("nodemailer");
 
 // To send email which got in body about updates in products , offers etc
 const subscribeToNewsletter = async function (req, res, next) {
     try {
         // query to find email passed with that email already exists in db 
-        let isEmailExists = await newsModel.findOne({ userEmail: req.body.userEmail })
+        let isEmailExists = await db.models.news.findOne({ userEmail: req.body.userEmail }).lean()
         // if email already exists
         if (isEmailExists) {
             return res.json({

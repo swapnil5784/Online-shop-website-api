@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
 
 // commman functions
-const CommonFunctions = require('../../comman/functions');
+const CommonFunctions = require('../../common/functions');
 const commonFn = new CommonFunctions();
 const productLog = commonFn.Logger('products')
 
@@ -40,10 +40,10 @@ const addReview = async function (req, res, next) {
     let reviewDetails = {
       userId: req.user._id,
       productId: productId,
-      review: review,
+      review: parseInt(review),
       rating: rating
     }
-    let reviewAddConfirmation = await productService.addReview(reviewDetails)
+    await productService.addReview(reviewDetails)
     let product = await reviewModel.aggregate([
       {
         $match: {
@@ -95,19 +95,8 @@ const deleteReview = async function (req, res, next) {
         message: "ReviewId is not valid !"
       })
     }
-    // query to verify review with reviewId passed in is their in  collection
-    let reviewToDelete = await productService.checkReviewExistsById(req.params.reviewId)
-    // if review to deleteis not found
-    if (!reviewToDelete) {
-      return res.json({
-        type: "error",
-        status: 404,
-        message: "Review not found !"
-      })
-    }
     // query to remove a review from collection
-    let reviewDeleteConfirmation = await productService.deleteReview(req.params.reviewId)
-    console.log(reviewDeleteConfirmation)
+    await productService.deleteReview(req.params.reviewId)
     return res.json({
       type: "success",
       status: 200,

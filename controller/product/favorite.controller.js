@@ -2,8 +2,8 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
-// comman functions
-const CommonFunctions = require('../../comman/functions');
+// common functions
+const CommonFunctions = require('../../common/functions');
 const commonFn = new CommonFunctions();
 const productLog = commonFn.Logger('products')
 
@@ -39,8 +39,7 @@ const markFavoriteAndGetFavorite = async function (req, res, next) {
       }
       // mark product favorite and store into collection
 
-      let markFavoriteConfirmation = await productService.markProductFavorite(productId, req.user._id)
-      console.log(markFavoriteConfirmation)
+      await productService.markProductFavorite(productId, req.user._id)
       return res.json({
         type: "success",
         status: 200,
@@ -49,7 +48,7 @@ const markFavoriteAndGetFavorite = async function (req, res, next) {
     }
     // query to store favorite products of logged-in user
     let products = await productService.getFavoriteProductsDetails(req.user._id)
-    let favoriteProductsCount = await productService.getFavoriteProductsCount(req.user._id) 
+    let favoriteProductsCount = await productService.getFavoriteProductsCount(req.user._id)
 
     // if user has no favorite products
     if (!products?.length) {
@@ -94,19 +93,8 @@ const deleteFavorite = async function (req, res, next) {
         message: "ObjectId is not valid !"
       })
     }
-    // query to check the product to delete from favorite is their in favorite product collection
-    let documentToDeleteFound = await productService.checkProductIsAlreadyMarkedFavorite(productId, req.user._id)
-    // if product to delete is not found
-    if (!documentToDeleteFound) {
-      return res.json({
-        type: "error",
-        status: 404,
-        message: "Product not found !"
-      })
-    }
     // query to remove favorite product
-    let deleteFavoriteConfirmation = await productService.removeProductFromFavorite(productId, req.user._id)
-    console.log(deleteFavoriteConfirmation);
+    await productService.removeProductFromFavorite(productId, req.user._id)
     return res.json({
       type: "success",
       status: 200,

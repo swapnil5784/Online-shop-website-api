@@ -1,14 +1,12 @@
 // packages
 const md5 = require('md5')
 
-// models
-const userModel = require('../../models/users')
 
 // To check user with mentioned email exists or not
 const userWithEmailExists = async (email) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await userModel.countDocuments({ email: email })
+            let data = await db.models.users.countDocuments({ email: email })
             resolve(data)
         }
         catch (error) {
@@ -22,7 +20,7 @@ const userWithEmailExists = async (email) => {
 const addResetOtpAndExpirytimeFieldToUser = async (email, otp, otpExpireAt) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let updateMessage = await userModel.updateOne({ email: email }, { resetOtp: otp, otpExpiredAt: otpExpireAt })
+            let updateMessage = await db.models.users.updateOne({ email: email }, { resetOtp: otp, otpExpiredAt: otpExpireAt })
             resolve(updateMessage)
         }
         catch (error) {
@@ -36,7 +34,7 @@ const addResetOtpAndExpirytimeFieldToUser = async (email, otp, otpExpireAt) => {
 const findUser = async (email) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let user = await userModel.findOne({ email: email })
+            let user = await db.models.users.findOne({ email: email }).lean()
             resolve(user)
         }
         catch (error) {
@@ -50,7 +48,7 @@ const findUser = async (email) => {
 const updatePassword = async (email, resetOtp, newPassword) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let message = await userModel.updateOne({ email: email, resetOtp: resetOtp }, { password: md5(newPassword) })
+            let message = await db.models.users.updateOne({ email: email, resetOtp: resetOtp }, { password: md5(newPassword) })
             resolve(message)
         }
         catch (error) {

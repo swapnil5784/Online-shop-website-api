@@ -2,14 +2,11 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
-// comman function
-const CommonFunctions = require('../../comman/functions');
+// common function
+const CommonFunctions = require('../../common/functions');
 const commonFn = new CommonFunctions();
 const productLog = commonFn.Logger('products')
 
-//models
-var productModel = require("../../models/products");
-const cartModel = require('../../models/carts')
 
 //services
 const productService = require('../../service/product.service')
@@ -29,11 +26,6 @@ const addAndUpdateCart = async function (req, res, next) {
         message: "Product not found !"
       })
     }
-    let productToAdd = {
-      productId: new ObjectId(productId),
-      userId: new ObjectId(req.user._id),
-      quantity: quantity
-    }
     let condition = {};
     // if product added from shop increment to product available in cart
     if (isAddedFromShop) {
@@ -43,13 +35,12 @@ const addAndUpdateCart = async function (req, res, next) {
     } else {
       // else set number of product passed from checkout page of details page
       condition['$set'] = {
-        quantity: quantity
+        quantity: parseInt(quantity)
       }
     }
 
     // used upsert if product is already in cart update else create a document
-    const upsertConfirmation = await productService.updateOrInsertCart(req.user._id, productId, condition)
-    console.log(upsertConfirmation);
+    await productService.updateOrInsertCart(req.user._id, productId, condition)
     return res.json({
       type: "success",
       status: 200,
@@ -89,20 +80,8 @@ const deleteCart = async function (req, res, next) {
         message: "CartIs not valid !"
       })
     }
-    // query to get count if mentioned product is in cart ot not
-    let cartFoundForDelete = await productService.cartExistsById(cartId)
-    // if product to delete is not in cart
-    if (!cartFoundForDelete) {
-      return res.json({
-        type: "error",
-        status: 409,
-        message: "Cart not found !"
-      })
-    }
-    console.log("cartId", cartId);
     // query to remove product from cart
-    let deleteCartConfirmation = await productService.deleteCart(cartId)
-    console.log(deleteCartConfirmation)
+    await productService.deleteCart(cartId)
     return res.json({
       type: "success",
       status: 200,

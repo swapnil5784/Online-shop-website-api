@@ -1,5 +1,5 @@
 // packages
-var emailValidator = require("deep-email-validator")
+const emailValidator = require("deep-email-validator")
 const emailChecker = require('email-existence')
 const md5 = require('md5')
 

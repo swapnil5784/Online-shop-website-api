@@ -1,9 +1,9 @@
 // packages
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 
 // middlewares
-const { authentication } = require('../comman/middlewares')
+const { authentication } = require('../common/middlewares')
 
 
 //controllers

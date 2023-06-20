@@ -1,11 +1,9 @@
-// models
-const addressBookModel = require('../models/addressBook')
 
 // To check user has any address exists in db
 const addressExistsOfUser = async (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await addressBookModel.countDocuments({ userId: userId })
+            let data = await db.models.addressBook.countDocuments({ userId: userId })
             resolve(data)
         }
         catch (error) {
@@ -19,7 +17,7 @@ const addressExistsOfUser = async (userId) => {
 const saveAddress = async (address) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await addressBookModel.create(address)
+            let data = await db.models.addressBook.create(address)
             resolve(data)
         }
         catch (error) {
@@ -33,7 +31,7 @@ const saveAddress = async (address) => {
 const addressExistsWithId = async (addressId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await addressBookModel.countDocuments({ _id: addressId })
+            let data = await db.models.addressBook.countDocuments({ _id: addressId })
             resolve(data)
         }
         catch (error) {
@@ -47,7 +45,7 @@ const addressExistsWithId = async (addressId) => {
 const removeAddress = async (addressId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await addressBookModel.deleteOne({ _id: addressId })
+            let data = await db.models.addressBook.deleteOne({ _id: addressId })
             resolve(data)
         }
         catch (error) {
@@ -61,7 +59,7 @@ const removeAddress = async (addressId) => {
 const updateAddress = async (addressId, detailsToUpdate) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await addressBookModel.updateOne({ _id: addressId }, { $set: detailsToUpdate })
+            let data = await db.models.addressBook.updateOne({ _id: addressId }, { $set: detailsToUpdate })
             resolve(data)
         }
         catch (error) {
