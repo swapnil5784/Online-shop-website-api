@@ -37,8 +37,8 @@ const addReview = async function (req, res, next) {
     let reviewDetails = {
       userId: req.user._id,
       productId: productId,
-      review: parseInt(review),
-      rating: rating
+      review: review,
+      rating: parseInt(rating)
     }
     await productService.addReview(reviewDetails)
     let product = await db.models.reviews.aggregate([
@@ -61,7 +61,7 @@ const addReview = async function (req, res, next) {
       }
     ])
     let reviewCountOnProduct = await db.models.reviews.countDocuments({ userId: req.user._id, productId: productId })
-    await db.models.products.updateOne({ _id: productId }, { $set: { "rating.rate": ((product[0].rating) / reviewCountOnProduct) } })
+    await db.models.products.updateOne({ _id: productId }, { $set: { "rating.rate": ((product[0].rating) / reviewCountOnProduct), "rating.count": reviewCountOnProduct } })
     return res.json({
       type: "success",
       status: 200,

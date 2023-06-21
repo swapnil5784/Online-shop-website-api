@@ -14,7 +14,7 @@ const favoriteProductModel = require('../../models/favoriteProducts')
 const productService = require('../../service/product.service')
 
 // To make product favorite as productId in parameter and get list of favorite products
-const markFavoriteAndGetFavorite = async function (req, res, next) {
+const favoriteProducts = async function (req, res, next) {
   try {
     let { productId } = req.params
     // if productId found in parameter
@@ -28,7 +28,7 @@ const markFavoriteAndGetFavorite = async function (req, res, next) {
         })
       }
       //query to check is product in favorite collection
-      let markedFavoriteAlready = await productService.checkProductIsAlreadyMarkedFavorite(productId, req.user._id)
+      let markedFavoriteAlready = await productService.isFavoriteProduct(productId, req.user._id)
       // if product is already in favorite products collection
       if (markedFavoriteAlready) {
         return res.json({
@@ -38,13 +38,11 @@ const markFavoriteAndGetFavorite = async function (req, res, next) {
         })
       }
       // mark product favorite and store into collection
-      let forTest = await db.models.favoriteProducts.countDocuments({ userId: new ObjectId(req.user._id.toString()), productId: new ObjectId(productId.toString()) })
-      console.log("forTest = = > >", forTest, "req.user._id = = > >", req.user._id, "productId = = > >", productId.toString());
       await productService.markProductFavorite(productId, req.user._id)
       return res.json({
         type: "success",
         status: 200,
-        favoriteProducts: await db.models.favoriteProducts.countDocuments({ usertId: req.user._id, productId: req.user._id }),
+        favoriteProducts: await db.models.favoriteProducts.countDocuments({ userId: new ObjectId(req.user._id.toString()) }),
         message: "Product successfully added to favorite !"
       })
     }
@@ -115,6 +113,6 @@ const deleteFavorite = async function (req, res, next) {
 }
 // exports
 module.exports = {
-  markFavoriteAndGetFavorite,
+  favoriteProducts,
   deleteFavorite
 }

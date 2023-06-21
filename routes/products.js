@@ -8,12 +8,12 @@ const { authentication } = require('../common/middlewares')
 // controllers
 const { addReview, deleteReview } = require('../controller/product/review.controller.js')
 const { addAndUpdateCart, deleteCart, showCartproducts } = require('../controller/product/cart.controller.js')
-const { markFavoriteAndGetFavorite, deleteFavorite } = require('../controller/product/favorite.controller.js')
+const { favoriteProducts, deleteFavorite } = require('../controller/product/favorite.controller.js')
 const { getProductFilter } = require('../controller/product/filter.controller.js')
 const { getProducts } = require('../controller/product/products.controller.js')
 
 // For get review details and assign to the mentioned product
-router.post('/review', authentication, addReview)
+router.post('/review', authentication, validation("add-review"), addReview)
 
 // For remove review
 router.delete('/review/remove/:reviewId', authentication, deleteReview)
@@ -28,7 +28,7 @@ router.get('/cart', authentication, showCartproducts);
 router.delete('/cart/remove/:cartId', authentication, deleteCart);
 
 // For get favorite products and mark product favorite
-router.get('/favorite/:productId?', authentication, markFavoriteAndGetFavorite);
+router.get('/favorite/:productId?', authentication, favoriteProducts);
 
 // For remove product from favorite
 router.delete('/favorite/remove/:productId', authentication, deleteFavorite)

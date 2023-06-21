@@ -170,8 +170,8 @@ const showCartProducts = async (userId) => {
         }
     })
 }
-// TO check the product to mark favorite is already marked ?
-const checkProductIsAlreadyMarkedFavorite = async (productId, userId) => {
+// TO check the product to mark favorite is already marked or not
+const isFavoriteProduct = async (productId, userId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let data = await db.models.favoriteProducts.countDocuments({
@@ -403,7 +403,7 @@ module.exports = {
     deleteCart,
     showCartProducts,
     // favorite
-    checkProductIsAlreadyMarkedFavorite,
+    isFavoriteProduct,
     markProductFavorite,
     getFavoriteProductsDetails,
     removeProductFromFavorite,

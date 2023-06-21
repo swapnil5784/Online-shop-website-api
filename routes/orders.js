@@ -11,7 +11,7 @@ const { placeOrder } = require('../controller/order/placeorder')
 router.get('/:orderId?', showOrderDetails);
 
 // For get order details and place order
-router.post('/', validation('place-order'), placeOrder);
+router.post('/', validation("place-order"), placeOrder);
 
 
 module.exports = router;

@@ -10,55 +10,6 @@ const addAddress = async function (req, res, next) {
     try {
         let { title, country, name, mobileNo, pincode, addressLineOne, addressLineTwo, landmark, city, state } = req.body
         // addressDetails object to save details accroding to shema defined
-        if (typeof title != "string") {
-            return res.json({
-                type: "error",
-                status: 409,
-                message: 'title is not valid !'
-            })
-        }
-        if (typeof name != "string") {
-            return res.json({
-                type: "error",
-                status: 409,
-                message: 'name is not valid !'
-            })
-        }
-        if (typeof country != "string") {
-            return res.json({
-                type: "error",
-                status: 409,
-                message: 'country is not valid !'
-            })
-        }
-        if (typeof pincode != "string") {
-            return res.json({
-                type: "error",
-                status: 409,
-                message: 'pincode is not valid !'
-            })
-        }
-        if (typeof landmark != "string") {
-            return res.json({
-                type: "error",
-                status: 409,
-                message: 'landmark is not valid !'
-            })
-        }
-        if (typeof city != "string") {
-            return res.json({
-                type: "error",
-                status: 409,
-                message: 'city is not valid !'
-            })
-        }
-        if (typeof state != "string") {
-            return res.json({
-                type: "error",
-                status: 409,
-                message: 'state is not valid !'
-            })
-        }
         let addressDetails = {
             userId: req.user._id,
             title: title,

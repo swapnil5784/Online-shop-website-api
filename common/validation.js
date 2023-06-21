@@ -36,21 +36,46 @@ module.exports = {
             }
         }
     },
+    "add-review": {
+        body: {
+            rating: {
+                trim: true,
+                isInt: {
+                    errorMessage: "Enter Number in rating and less tha 6 !"
+                },
+                notEmpty: true,
+                errorMesssage: "Enter rating !"
+            }
+        }
+    },
     "place-order": {
         body: {
             billingId: {
-                trim: true,
                 notEmpty: true,
-                errorMessage: "Please Provide billingId",
                 custom: {
-                    options: function (Id) {
-                        if (commonFn.isValidObjectId(Id)) {
+                    options: function (id) {
+                        if (commonFn.isValidObjectId(id)) {
                             return true;
                         }
                         return false;
                     },
-                    errorMessage: 'billingId is invalid'
-                }
+                    errorMessage: "Enter valid billingId"
+                },
+                errorMessage: "Enter billingId !"
+            },
+            deliveryId: {
+                notEmpty: true,
+                optional: { options: { nullable: true } },
+                custom: {
+                    options: function (id) {
+                        if (commonFn.isValidObjectId(id)) {
+                            return true;
+                        }
+                        return false;
+                    },
+                    errorMessage: "Enter valid deliveryId"
+                },
+                errorMessage: "Enter deliveryId !"
             },
         }
     }
