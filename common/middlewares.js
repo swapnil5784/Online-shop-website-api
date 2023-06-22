@@ -1,12 +1,6 @@
 
 // packages
-const jwt = require('jsonwebtoken')
-const moment = require('moment')
-const { query, validationResult } = require('express-validator')
-
-// models
-const userModel = require('../models/users')
-
+const jwt = require('jsonwebtoken');
 
 const validates = require('./validation');
 // Export functions as object's key
@@ -14,7 +8,7 @@ module.exports = {
     // Middleware function to authenticate every request by verifying token
     authentication: async function (req, res, next) {
         try {
-            let { token } = req.headers
+            let { token } = req.headers;
             // if token is not in request headers
             if (!token) {
                 return res.json({
@@ -28,12 +22,12 @@ module.exports = {
                 if (error) {
                     console.log({
                         message: error.message,
-                    })
+                    });
                 }
-                return decoded
+                return decoded;
             })
             // asign request user's details
-            req.user = await db.models.users.findById(decoded._id)
+            req.user = await db.models.users.findById(decoded._id);
             // if decoded user _id not found in db
             if (!req.user) {
                 return res.json({
@@ -47,11 +41,11 @@ module.exports = {
             // if error in authentication process
             return res.json({
                 type: "error",
-                status: 409,
+                status: 401,
                 message: "invalid token"
-            })
+            });
         }
-        return next()
+        return next();
     },
     // 
     validations(modelName) {
@@ -85,7 +79,7 @@ module.exports = {
                 console.log("error", error);
             }
 
-        }
+        };
     }
 
 }

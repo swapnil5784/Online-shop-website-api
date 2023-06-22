@@ -11,7 +11,7 @@ const {
     removeAddress,
     showAddressList,
     updateAddress
-} = require('../controller/address/address.controller')
+} = require('../controller/address.controller');
 
 // For send address list in response
 router.get('/', showAddressList);
@@ -20,7 +20,7 @@ router.get('/', showAddressList);
 router.post('/add', addAddress);
 
 // For get address details to update and update into db
-router.put('/update/:addressId', validation("update-address"), updateAddress)
+router.put('/update/:addressId', validation("update-address"), updateAddress);
 
 // For delete address details
 router.delete('/remove/:addressId', validation("remove-address"), removeAddress);

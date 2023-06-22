@@ -5,7 +5,7 @@ const ObjectId = mongoose.Types.ObjectId;
 // common  functions
 const CommonFunctions = require('../../common/functions');
 const commonFn = new CommonFunctions();
-const productLog = commonFn.Logger('products')
+const productLog = commonFn.Logger('products');
 
 
 // To get product list
@@ -18,7 +18,7 @@ const getProducts = async function (req, res, next) {
       pagination,
       isCategoryList,
     } = req.body;
-    const { id } = req.params
+    const { id } = req.params;
 
     let condition = [];
 
@@ -34,7 +34,7 @@ const getProducts = async function (req, res, next) {
           type: "error",
           status: 409,
           message: 'ObjectId is not valid !'
-        })
+        });
       }
       match["_id"] = new ObjectId(id);
       // push match for filter
@@ -96,7 +96,7 @@ const getProducts = async function (req, res, next) {
           ],
           as: "reviews"
         }
-      })
+      });
       condition.push({
         $project: {
           _id: 1,
@@ -114,8 +114,8 @@ const getProducts = async function (req, res, next) {
           size: 1,
           reviews: 1
         }
-      })
-      let productDetails = await db.models.products.aggregate(condition)
+      });
+      let productDetails = await db.models.products.aggregate(condition);
 
       return res.json({
         type: "success",
@@ -148,19 +148,19 @@ const getProducts = async function (req, res, next) {
             { price: { $lte: range.max } },
             { price: { $gte: range.min } },
           ]
-        })
-      })
-      match.$or = priceRangeArray
+        });
+      });
+      match.$or = priceRangeArray;
     }
 
     // filter colors in product
     if (filter?.color && filter.color.length) {
-      match.color = { $in: filter.color }
+      match.color = { $in: filter.color };
     }
 
     // filter sizes in product
     if (filter?.size && filter.size.length) {
-      match.size = { $in: filter.size }
+      match.size = { $in: filter.size };
     }
 
     // removes $or field from match if $or is empty
@@ -183,7 +183,7 @@ const getProducts = async function (req, res, next) {
             { category: { $regex: filter.search, $options: "i" } },
           ]
         }
-      })
+      });
     }
 
 
@@ -201,7 +201,7 @@ const getProducts = async function (req, res, next) {
       $sort: {
         [field]: order
       }
-    })
+    });
     //3.------------------ (i)skip-(ii)limit
     if (pagination) {
       let productsPerPage = parseInt(pagination.productsPerPage) || 8;
@@ -247,7 +247,7 @@ const getProducts = async function (req, res, next) {
         totalProducts: totalFilteredProducts,
         totalFilteredProducts: totalProducts,
         data: data
-      })
+      });
     }
     // product's categories to send
     if (isCategoryList) {
@@ -279,7 +279,7 @@ const getProducts = async function (req, res, next) {
             }
           }
         ])
-      }
+      };
       // if no category found
       if (!data?.categories?.length) {
         return res.json({
@@ -287,7 +287,7 @@ const getProducts = async function (req, res, next) {
           status: 404,
           message: "No category found !",
           data: data
-        })
+        });
       }
     }
     return res.json({
@@ -300,7 +300,7 @@ const getProducts = async function (req, res, next) {
     });
   } catch (error) {
     // if error while sending products with filters or category list
-    productLog.error("error at post /products route...", error)
+    productLog.error("error at post /products route...", error);
     console.log("error at post /products route...", error);
     return res.json({
       type: "error",
@@ -308,8 +308,8 @@ const getProducts = async function (req, res, next) {
       message: `Server error in /products/ API `,
     });
   }
-}
+};
 //exports
 module.exports = {
-  getProducts
-}
+  getProducts,
+};

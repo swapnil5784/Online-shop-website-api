@@ -1,5 +1,6 @@
+const tokenRegenerateLog = commonFn.Logger("renewToken")
 // packages
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 
 // To regenerate the token 
 const regerateToken = async function (req, res, next) {
@@ -11,20 +12,21 @@ const regerateToken = async function (req, res, next) {
             status: 200,
             token: token,
             message: "Successfully rengenerated token ."
-        })
+        });
     }
     catch (error) {
         // if error in regerate token
-        console.log('error in /token-renew route at index.js', error)
+        tokenRegenerateLog.error('error in /token-renew route at index.js', error)
+        console.log('error in /token-renew route at index.js', error);
         return res.json({
             type: "error",
             status: 500,
             message: "Server error at /token-review !"
-        })
+        });
     }
-}
+};
 
 // exports
 module.exports = {
-    regerateToken
-}
+    regerateToken,
+};

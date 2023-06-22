@@ -1,18 +1,15 @@
 // common functions
 const CommonFunctions = require('../../common/functions');
 const commonFn = new CommonFunctions();
-const productLog = commonFn.Logger('products')
-
-// import models
-const productModel = require("../../models/products");
-
+const productLog = commonFn.Logger('products');
+const crypto = require('crypto')
 // services
-const productServices = require('../../service/product.service')
+const productServices = require('../../service/product');
 
 const getProductFilter = async function (req, res, next) {
   try {
     // query get price ranges maximum and minimum 
-    let maxPriceDetails = await productServices.findMaximumAndMinumumProductPrice();
+    let maxPriceDetails = await productServices.minMaxPrice();
     // below loop is to create an array ranges of 100 in [ MinimumPrice ,  MaximumPrice ]
     let priceRanges = [];
     for (
@@ -20,7 +17,7 @@ const getProductFilter = async function (req, res, next) {
       i < Math.ceil(maxPriceDetails[0].MaximumPrice);
       i = i + 100
     ) {
-      let productsInRange = await productServices.productsInPriceRange(i, i + 100)
+      let productsInRange = await productServices.productsInPriceRange(i, i + 100);
       if (productsInRange) {
         priceRanges.push({
           min: i,
@@ -30,9 +27,9 @@ const getProductFilter = async function (req, res, next) {
       }
     }
     // query to get the colors list of product in collection
-    let colorsArray = await productServices.colorsAvailableInProducts();
+    let colorsArray = await productServices.availableColors();
     // query to get the colors size of product in collection
-    let sizesArray = await productServices.sizesAvailableInProducts();
+    let sizesArray = await productServices.availableSizes();
     // if colorsList , sizeList and priceRangeList are empty
     if (!colorsArray?.length && !sizesArray?.length && !priceRanges?.length) {
       return res.json({
@@ -44,8 +41,18 @@ const getProductFilter = async function (req, res, next) {
           sizes: sizesArray,
           priceRanges: priceRanges,
         },
-      })
+      });
     }
+    let dataObject =
+    {
+      colors: colorsArray,
+      sizes: sizesArray,
+      priceRanges: priceRanges,
+    }
+    const key = crypto.scryptSync(process.env.ENCRYPTION_KEY, 'salt', 32);
+    const iv = crypto.randomBytes(16);
+    // let ivToEncryptIv = crypto.scryptSync(process.env.ENCRYPTION_KEY, 'salt', 16);
+    let encData = commonFn.encrypt(JSON.stringify(dataObject), key, iv);
     return res.json({
       type: "success",
       status: 200,
@@ -55,10 +62,11 @@ const getProductFilter = async function (req, res, next) {
         sizes: sizesArray,
         priceRanges: priceRanges,
       },
+      newData: encData,
     });
   } catch (error) {
     // if errot while sending fileters of products
-    productLog.error("error at GET /products/filters route...", error)
+    productLog.error("error at GET /products/filters route...", error);
     console.log("error at get /products/filters route...", error);
     return res.json({
       type: "error",
@@ -66,9 +74,9 @@ const getProductFilter = async function (req, res, next) {
       message: `Server error at /products/filters API `,
     });
   }
-}
+};
 
 // export function
 module.exports = {
-  getProductFilter
-}
+  getProductFilter,
+};

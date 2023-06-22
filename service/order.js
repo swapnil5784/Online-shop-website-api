@@ -1,6 +1,6 @@
 // packages
-const mongoose = require('mongoose')
-const ObjectId = mongoose.Types.ObjectId
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 // To send orderDetails of specific order by orderId
 const SpecificOrderInDetail = async (orderId) => {
@@ -11,16 +11,16 @@ const SpecificOrderInDetail = async (orderId) => {
                 {
                     _id: new ObjectId(orderId)
                 }
-            ).lean()
+            ).lean();
             // console.log('details = = > >', details)
-            resolve(details)
+            resolve(details);
         } catch (error) {
             // if error while sending orderDetails
-            console.log("error in fetching specific order details !", error)
-            reject(error)
+            console.log("error in fetching specific order details !", error);
+            reject(error);
         }
-    })
-}
+    });
+};
 
 // To send the list of orders of logged in user 
 const getUserOrderDetails = async function (userId) {
@@ -37,19 +37,19 @@ const getUserOrderDetails = async function (userId) {
                     paymentMethod: 1,
                     status: 1
                 }
-            ).sort({ createdOn: -1 })
-            resolve(orderListDetails)
+            ).sort({ createdOn: -1 });
+            resolve(orderListDetails);
         }
         catch (error) {
             // if error in sending order List
-            console.log('error in order service for show order Details = = > > ', error)
-            reject(error)
+            console.log('error in order service for show order Details = = > > ', error);
+            reject(error);
         }
-    })
-}
+    });
+};
 
 // exports
 module.exports = {
     getUserOrderDetails,
-    SpecificOrderInDetail
-}
+    SpecificOrderInDetail,
+};

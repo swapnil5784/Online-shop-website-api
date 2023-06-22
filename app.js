@@ -1,5 +1,5 @@
 //-1---------------------------------------------------
-require('dotenv').config()
+require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -17,16 +17,11 @@ global.validation = validations;
 
 const CommonFunctions = require('./common/functions');
 global.commonFn = new CommonFunctions();
-console.log();
 
 const indexRouter = require('./routes/index');
 const productsRouter = require('./routes/products');
-const usersRouter = require('./routes/users');
-const addressBookRouter = require('./routes/addressBook')
-const orderRouter = require('./routes/orders')
-// 1. passport authentication
-const passport = require('passport');
-
+const addressBookRouter = require('./routes/addressBook');
+const orderRouter = require('./routes/orders');
 
 // load passport local for login process
 require('./auth/auth');
@@ -67,10 +62,9 @@ app.use(cors({
 // addTwo(1, 2)
 app.use('/', indexRouter);
 app.use('/products', productsRouter);
-app.use('/users', usersRouter);
-app.use(authentication)
-app.use('/address', addressBookRouter)
-app.use('/orders', orderRouter)
+app.use(authentication);
+app.use('/address', addressBookRouter);
+app.use('/orders', orderRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
