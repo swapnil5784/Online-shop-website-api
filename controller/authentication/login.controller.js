@@ -3,7 +3,7 @@
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 
-const authenticationLog = commonFn.Logger('authentication')
+// const authenticationLog = commonFn.Logger('authentication')
 
 // To login user and sign token 
 const userLogin = async function (req, res, next) {
@@ -11,7 +11,7 @@ const userLogin = async function (req, res, next) {
         passport.authenticate('local', { session: false }, (err, user, info) => {
             // if user not found as details passed in body
             if (err || !user) {
-                authenticationLog.error('Login failed , entered details are not correct ! ')
+                // authenticationLog.error('Login failed , entered details are not correct ! ')
                 return res.json({
                     message: info ? info.message : 'Login failed , entered details are not correct ! ',
                     user: user
@@ -35,7 +35,7 @@ const userLogin = async function (req, res, next) {
     }
     catch (error) {
         // if error in user login process
-        authenticationLog.error("error post: /login --> index.js route", error)
+        // authenticationLog.error("error post: /login --> index.js route", error)
         console.log("error post: /login --> index.js route", error);
         return res.json({
             type: "error",

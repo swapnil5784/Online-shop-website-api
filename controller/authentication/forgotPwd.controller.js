@@ -3,7 +3,7 @@ const handlebars = require('hbs');
 const moment = require('moment');
 const fs = require('fs');
 
-const authenticationLog = commonFn.Logger('authentication');
+// const authenticationLog = commonFn.Logger('authentication');
 
 // services
 const authService = require('../../service/authentication');
@@ -48,7 +48,7 @@ const forgotPassword = async (req, res) => {
     }
     catch (error) {
         // if error while sending otp to email
-        authenticationLog.error("error at post: /forgot", error)
+        // authenticationLog.error("error at post: /forgot", error)
         console.log("error at post: /forgot", error);
         return res.json({
             type: 'error',
@@ -66,7 +66,7 @@ const resetPassword = async (req, res) => {
 
         // if any required field not found in body
         if (!email || !resetOtp || !newPassword) {
-            authenticationLog.error("Incomplete details for Forget password !");
+            // authenticationLog.error("Incomplete details for Forget password !");
             return res.json({
                 type: 'error',
                 status: 409,
@@ -76,7 +76,7 @@ const resetPassword = async (req, res) => {
 
         // time exceeds the otp-expiration time
         if (!(userDetails.otpExpiredAt > moment())) {
-            authenticationLog.error("Invalid OTP !");
+            // authenticationLog.error("Invalid OTP !");
             return res.json({
                 type: 'error',
                 status: 409,
@@ -87,7 +87,7 @@ const resetPassword = async (req, res) => {
 
         // check otp is same as generated
         if (!(userDetails.resetOtp === resetOtp)) {
-            authenticationLog.error("Invalid OTP !")
+            // authenticationLog.error("Invalid OTP !")
             return res.json({
                 type: 'error',
                 status: 409,
@@ -104,7 +104,7 @@ const resetPassword = async (req, res) => {
     }
     catch (error) {
         // if error in pass reset process
-        authenticationLog.error("error at post: /forgot", error)
+        // authenticationLog.error("error at post: /forgot", error)
         console.log("error at post: /forgot", error)
         return res.json({
             type: 'error',

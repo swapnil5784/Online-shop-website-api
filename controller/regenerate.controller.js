@@ -1,4 +1,4 @@
-const tokenRegenerateLog = commonFn.Logger("renewToken")
+// const tokenRegenerateLog = commonFn.Logger("renewToken")
 // packages
 const jwt = require('jsonwebtoken');
 
@@ -16,7 +16,7 @@ const regerateToken = async function (req, res, next) {
     }
     catch (error) {
         // if error in regerate token
-        tokenRegenerateLog.error('error in /token-renew route at index.js', error)
+        // tokenRegenerateLog.error('error in /token-renew route at index.js', error)
         console.log('error in /token-renew route at index.js', error);
         return res.json({
             type: "error",

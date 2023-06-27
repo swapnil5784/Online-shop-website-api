@@ -1,6 +1,6 @@
 // packages
 const md5 = require('md5');
-const authenticationLog = commonFn.Logger('authentication')
+// const authenticationLog = commonFn.Logger('authentication')
 // middleware
 const authService = require('../../service/authentication');
 
@@ -21,7 +21,7 @@ const registerUser = async function (req, res) {
     // if emailId or mobile already registered
     let userFound = await authService.findUserByIdOrMobile(email, mobile);
     if (userFound) {
-      authenticationLog.error(`User already registred with entered details ! User registration failed !`)
+      // authenticationLog.error(`User already registred with entered details ! User registration failed !`)
       return commonFn.sendErrorResponse(res, 409, `User already registred with entered details ! User registration failed !`)
     }
     // register user in database
@@ -40,7 +40,7 @@ const registerUser = async function (req, res) {
   }
   catch (error) {
     // if error in user registration process
-    authenticationLog.error("error post: /register --> index.js route", error)
+    // authenticationLog.error("error post: /register --> index.js route", error)
     console.log("error post: /register --> index.js route", error);
     return commonFn.sendErrorResponse(res, 500, `User registration failed !`)
   }

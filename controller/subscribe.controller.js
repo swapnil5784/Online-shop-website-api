@@ -1,5 +1,5 @@
 
-const subscribeLog = commonFn.Logger('subscribe')
+// const subscribeLog = commonFn.Logger('subscribe')
 // services
 const emailService = require('../common/sendmail');
 
@@ -28,7 +28,7 @@ const subscribeToNewsletter = async function (req, res, next) {
             message: "successfully registered !",
         });
     } catch (error) {
-        subscribeLog.error("error at post /subscribe route in index.js", error)
+        // subscribeLog.error("error at post /subscribe route in index.js", error)
         console.log("error at post /subscribe route in index.js", error);
         return res.json({
             type: "error",

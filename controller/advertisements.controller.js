@@ -1,5 +1,5 @@
 
-const advertisementLog = commonFn.Logger('advertisements')
+// const advertisementLog = commonFn.Logger('advertisements')
 // To send the vendor list of advertisement
 const vendorList = async function (req, res, next) {
     try {
@@ -7,7 +7,7 @@ const vendorList = async function (req, res, next) {
         let vendors = await db.models.vendors.find({});
         // if no vendors in db
         if (!vendors.length) {
-            advertisementLog.error('No vendors found !');
+            // advertisementLog.error('No vendors found !');
             return res.json({
                 type: "error",
                 status: 404,
@@ -23,7 +23,7 @@ const vendorList = async function (req, res, next) {
         });
     } catch (error) {
         // if error in sending vendor list
-        advertisementLog.error("error at /products/vendors --> index.js route", error);
+        // advertisementLog.error("error at /products/vendors --> index.js route", error);
         console.log("error at /products/vendors --> index.js route", error);
         return res.json({
             type: "error",
@@ -41,7 +41,7 @@ const carouselsList = async function (req, res, next) {
         // query to get offer list from db as list
         let offers = await db.models.offers.find({});
         if (!offers.length && !advertisements.length) {
-            advertisementLog.error(`No advertisements or offer found !`);
+            // advertisementLog.error(`No advertisements or offer found !`);
             return res.json({
                 type: "error",
                 status: 404,
@@ -63,7 +63,7 @@ const carouselsList = async function (req, res, next) {
         });
     } catch (error) {
         // if error in sending advertisement details
-        advertisementLog.error("error at /banner route", error);
+        // advertisementLog.error("error at /banner route", error);
         console.log("error at /banner route", error);
         return res.json({
             type: "error",

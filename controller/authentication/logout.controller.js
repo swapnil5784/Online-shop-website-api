@@ -1,4 +1,4 @@
-const authenticationLog = commonFn.Logger('authentication')
+// const authenticationLog = commonFn.Logger('authentication')
 // To logout user from application
 const userLogout = function (req, res, next) {
     try {
@@ -10,7 +10,7 @@ const userLogout = function (req, res, next) {
         });
     }
     catch (error) {
-        authenticationLog.error('error while logout', error)
+        // authenticationLog.error('error while logout', error)
         console.log('error while logout', error);
         return res.json({
             type: 'error',

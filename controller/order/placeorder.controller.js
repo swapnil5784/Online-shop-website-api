@@ -1,7 +1,7 @@
 // packages
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
-const orderLog = commonFn.Logger('orders')
+// const orderLog = commonFn.Logger('orders')
 module.exports = {
     // function to place order
     placeOrder: async function (req, res, next) {
@@ -29,7 +29,7 @@ module.exports = {
             // if shipping and delivery addresses are different 
             if (shipToDifferentAddress) {
                 if (!deliveryId) {
-                    orderLog.error("DeliveryId not found !")
+                    // orderLog.error("DeliveryId not found !")
                     return res.json({
                         type: "error",
                         status: 409,
@@ -38,7 +38,7 @@ module.exports = {
                 }
                 if (deliveryId) {
                     if (!ObjectId.isValid(deliveryId)) {
-                        orderLog.error("DeliveryId is not valid !")
+                        // orderLog.error("DeliveryId is not valid !")
                         return res.json({
                             type: "error",
                             status: 409,
@@ -58,7 +58,7 @@ module.exports = {
         }
         catch (error) {
             // if error in place order process
-            orderLog.error("error at POST : /order", error)
+            // orderLog.error("error at POST : /order", error)
             console.log("error at POST : /order", error);
             return res.json({
                 type: "error",

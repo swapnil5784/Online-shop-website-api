@@ -1,5 +1,5 @@
 
-const contactLog = commonFn.Logger('contact')
+// const contactLog = commonFn.Logger('contact')
 const crypto = require('crypto')
 // To save message of user even if not register
 const contactUsController = async (req, res) => {
@@ -26,7 +26,7 @@ const contactUsController = async (req, res) => {
     }
     catch (error) {
         // if error in contact-us process
-        contactLog.error("error in contactUsController controller", error)
+        // contactLog.error("error in contactUsController controller", error)
         console.log("error in contactUsController controller", error);
         return res.json({
             type: "error",

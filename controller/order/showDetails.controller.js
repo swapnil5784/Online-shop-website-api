@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
-const orderLog = commonFn.Logger('orders')
+// const orderLog = commonFn.Logger('orders')
 
 //services
 const orderService = require('../../service/order');
@@ -13,7 +13,7 @@ const showOrderDetails = async function (req, res, next) {
         let { orderId } = req.params;
         if (orderId) {
             if (!ObjectId.isValid(orderId)) {
-                orderLog.error('"ObjectId of order is not valid !"')
+                // orderLog.error('"ObjectId of order is not valid !"')
                 return res.json({
                     type: "error",
                     status: 500,
@@ -34,7 +34,7 @@ const showOrderDetails = async function (req, res, next) {
         let orderDetails = await orderService.getUserOrderDetails(req.user._id);
         // if logged-in user has no order
         if (!orderDetails.length) {
-            orderLog.error('No orderDetails found !')
+            // orderLog.error('No orderDetails found !')
             return res.json({
                 type: "error",
                 status: 404,
@@ -55,7 +55,7 @@ const showOrderDetails = async function (req, res, next) {
     catch (error) {
         // if error in sending order details
         console.log("error at /order", error);
-        orderLog.error("Server error at /orders !")
+        // orderLog.error("Server error at /orders !")
         return res.json({
             type: "error",
             status: 500,

@@ -1,5 +1,5 @@
 
-const addressLog = commonFn.Logger("addresses")
+// const addressLog = commonFn.Logger("addresses")
 
 // services
 const addressBookService = require('../service/addressBook');
@@ -39,7 +39,7 @@ const addAddress = async function (req, res, next) {
     }
     catch (error) {
         // if error in add address process
-        addressLog.error('error in /address route', error)
+        // addressLog.error('error in /address route', error)
         console.log('error in /address route', error);
         return res.json({
             type: "error",
@@ -61,7 +61,7 @@ const removeAddress = async function (req, res, next) {
     }
     catch (error) {
         // if error in removing address
-        addressLog.error(`error at /address/remove/${req.params.addressId}`, error)
+        // addressLog.error(`error at /address/remove/${req.params.addressId}`, error)
         console.log(`error at /address/remove/${req.params.addressId}`, error);
         return res.json({
             type: "error",
@@ -78,7 +78,7 @@ const updateAddress = async function (req, res, next) {
         let addressFoundForUpdate = await addressBookService.addressExistsWithId(req.params.addressId);
         // if address to update is not found in db
         if (!addressFoundForUpdate) {
-            addressLog.error(`Address not found to update!`)
+            // addressLog.error(`Address not found to update!`)
             return res.json({
                 type: "error",
                 status: 404,
@@ -96,7 +96,7 @@ const updateAddress = async function (req, res, next) {
     }
     catch (error) {
         // if error in address update process
-        addressLog.error(`error at Patch: /address/update/${req.params.addressId}`, error)
+        // addressLog.error(`error at Patch: /address/update/${req.params.addressId}`, error)
         console.log(`error at Patch: /address/update/${req.params.addressId}`, error);
         return res.json({
             type: "error",
@@ -126,7 +126,7 @@ const showAddressList = async function (req, res, next) {
         });
         // if user had not added addresses
         if (!userAddressBook.length) {
-            addressLog.error('No address found !')
+            // addressLog.error('No address found !')
             return res.json({
                 type: "error",
                 status: 404,
@@ -147,7 +147,7 @@ const showAddressList = async function (req, res, next) {
     }
     catch (error) {
         // if error in showing address list
-        addressLog.error('error in /address route', error)
+        // addressLog.error('error in /address route', error)
         console.log('error in /address route', error);
         return res.status(500).json({
             type: "error",
